@@ -42,25 +42,27 @@
 </head>
 <body>
 
-<h2>💰 Payroll System</h2>
+<h2>💰 Payroll System (Auto Deduction)</h2>
 
-<button class="back" onclick="back()">⬅ Back to Employee</button>
+<button class="back" onclick="back()">⬅ Back</button>
 
 <br><br>
 
 <select id="emp"></select>
 <input id="rate" placeholder="Daily Rate">
 <input id="days" placeholder="Days Worked">
-<input id="deduction" placeholder="Other Deduction">
 
-<button class="compute" onclick="compute()">Compute</button>
+<button class="compute" onclick="compute()">Compute Salary</button>
 
 <table>
 <tr>
 <th>Name</th>
 <th>Gross</th>
-<th>Deductions</th>
-<th>Net</th>
+<th>SSS</th>
+<th>PhilHealth</th>
+<th>Pag-IBIG</th>
+<th>Total Deduction</th>
+<th>Net Pay</th>
 </tr>
 <tbody id="table"></tbody>
 </table>
@@ -81,9 +83,10 @@ function load(){
   });
 }
 
+// 💰 AUTO DEDUCTIONS (sample logic)
 function compute(){
-  let i=emp.value;
-  let e=data[i];
+  let i = emp.value;
+  let e = data[i];
 
   if(!e){
     alert("Select employee");
@@ -92,17 +95,26 @@ function compute(){
 
   let rate = +rate.value || 0;
   let days = +days.value || 0;
-  let ded = +deduction.value || 0;
 
   let gross = rate * days;
-  let net = gross - ded;
+
+  // 🔥 SAMPLE COMPUTATION (pwede pa natin i-adjust)
+  let sss = gross * 0.045;        // 4.5%
+  let philhealth = gross * 0.03;  // 3%
+  let pagibig = 100;              // fixed
+
+  let totalDed = sss + philhealth + pagibig;
+  let net = gross - totalDed;
 
   table.innerHTML += `
   <tr>
     <td>${e.fname} ${e.lname}</td>
-    <td>${gross}</td>
-    <td>${ded}</td>
-    <td>${net}</td>
+    <td>${gross.toFixed(2)}</td>
+    <td>${sss.toFixed(2)}</td>
+    <td>${philhealth.toFixed(2)}</td>
+    <td>${pagibig.toFixed(2)}</td>
+    <td>${totalDed.toFixed(2)}</td>
+    <td>${net.toFixed(2)}</td>
   </tr>`;
 }
 
