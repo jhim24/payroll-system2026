@@ -2,14 +2,25 @@
 <html>
 <head>
   <title>HR System</title>
+
   <style>
-    body {font-family: Arial; padding:20px; background:#eef3ff;}
-    h2 {border-bottom:3px solid blue;}
+    body {
+      font-family: Arial;
+      padding:20px;
+      background:#eef3ff;
+    }
+
+    h2 {
+      border-bottom:3px solid blue;
+    }
 
     button {
-      padding:10px; margin:5px;
-      border:none; color:white;
-      border-radius:5px; cursor:pointer;
+      padding:10px;
+      margin:5px;
+      border:none;
+      color:white;
+      border-radius:5px;
+      cursor:pointer;
     }
 
     .nav {background:green;}
@@ -26,11 +37,21 @@
     }
 
     input, select {
-      padding:8px; margin:5px; width:180px;
+      padding:8px;
+      margin:5px;
+      width:180px;
+    }
+
+    /* 🔥 SCROLL TABLE */
+    .table-container {
+      width:100%;
+      overflow-x:auto;
     }
 
     table {
-      width:100%; margin-top:20px;
+      min-width:1400px;
+      width:100%;
+      margin-top:20px;
       border-collapse:collapse;
       background:white;
       border:2px solid blue;
@@ -41,9 +62,15 @@
       border:1px solid #ccc;
       padding:8px;
       text-align:center;
+      white-space:nowrap;
     }
 
-    th {background:blue; color:white;}
+    th {
+      background:blue;
+      color:white;
+      position:sticky;
+      top:0;
+    }
   </style>
 </head>
 <body>
@@ -90,17 +117,32 @@
 
 </div>
 
-<table>
-<tr>
-<th>First</th><th>Middle</th><th>Last</th>
-<th>Age</th><th>Address</th><th>Contact</th><th>Email</th>
-<th>ID</th><th>Passport</th>
-<th>Bank</th><th>Account</th>
-<th>SSS</th><th>PhilHealth</th><th>Pag-IBIG</th>
-<th>Action</th>
-</tr>
-<tbody id="table"></tbody>
-</table>
+<!-- ✅ FIXED TABLE -->
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>First</th>
+        <th>Middle</th>
+        <th>Last</th>
+        <th>Age</th>
+        <th>Address</th>
+        <th>Contact</th>
+        <th>Email</th>
+        <th>ID</th>
+        <th>Passport</th>
+        <th>Bank</th>
+        <th>Account</th>
+        <th>SSS</th>
+        <th>PhilHealth</th>
+        <th>Pag-IBIG</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody id="table"></tbody>
+  </table>
+</div>
 
 <script>
 let data = JSON.parse(localStorage.getItem("employees")) || [];
@@ -110,8 +152,7 @@ let editIndex = -1;
 birthday.onchange = function(){
   let b = new Date(this.value);
   let t = new Date();
-  let ageVal = t.getFullYear() - b.getFullYear();
-  age.value = ageVal;
+  age.value = t.getFullYear() - b.getFullYear();
 };
 
 function save(){
