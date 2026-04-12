@@ -61,7 +61,9 @@
 <input id="ot" type="number" placeholder="OT Hours">
 <input id="holiday" type="number" placeholder="Holiday Days"><br>
 
-<input id="leave" type="number" placeholder="Leave Days"><br>
+<input id="vac" type="number" placeholder="Vacation Leave">
+<input id="sick" type="number" placeholder="Sick Leave">
+<input id="bday" type="number" placeholder="Birthday Leave"><br>
 
 <input id="sss" type="number" placeholder="SSS Deduction">
 <input id="philhealth" type="number" placeholder="PhilHealth">
@@ -78,7 +80,9 @@
 <th>Gross</th>
 <th>OT</th>
 <th>Holiday</th>
-<th>Leave</th>
+<th>Vacation</th>
+<th>Sick</th>
+<th>Birthday</th>
 <th>SSS</th>
 <th>PhilHealth</th>
 <th>Pag-IBIG</th>
@@ -125,7 +129,9 @@ function compute(){
   let days = parseFloat(document.getElementById("days").value) || 0;
   let ot = parseFloat(document.getElementById("ot").value) || 0;
   let holiday = parseFloat(document.getElementById("holiday").value) || 0;
-  let leave = parseFloat(document.getElementById("leave").value) || 0;
+  let vac = parseFloat(document.getElementById("vac").value) || 0;
+let sick = parseFloat(document.getElementById("sick").value) || 0;
+let bday = parseFloat(document.getElementById("bday").value) || 0;
 
   let sss = parseFloat(document.getElementById("sss").value) || 0;
   let philhealth = parseFloat(document.getElementById("philhealth").value) || 0;
@@ -143,9 +149,13 @@ function compute(){
 
   let holidayPay = holiday * rate * 2;
 
-  let leavePay = leave * rate;
+ let vacPay = vac * rate;
+let sickPay = sick * rate;
+let bdayPay = bday * rate;
 
-  let totalIncome = gross + otPay + holidayPay + leavePay;
+let totalLeave = vacPay + sickPay + bdayPay;
+
+  let totalIncome = gross + otPay + holidayPay + totalLeave;
 
   let totalDed = sss + philhealth + pagibig;
 
@@ -159,7 +169,9 @@ function compute(){
     gross: gross.toFixed(2),
     ot: otPay.toFixed(2),
     holiday: holidayPay.toFixed(2),
-    leave: leavePay.toFixed(2),
+    vac: vacPay.toFixed(2),
+sick: sickPay.toFixed(2),
+bday: bdayPay.toFixed(2),
     sss: sss.toFixed(2),
     philhealth: philhealth.toFixed(2),
     pagibig: pagibig.toFixed(2),
@@ -178,7 +190,9 @@ function compute(){
       <td>${gross.toFixed(2)}</td>
       <td>${otPay.toFixed(2)}</td>
       <td>${holidayPay.toFixed(2)}</td>
-      <td>${leavePay.toFixed(2)}</td>
+      <td>${vacPay.toFixed(2)}</td>
+<td>${sickPay.toFixed(2)}</td>
+<td>${bdayPay.toFixed(2)}</td>
       <td>${sss.toFixed(2)}</td>
       <td>${philhealth.toFixed(2)}</td>
       <td>${pagibig.toFixed(2)}</td>
