@@ -1,24 +1,111 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <title>Payroll History</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding:20px;
+      background:#eef3ff;
+    }
+
+    h2 {
+      border-bottom:3px solid blue;
+    }
+
+    button {
+      padding:10px;
+      margin:5px;
+      border:none;
+      color:white;
+      border-radius:5px;
+      cursor:pointer;
+    }
+
+    .back {background:#444;}
+    .delete {background:red;}
+    .clear {background:orange;}
+
+    table {
+      width:100%;
+      margin-top:20px;
+      border-collapse:collapse;
+      background:white;
+      border:2px solid blue;
+    }
+
+    th, td {
+      border:1px solid #ccc;
+      padding:10px;
+      text-align:center;
+    }
+
+    th {
+      background:blue;
+      color:white;
+    }
+  </style>
+</head>
 <body>
 
-<h2>Payroll History</h2>
-<table border="1">
-<tr><th>Name</th><th>Net</th><th>Date</th></tr>
-<tbody id="hist"></tbody>
+<h2>📊 Payroll History</h2>
+
+<button class="back" onclick="back()">⬅ Back</button>
+<button class="clear" onclick="clearAll()">Clear All</button>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Net Salary</th>
+<th>Date</th>
+<th>Action</th>
+</tr>
+<tbody id="table"></tbody>
 </table>
 
 <script>
-let h = JSON.parse(localStorage.getItem("history")) || [];
+let history = JSON.parse(localStorage.getItem("history")) || [];
 
-h.forEach(e=>{
-  hist.innerHTML += `
-  <tr>
-    <td>${e.name}</td>
-    <td>${e.net}</td>
-    <td>${e.date}</td>
-  </tr>`;
-});
+// LOAD DATA
+function load(){
+  let table = document.getElementById("table");
+  table.innerHTML = "";
+
+  history.forEach((e,i)=>{
+    table.innerHTML += `
+      <tr>
+        <td>${e.name}</td>
+        <td>${e.net}</td>
+        <td>${e.date}</td>
+        <td>
+          <button class="delete" onclick="del(${i})">Delete</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+// DELETE ONE
+function del(i){
+  history.splice(i,1);
+  localStorage.setItem("history", JSON.stringify(history));
+  load();
+}
+
+// CLEAR ALL
+function clearAll(){
+  if(confirm("Clear all history?")){
+    localStorage.removeItem("history");
+    load();
+  }
+}
+
+// BACK
+function back(){
+  window.location.href = "payroll.html";
+}
+
+load();
 </script>
 
 </body>
