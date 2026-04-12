@@ -107,7 +107,16 @@ th:first-child {
 <input id="empid" placeholder="Employee ID"><br>
 
 <input id="passport" placeholder="Passport">
-
+<select id="position">
+  <option value="">Select Position</option>
+  <option>GENERAL MANAGER</option>
+  <option>MANAGER</option>
+  <option>SUPERVISOR</option>
+  <option>ADMIN</option>
+  <option>WAITER</option>
+  <option>WAITRESS</option>
+  <option>CASHIER</option>
+</select>
 <select id="bank">
 <option value="">Select Bank</option>
 <option>BDO</option>
@@ -143,6 +152,7 @@ th:first-child {
         <th>Email</th>
         <th>ID</th>
         <th>Passport</th>
+        <th>Position</th>
         <th>Bank</th>
         <th>Account</th>
         <th>SSS</th>
@@ -190,6 +200,9 @@ function render(){
       <td>${e.email}</td>
       <td>${e.empid}</td>
       <td>${e.passport}</td>
+      <td>${e.passport}</td>
+<td>${e.position}</td>
+<td>${e.bank}</td>
       <td>${e.bank}</td>
       <td>${e.bankAccount}</td>
       <td>${e.sss}</td>
@@ -215,6 +228,7 @@ function getForm(){
     email: email.value,
     empid: empid.value,
     passport: passport.value,
+    position: position.value,
     bank: bank.value,
     bankAccount: bankAccount.value,
     sss: sss.value,
