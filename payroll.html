@@ -62,7 +62,7 @@ th {background:green; color:white;}
 <select id="emp"></select><br>
 
 <input id="rate" placeholder="Daily Rate">
-<input id="days" placeholder="Days"><br>
+<input id="days" placeholder="Days Worked"><br>
 
 <input id="ot" placeholder="OT Hours">
 <input id="holiday" placeholder="Holiday"><br>
@@ -75,8 +75,8 @@ th {background:green; color:white;}
 <input id="philhealth" placeholder="PhilHealth">
 <input id="pagibig" placeholder="Pag-IBIG"><br>
 
-<button class="compute" onclick="compute()">Compute</button>
-<button onclick="payslip()">Payslip</button>
+<button class="compute" onclick="compute()">Compute Salary</button>
+<button onclick="openPayslip()">Payslip 🧾</button>
 
 </div>
 
@@ -101,8 +101,9 @@ th {background:green; color:white;}
 
 // LOAD EMPLOYEES
 let data = JSON.parse(localStorage.getItem("employees")) || [];
-let last = null;
+let lastPayslip = null;
 
+// LOAD DROPDOWN
 let emp = document.getElementById("emp");
 emp.innerHTML = "<option value=''>Select Employee</option>";
 
@@ -112,7 +113,7 @@ data.forEach((e,i)=>{
   </option>`;
 });
 
-// NAV
+// NAVIGATION
 function back(){
   window.location.href="index.html";
 }
@@ -121,73 +122,138 @@ function goHistory(){
   window.location.href="history.html";
 }
 
-// COMPUTE
+// ✅ FIXED COMPUTE FUNCTION
 function compute(){
 
-  let i = emp.value;
-  if(i===""){ alert("Select employee"); return; }
+  let i = document.getElementById("emp").value;
+
+  if(i===""){
+    alert("Select employee");
+    return;
+  }
 
   let e = data[i];
 
-  let rate = +rate.value || 0;
-  let days = +days.value || 0;
+  let rateVal = Number(document.getElementById("rate").value) || 0;
+  let daysVal = Number(document.getElementById("days").value) || 0;
 
-  if(rate===0 || days===0){
+  if(rateVal===0 || daysVal===0){
     alert("Enter rate & days");
     return;
   }
 
-  let otPay = (rate/8)*(+ot.value||0)*1.25;
-  let holidayPay = (+holiday.value||0)*rate*2;
+  let otVal = Number(document.getElementById("ot").value) || 0;
+  let holidayVal = Number(document.getElementById("holiday").value) || 0;
 
-  let vacPay = (+vac.value||0)*rate;
-  let sickPay = (+sick.value||0)*rate;
-  let bdayPay = (+bday.value||0)*rate;
+  let vacVal = Number(document.getElementById("vac").value) || 0;
+  let sickVal = Number(document.getElementById("sick").value) || 0;
+  let bdayVal = Number(document.getElementById("bday").value) || 0;
 
-  let gross = rate*days;
+  let sssVal = Number(document.getElementById("sss").value) || 0;
+  let philVal = Number(document.getElementById("philhealth").value) || 0;
+  let pagVal = Number(document.getElementById("pagibig").value) || 0;
 
-  let sssVal = +sss.value||0;
-  let phil = +philhealth.value||0;
-  let pag = +pagibig.value||0;
+  // COMPUTE
+  let gross = rateVal * daysVal;
+  let otPay = (rateVal / 8) * otVal * 1.25;
+  let holidayPay = holidayVal * rateVal * 2;
 
-  let net = gross + otPay + holidayPay + vacPay + sickPay + bdayPay - (sssVal+phil+pag);
+  let vacPay = vacVal * rateVal;
+  let sickPay = sickVal * rateVal;
+  let bdayPay = bdayVal * rateVal;
 
-  last = {name:e.fname+" "+e.lname, gross, otPay, holidayPay, vacPay, sickPay, bdayPay, sssVal, phil, pag, net};
+  let totalIncome = gross + otPay + holidayPay + vacPay + sickPay + bdayPay;
+  let totalDed = sssVal + philVal + pagVal;
 
-  // DISPLAY
+  let net = totalIncome - totalDed;
+
+  // SAVE FOR PAYSLIP
+  lastPayslip = {
+    name: e.fname + " " + e.lname,
+    gross, otPay, holidayPay,
+    vacPay, sickPay, bdayPay,
+    sss: sssVal,
+    philhealth: philVal,
+    pagibig: pagVal,
+    net
+  };
+
+  // DISPLAY TABLE
+  let table = document.getElementById("table");
+
   table.innerHTML += `
   <tr>
-    <td>${last.name}</td>
-    <td>${gross}</td>
-    <td>${otPay}</td>
-    <td>${holidayPay}</td>
-    <td>${vacPay}</td>
-    <td>${sickPay}</td>
-    <td>${bdayPay}</td>
-    <td>${sssVal}</td>
-    <td>${phil}</td>
-    <td>${pag}</td>
-    <td><b>${net}</b></td>
-  </tr>`;
+    <td>${lastPayslip.name}</td>
+    <td>${gross.toFixed(2)}</td>
+    <td>${otPay.toFixed(2)}</td>
+    <td>${holidayPay.toFixed(2)}</td>
+    <td>${vacPay.toFixed(2)}</td>
+    <td>${sickPay.toFixed(2)}</td>
+    <td>${bdayPay.toFixed(2)}</td>
+    <td>${sssVal.toFixed(2)}</td>
+    <td>${philVal.toFixed(2)}</td>
+    <td>${pagVal.toFixed(2)}</td>
+    <td><b>${net.toFixed(2)}</b></td>
+  </tr>
+  `;
 
-  // SAVE HISTORY
-  let h = JSON.parse(localStorage.getItem("history"))||[];
-  h.push({...last, date:new Date().toLocaleString()});
-  localStorage.setItem("history", JSON.stringify(h));
-
-  alert("Computed!");
+  alert("Salary Computed!");
 }
 
-// PAYSLIP
-function payslip(){
-  if(!last){ alert("Compute first"); return; }
+// 🧾 PAYSLIP
+function openPayslip(){
 
-  let w = window.open("");
-  w.document.write(`
-  <h2>Payslip</h2>
-  <p>${last.name}</p>
-  <p>Net: ${last.net}</p>
-  <button onclick="window.print()">Print</button>
+  if(!lastPayslip){
+    alert("Compute salary first!");
+    return;
+  }
+
+  let p = lastPayslip;
+
+  let win = window.open("", "", "width=800,height=600");
+
+  win.document.write(`
+  <html>
+  <head>
+  <title>Payslip</title>
+  <style>
+  body {font-family:Arial; padding:20px;}
+  h2 {text-align:center;}
+  table {width:100%; border-collapse:collapse;}
+  td,th {border:1px solid #ccc; padding:10px;}
+  th {background:#eee;}
+  .net {color:green; font-weight:bold;}
+  </style>
+  </head>
+
+  <body>
+
+  <h2>🧾 COMPANY PAYSLIP</h2>
+
+  <p><b>Employee:</b> ${p.name}</p>
+
+  <table>
+    <tr><th>Earnings</th><th>Amount</th></tr>
+    <tr><td>Gross</td><td>${p.gross}</td></tr>
+    <tr><td>OT</td><td>${p.otPay}</td></tr>
+    <tr><td>Holiday</td><td>${p.holidayPay}</td></tr>
+    <tr><td>Vacation</td><td>${p.vacPay}</td></tr>
+    <tr><td>Sick</td><td>${p.sickPay}</td></tr>
+    <tr><td>Birthday</td><td>${p.bdayPay}</td></tr>
+
+    <tr><th>Deductions</th><th></th></tr>
+    <tr><td>SSS</td><td>${p.sss}</td></tr>
+    <tr><td>PhilHealth</td><td>${p.philhealth}</td></tr>
+    <tr><td>Pag-IBIG</td><td>${p.pagibig}</td></tr>
+
+    <tr><td><b>Net Salary</b></td><td class="net">${p.net}</td></tr>
+  </table>
+
+  <br><br>
+  <button onclick="window.print()">🖨️ Print</button>
+
+  </body>
+  </html>
   `);
 }
 
