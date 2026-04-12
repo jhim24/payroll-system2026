@@ -2,30 +2,104 @@
 <html>
 <head>
   <title>Payroll System</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding:20px;
+      background:#fff7f0;
+    }
+
+    h2 {
+      border-bottom:3px solid green;
+      padding-bottom:5px;
+    }
+
+    .box {
+      border:2px solid green;
+      padding:15px;
+      border-radius:10px;
+      background:white;
+      margin-bottom:20px;
+    }
+
+    input, select {
+      padding:8px;
+      margin:5px;
+      width:180px;
+      border-radius:5px;
+      border:1px solid #ccc;
+    }
+
+    button {
+      padding:10px;
+      margin:5px;
+      border:none;
+      color:white;
+      border-radius:5px;
+      cursor:pointer;
+    }
+
+    .back {background:#444;}
+    .compute {background:green;}
+
+    table {
+      width:100%;
+      border-collapse:collapse;
+      border:2px solid green;
+      background:white;
+      margin-top:20px;
+    }
+
+    th, td {
+      border:1px solid #ccc;
+      padding:10px;
+      text-align:center;
+    }
+
+    th {
+      background:green;
+      color:white;
+    }
+  </style>
 </head>
 <body>
 
 <h2>💰 Payroll System (Advanced)</h2>
 
-<button onclick="back()">⬅ Back</button>
+<button class="back" onclick="back()">⬅ Back</button>
 
-<br><br>
+<div class="box">
 
-<select id="emp"></select><br><br>
+<select id="emp"></select><br>
 
-<input id="rate" type="number" placeholder="Daily Rate"><br>
+<input id="rate" type="number" placeholder="Daily Rate">
 <input id="days" type="number" placeholder="Days Worked"><br>
 
-<input id="ot" type="number" placeholder="OT Hours"><br>
+<input id="ot" type="number" placeholder="OT Hours">
 <input id="holiday" type="number" placeholder="Holiday Days"><br>
 
-<input id="sick" type="number" placeholder="Sick Leave"><br>
-<input id="vac" type="number" placeholder="Vacation Leave"><br>
-<input id="bday" type="number" placeholder="Birthday Leave (1 or 0)"><br><br>
+<input id="sick" type="number" placeholder="Sick Leave">
+<input id="vac" type="number" placeholder="Vacation Leave">
+<input id="bday" type="number" placeholder="Birthday Leave (1 or 0)"><br>
 
-<button onclick="compute()">Compute Salary</button>
+<button class="compute" onclick="compute()">Compute Salary</button>
 
-<h3 id="result"></h3>
+</div>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Gross</th>
+<th>OT Pay</th>
+<th>Holiday</th>
+<th>Leaves</th>
+<th>SSS</th>
+<th>PhilHealth</th>
+<th>Pag-IBIG</th>
+<th>Net Pay</th>
+</tr>
+<tbody id="table"></tbody>
+</table>
 
 <script>
 let data = JSON.parse(localStorage.getItem("employees")) || [];
@@ -40,12 +114,12 @@ data.forEach((e,i)=>{
   </option>`;
 });
 
-// BACK
+// BACK BUTTON
 function back(){
   window.location.href = "index.html";
 }
 
-// COMPUTE (WORKING VERSION)
+// COMPUTE
 function compute(){
   let index = document.getElementById("emp").value;
 
@@ -53,6 +127,8 @@ function compute(){
     alert("Select employee");
     return;
   }
+
+  let e = data[index];
 
   let rate = parseFloat(document.getElementById("rate").value) || 0;
   let days = parseFloat(document.getElementById("days").value) || 0;
@@ -62,22 +138,22 @@ function compute(){
   let vac = parseFloat(document.getElementById("vac").value) || 0;
   let bday = parseFloat(document.getElementById("bday").value) || 0;
 
-  // BASIC
+  if(rate === 0 || days === 0){
+    alert("Enter rate and days");
+    return;
+  }
+
   let gross = rate * days;
 
-  // OT (1.25x)
   let hourly = rate / 8;
   let otPay = ot * hourly * 1.25;
 
-  // HOLIDAY (double pay)
   let holidayPay = holiday * rate * 2;
 
-  // LEAVES (paid)
   let leavePay = (sick + vac + bday) * rate;
 
   let totalIncome = gross + otPay + holidayPay + leavePay;
 
-  // DEDUCTIONS
   let sss = totalIncome * 0.045;
   let philhealth = totalIncome * 0.03;
   let pagibig = 100;
@@ -85,17 +161,20 @@ function compute(){
   let totalDed = sss + philhealth + pagibig;
   let net = totalIncome - totalDed;
 
-  document.getElementById("result").innerHTML = `
-    Gross: ${gross.toFixed(2)} <br>
-    OT Pay: ${otPay.toFixed(2)} <br>
-    Holiday Pay: ${holidayPay.toFixed(2)} <br>
-    Leave Pay: ${leavePay.toFixed(2)} <br><br>
+  let table = document.getElementById("table");
 
-    SSS: ${sss.toFixed(2)} <br>
-    PhilHealth: ${philhealth.toFixed(2)} <br>
-    Pag-IBIG: ${pagibig.toFixed(2)} <br><br>
-
-    <b>Net Pay: ${net.toFixed(2)}</b>
+  table.innerHTML += `
+    <tr>
+      <td>${e.fname} ${e.lname}</td>
+      <td>${gross.toFixed(2)}</td>
+      <td>${otPay.toFixed(2)}</td>
+      <td>${holidayPay.toFixed(2)}</td>
+      <td>${leavePay.toFixed(2)}</td>
+      <td>${sss.toFixed(2)}</td>
+      <td>${philhealth.toFixed(2)}</td>
+      <td>${pagibig.toFixed(2)}</td>
+      <td><b>${net.toFixed(2)}</b></td>
+    </tr>
   `;
 }
 </script>
