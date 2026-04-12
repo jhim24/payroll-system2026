@@ -5,7 +5,7 @@
 </head>
 <body>
 
-<h2>💰 Payroll System (Advanced)</h2>
+<h2>💰 Payroll System (Advanced + Deductions)</h2>
 
 <button onclick="back()">⬅ Back</button>
 
@@ -65,24 +65,29 @@ function compute(){
   // BASIC
   let gross = rate * days;
 
-  // OT (1.25x)
   let hourly = rate / 8;
   let otPay = ot * hourly * 1.25;
 
-  // HOLIDAY (double pay)
   let holidayPay = holiday * rate * 2;
 
-  // LEAVE (paid)
   let leavePay = leave * rate;
 
   let totalIncome = gross + otPay + holidayPay + leavePay;
 
-  // SAVE HISTORY (SAFE)
+  // 💰 DEDUCTIONS
+  let sss = totalIncome * 0.045;
+  let philhealth = totalIncome * 0.03;
+  let pagibig = 100;
+
+  let totalDed = sss + philhealth + pagibig;
+  let net = totalIncome - totalDed;
+
+  // SAVE HISTORY
   let history = JSON.parse(localStorage.getItem("history")) || [];
 
   history.push({
     name: e.fname + " " + e.lname,
-    total: totalIncome.toFixed(2),
+    net: net.toFixed(2),
     date: new Date().toLocaleString()
   });
 
@@ -94,7 +99,11 @@ function compute(){
     Holiday: ${holidayPay.toFixed(2)} <br>
     Leave: ${leavePay.toFixed(2)} <br><br>
 
-    <b>Total Salary: ${totalIncome.toFixed(2)}</b>
+    SSS: ${sss.toFixed(2)} <br>
+    PhilHealth: ${philhealth.toFixed(2)} <br>
+    Pag-IBIG: ${pagibig.toFixed(2)} <br><br>
+
+    <b>Net Salary: ${net.toFixed(2)}</b>
   `;
 }
 </script>
