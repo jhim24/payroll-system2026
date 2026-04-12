@@ -3,109 +3,55 @@
 <head>
   <title>Payroll History</title>
   <style>
-    body {
-      font-family: Arial;
-      padding:20px;
-      background:#eef3ff;
-    }
-
-    h2 {
-      border-bottom:3px solid blue;
-    }
-
-    button {
-      padding:10px;
-      margin:5px;
-      border:none;
-      color:white;
-      border-radius:5px;
-      cursor:pointer;
-    }
-
-    .back {background:#444;}
-    .delete {background:red;}
-    .clear {background:orange;}
-
-    table {
-      width:100%;
-      margin-top:20px;
-      border-collapse:collapse;
-      background:white;
-      border:2px solid blue;
-    }
-
-    th, td {
-      border:1px solid #ccc;
-      padding:10px;
-      text-align:center;
-    }
-
-    th {
-      background:blue;
-      color:white;
-    }
+    body {font-family:Arial; padding:20px;}
+    table {width:100%; border-collapse:collapse;}
+    th, td {border:1px solid #ccc; padding:10px; text-align:center;}
+    th {background:blue; color:white;}
+    tr {cursor:pointer;}
   </style>
 </head>
 <body>
 
 <h2>📊 Payroll History</h2>
 
-<button class="back" onclick="back()">⬅ Back</button>
-<button class="clear" onclick="clearAll()">Clear All</button>
-
 <table>
 <tr>
 <th>Name</th>
-<th>Net Salary</th>
+<th>Net</th>
 <th>Date</th>
-<th>Action</th>
 </tr>
 <tbody id="table"></tbody>
 </table>
 
+<div id="details"></div>
+
 <script>
 let history = JSON.parse(localStorage.getItem("history")) || [];
 
-// LOAD DATA
-function load(){
-  let table = document.getElementById("table");
-  table.innerHTML = "";
+history.forEach((e,i)=>{
+  table.innerHTML += `
+  <tr onclick="view(${i})">
+    <td>${e.name}</td>
+    <td>${e.net}</td>
+    <td>${e.date}</td>
+  </tr>`;
+});
 
-  history.forEach((e,i)=>{
-    table.innerHTML += `
-      <tr>
-        <td>${e.name}</td>
-        <td>${e.net}</td>
-        <td>${e.date}</td>
-        <td>
-          <button class="delete" onclick="del(${i})">Delete</button>
-        </td>
-      </tr>
-    `;
-  });
+function view(i){
+  let e = history[i];
+
+  details.innerHTML = `
+  <h3>${e.name}</h3>
+  Gross: ${e.gross}<br>
+  OT: ${e.ot}<br>
+  Holiday: ${e.holiday}<br>
+  Leave: ${e.leave}<br><br>
+  SSS: ${e.sss}<br>
+  PhilHealth: ${e.philhealth}<br>
+  Pag-IBIG: ${e.pagibig}<br><br>
+  <b>Net: ${e.net}</b>
+  `;
 }
-
-// DELETE ONE
-function del(i){
-  history.splice(i,1);
-  localStorage.setItem("history", JSON.stringify(history));
-  load();
-}
-
-// CLEAR ALL
-function clearAll(){
-  if(confirm("Clear all history?")){
-    localStorage.removeItem("history");
-    load();
-  }
-}
-
-// BACK
-function back(){
-  window.location.href = "payroll.html";
-}
-
-load();
 </script>
 
 </body>
