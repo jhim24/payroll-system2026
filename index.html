@@ -1,11 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <header>💼 HR DASHBOARD</header>
+  <div style="margin:20px; font-size:18px;">
+  Total Employees: <b id="totalEmp">0</b> |
+  Total Payroll: ₱ <b id="totalPay">0</b> |
+  Total Records: <b id="recCount">0</b>
+</div>
+  <header style="display:flex; justify-content:center; align-items:center; position:relative;">
+  <h2 style="margin:0;">💼 HR DASHBOARD</h2>
 
-<button onclick="logout()" style="margin-top:10px;">Logout</button>
-  
-  <style>
+  <!-- LOGOUT BUTTON -->
+  <button onclick="logout()" 
+    style="position:absolute; right:20px; padding:8px 15px; border:none; background:red; color:white; border-radius:5px;">
+    Logout
+  </button>
+</header>
     body {
   body {
   font-family: Arial;
@@ -134,6 +143,22 @@ if(localStorage.getItem("login") !== "true"){
 window.logout = function(){
   localStorage.removeItem("login");
   window.location.href = "login.html";
+  / 📊 DASHBOARD STATS (ADD ONLY)
+let emp = JSON.parse(localStorage.getItem("employees")) || [];
+let history = JSON.parse(localStorage.getItem("history")) || [];
+
+// TOTAL EMPLOYEE
+document.getElementById("totalEmp").innerText = emp.length;
+
+// TOTAL PAYROLL
+let total = 0;
+history.forEach(e=>{
+  total += Number(e.net || 0);
+});
+document.getElementById("totalPay").innerText = total.toFixed(2);
+
+// TOTAL RECORDS
+document.getElementById("recCount").innerText = history.lengt
 }
 </script>
 
