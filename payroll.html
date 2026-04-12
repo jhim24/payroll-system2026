@@ -70,6 +70,7 @@
 <input id="pagibig" type="number" placeholder="Pag-IBIG"><br>
 
 <button class="compute" onclick="compute()">Compute Salary</button>
+  <button onclick="openPayslip()">View Payslip 🧾</button>
 <button class="history" onclick="goHistory()">View History</button>
 
 </div>
@@ -199,6 +200,103 @@ bday: bdayPay.toFixed(2),
       <td><b>${net.toFixed(2)}</b></td>
     </tr>
   `;
+}
+  let lastPayslip = null;
+
+function compute(){
+  let index = document.getElementById("emp").value;
+  if(index===""){ alert("Select employee"); return; }
+
+  let e = data[index];
+
+  let rate = +rate.value || 0;
+  let days = +days.value || 0;
+  let ot = +ot.value || 0;
+  let holiday = +holiday.value || 0;
+
+  let vac = +vac.value || 0;
+  let sick = +sick.value || 0;
+  let bday = +bday.value || 0;
+
+  let sss = +sss.value || 0;
+  let phil = +philhealth.value || 0;
+  let pagibig = +pagibig.value || 0;
+
+  let gross = rate * days;
+  let otPay = (rate/8)*ot*1.25;
+  let holidayPay = holiday * rate * 2;
+
+  let vacPay = vac * rate;
+  let sickPay = sick * rate;
+  let bdayPay = bday * rate;
+
+  let totalIncome = gross + otPay + holidayPay + vacPay + sickPay + bdayPay;
+  let totalDed = sss + phil + pagibig;
+  let net = totalIncome - totalDed;
+
+  // 👉 SAVE FOR PAYSLIP
+  lastPayslip = {
+    name: e.fname + " " + e.lname,
+    gross, otPay, holidayPay,
+    vacPay, sickPay, bdayPay,
+    sss, phil, pagibig,
+    net
+  };
+
+  alert("Computed! You can now view payslip.");
+}
+  function openPayslip(){
+  if(!lastPayslip){
+    alert("Compute salary first!");
+    return;
+  }
+
+  let p = lastPayslip;
+
+  let win = window.open("", "", "width=800,height=600");
+
+  win.document.write(`
+  <html>
+  <head>
+    <title>Payslip</title>
+    <style>
+      body {font-family: Arial; padding:20px;}
+      h2 {text-align:center;}
+      table {width:100%; border-collapse:collapse; margin-top:20px;}
+      td, th {border:1px solid #ccc; padding:10px;}
+      th {background:#eee;}
+      .net {color:green; font-weight:bold;}
+    </style>
+  </head>
+  <body>
+
+  <h2>🧾 COMPANY PAYSLIP</h2>
+
+  <p><b>Employee:</b> ${p.name}</p>
+
+  <table>
+    <tr><th>Earnings</th><th>Amount</th></tr>
+    <tr><td>Gross</td><td>${p.gross}</td></tr>
+    <tr><td>OT</td><td>${p.otPay}</td></tr>
+    <tr><td>Holiday</td><td>${p.holidayPay}</td></tr>
+    <tr><td>Vacation</td><td>${p.vacPay}</td></tr>
+    <tr><td>Sick</td><td>${p.sickPay}</td></tr>
+    <tr><td>Birthday</td><td>${p.bdayPay}</td></tr>
+
+    <tr><th>Deductions</th><th></th></tr>
+    <tr><td>SSS</td><td>${p.sss}</td></tr>
+    <tr><td>PhilHealth</td><td>${p.phil}</td></tr>
+    <tr><td>Pag-IBIG</td><td>${p.pagibig}</td></tr>
+
+    <tr><td><b>Net Salary</b></td><td class="net">${p.net}</td></tr>
+  </table>
+
+  <br><br>
+  <button onclick="window.print()">🖨️ Print</button>
+
+  </body>
+  </html>
+  `);
 }
 </script>
 
