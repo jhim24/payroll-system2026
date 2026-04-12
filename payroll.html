@@ -5,7 +5,7 @@
 </head>
 <body>
 
-<h2>💰 Payroll System</h2>
+<h2>💰 Payroll System (Advanced)</h2>
 
 <button onclick="back()">⬅ Back</button>
 
@@ -16,12 +16,16 @@
 <input id="rate" type="number" placeholder="Daily Rate"><br>
 <input id="days" type="number" placeholder="Days Worked"><br>
 
+<input id="ot" type="number" placeholder="OT Hours"><br>
+<input id="holiday" type="number" placeholder="Holiday Days"><br>
+
+<input id="leave" type="number" placeholder="Total Leave Days"><br><br>
+
 <button onclick="compute()">Compute</button>
 
 <h3 id="result"></h3>
 
 <script>
-// LOAD EMPLOYEE DATA
 let data = JSON.parse(localStorage.getItem("employees")) || [];
 
 let select = document.getElementById("emp");
@@ -33,12 +37,10 @@ data.forEach((e,i)=>{
   </option>`;
 });
 
-// BACK
 function back(){
   window.location.href = "index.html";
 }
 
-// COMPUTE (CLEAN WORKING VERSION)
 function compute(){
   let index = document.getElementById("emp").value;
 
@@ -51,27 +53,49 @@ function compute(){
 
   let rate = parseFloat(document.getElementById("rate").value) || 0;
   let days = parseFloat(document.getElementById("days").value) || 0;
+  let ot = parseFloat(document.getElementById("ot").value) || 0;
+  let holiday = parseFloat(document.getElementById("holiday").value) || 0;
+  let leave = parseFloat(document.getElementById("leave").value) || 0;
 
   if(rate === 0 || days === 0){
     alert("Enter rate and days");
     return;
   }
 
+  // BASIC
   let gross = rate * days;
 
-  // SAVE HISTORY
+  // OT (1.25x)
+  let hourly = rate / 8;
+  let otPay = ot * hourly * 1.25;
+
+  // HOLIDAY (double pay)
+  let holidayPay = holiday * rate * 2;
+
+  // LEAVE (paid)
+  let leavePay = leave * rate;
+
+  let totalIncome = gross + otPay + holidayPay + leavePay;
+
+  // SAVE HISTORY (SAFE)
   let history = JSON.parse(localStorage.getItem("history")) || [];
 
   history.push({
     name: e.fname + " " + e.lname,
-    gross: gross,
+    total: totalIncome.toFixed(2),
     date: new Date().toLocaleString()
   });
 
   localStorage.setItem("history", JSON.stringify(history));
 
-  document.getElementById("result").innerHTML =
-    "Gross Salary: " + gross;
+  document.getElementById("result").innerHTML = `
+    Gross: ${gross.toFixed(2)} <br>
+    OT: ${otPay.toFixed(2)} <br>
+    Holiday: ${holidayPay.toFixed(2)} <br>
+    Leave: ${leavePay.toFixed(2)} <br><br>
+
+    <b>Total Salary: ${totalIncome.toFixed(2)}</b>
+  `;
 }
 </script>
 
