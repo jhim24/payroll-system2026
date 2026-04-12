@@ -48,9 +48,10 @@
 
 <br><br>
 
-<select id="emp"></select>
-<input id="rate" placeholder="Daily Rate">
-<input id="days" placeholder="Days Worked">
+<select id="emp"></select><br>
+
+<input id="rate" type="number" placeholder="Daily Rate">
+<input id="days" type="number" placeholder="Days Worked"><br>
 
 <button class="compute" onclick="compute()">Compute Salary</button>
 
@@ -70,54 +71,68 @@
 <script>
 let data = JSON.parse(localStorage.getItem("employees")) || [];
 
+// BACK BUTTON
 function back(){
-  window.location.href="index.html";
+  window.location.href = "index.html";
 }
 
+// LOAD EMPLOYEES
 function load(){
-  emp.innerHTML="<option>Select Employee</option>";
+  let select = document.getElementById("emp");
+  select.innerHTML = "<option value=''>Select Employee</option>";
+
   data.forEach((e,i)=>{
-    emp.innerHTML += `<option value="${i}">
+    select.innerHTML += `<option value="${i}">
       ${e.fname} ${e.lname}
     </option>`;
   });
 }
 
-// 💰 AUTO DEDUCTIONS (sample logic)
+// COMPUTE FUNCTION (FIXED)
 function compute(){
-  let i = emp.value;
-  let e = data[i];
+  let index = document.getElementById("emp").value;
 
-  if(!e){
-    alert("Select employee");
+  if(index === ""){
+    alert("Please select employee");
     return;
   }
 
-  let rate = +rate.value || 0;
-  let days = +days.value || 0;
+  let emp = data[index];
+
+  let rate = parseFloat(document.getElementById("rate").value) || 0;
+  let days = parseFloat(document.getElementById("days").value) || 0;
+
+  if(rate === 0 || days === 0){
+    alert("Enter rate and days");
+    return;
+  }
 
   let gross = rate * days;
 
-  // 🔥 SAMPLE COMPUTATION (pwede pa natin i-adjust)
-  let sss = gross * 0.045;        // 4.5%
-  let philhealth = gross * 0.03;  // 3%
-  let pagibig = 100;              // fixed
+  // AUTO DEDUCTIONS
+  let sss = gross * 0.045;
+  let philhealth = gross * 0.03;
+  let pagibig = 100;
 
-  let totalDed = sss + philhealth + pagibig;
-  let net = gross - totalDed;
+  let total = sss + philhealth + pagibig;
+  let net = gross - total;
+
+  let table = document.getElementById("table");
 
   table.innerHTML += `
-  <tr>
-    <td>${e.fname} ${e.lname}</td>
-    <td>${gross.toFixed(2)}</td>
-    <td>${sss.toFixed(2)}</td>
-    <td>${philhealth.toFixed(2)}</td>
-    <td>${pagibig.toFixed(2)}</td>
-    <td>${totalDed.toFixed(2)}</td>
-    <td>${net.toFixed(2)}</td>
-  </tr>`;
+    <tr>
+      <td>${emp.fname} ${emp.lname}</td>
+      <td>${gross.toFixed(2)}</td>
+      <td>${sss.toFixed(2)}</td>
+      <td>${philhealth.toFixed(2)}</td>
+      <td>${pagibig.toFixed(2)}</td>
+      <td>${total.toFixed(2)}</td>
+      <td>${net.toFixed(2)}</td>
+    </tr>
+  `;
 }
 
+// INIT
 load();
 </script>
 
