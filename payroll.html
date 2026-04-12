@@ -1,136 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Payroll System</title>
+
+<style>
+body {font-family:Arial; padding:20px; background:#eef3ff;}
+h2 {border-bottom:3px solid green;}
+
+.box {
+  border:2px solid green;
+  padding:15px;
+  border-radius:10px;
+  background:white;
+}
+
+input, select {
+  padding:8px;
+  margin:5px;
+  width:160px;
+}
+
+button {
+  padding:10px;
+  margin:5px;
+  border:none;
+  color:white;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+.compute {background:green;}
+.back {background:#444;}
+.history {background:blue;}
+
+table {
+  width:100%;
+  margin-top:20px;
+  border-collapse:collapse;
+  background:white;
+}
+
+th, td {
+  border:1px solid #ccc;
+  padding:8px;
+  text-align:center;
+}
+
+th {background:green; color:white;}
+</style>
+</head>
+
+<body>
+
+<h2>💰 Payroll System</h2>
+
+<button class="back" onclick="back()">⬅ Back</button>
+<button class="history" onclick="goHistory()">History</button>
+
+<div class="box">
+
+<select id="emp"></select><br>
+
+<input id="rate" placeholder="Daily Rate">
+<input id="days" placeholder="Days"><br>
+
+<input id="ot" placeholder="OT Hours">
+<input id="holiday" placeholder="Holiday"><br>
+
+<input id="vac" placeholder="Vacation">
+<input id="sick" placeholder="Sick">
+<input id="bday" placeholder="Birthday"><br>
+
+<input id="sss" placeholder="SSS">
+<input id="philhealth" placeholder="PhilHealth">
+<input id="pagibig" placeholder="Pag-IBIG"><br>
+
+<button class="compute" onclick="compute()">Compute</button>
+<button onclick="payslip()">Payslip</button>
+
+</div>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Gross</th>
+<th>OT</th>
+<th>Holiday</th>
+<th>Vacation</th>
+<th>Sick</th>
+<th>Birthday</th>
+<th>SSS</th>
+<th>PhilHealth</th>
+<th>Pag-IBIG</th>
+<th>Net</th>
+</tr>
+<tbody id="table"></tbody>
+</table>
+
 <script>
 
-document.addEventListener("DOMContentLoaded", function(){
-
-// 🔥 AUTO RESTORE
-let backup = localStorage.getItem("employees_backup");
-
-if(!localStorage.getItem("employees") && backup){
-  localStorage.setItem("employees", backup);
-}
-
-// LOAD DATA
-let data = JSON.parse(localStorage.getItem("employees")) || [];
-let lastPayslip = null;
-
 // LOAD EMPLOYEES
-let select = document.getElementById("emp");
+let data = JSON.parse(localStorage.getItem("employees")) || [];
+let last = null;
 
-if(!select){
-  alert("EMP SELECT NOT FOUND!");
-  return;
-}
-
-select.innerHTML = "<option value=''>Select Employee</option>";
+let emp = document.getElementById("emp");
+emp.innerHTML = "<option value=''>Select Employee</option>";
 
 data.forEach((e,i)=>{
-  select.innerHTML += `<option value="${i}">
+  emp.innerHTML += `<option value="${i}">
     ${e.fname} ${e.lname}
   </option>`;
 });
 
-// BACK
-window.back = function(){
-  window.location.href = "index.html";
+// NAV
+function back(){
+  window.location.href="index.html";
 }
 
-// HISTORY
-window.goHistory = function(){
-  window.location.href = "history.html";
+function goHistory(){
+  window.location.href="history.html";
 }
 
 // COMPUTE
-window.compute = function(){
+function compute(){
 
-  let index = document.getElementById("emp").value;
+  let i = emp.value;
+  if(i===""){ alert("Select employee"); return; }
 
-  if(index === ""){
-    alert("Select employee");
+  let e = data[i];
+
+  let rate = +rate.value || 0;
+  let days = +days.value || 0;
+
+  if(rate===0 || days===0){
+    alert("Enter rate & days");
     return;
   }
 
-  let e = data[index];
+  let otPay = (rate/8)*(+ot.value||0)*1.25;
+  let holidayPay = (+holiday.value||0)*rate*2;
 
-  let rate = Number(document.getElementById("rate").value) || 0;
-  let days = Number(document.getElementById("days").value) || 0;
+  let vacPay = (+vac.value||0)*rate;
+  let sickPay = (+sick.value||0)*rate;
+  let bdayPay = (+bday.value||0)*rate;
 
-  if(rate === 0 || days === 0){
-    alert("Enter rate and days");
-    return;
-  }
+  let gross = rate*days;
 
-  let ot = Number(document.getElementById("ot").value) || 0;
-  let holiday = Number(document.getElementById("holiday").value) || 0;
+  let sssVal = +sss.value||0;
+  let phil = +philhealth.value||0;
+  let pag = +pagibig.value||0;
 
-  let vac = Number(document.getElementById("vac").value) || 0;
-  let sick = Number(document.getElementById("sick").value) || 0;
-  let bday = Number(document.getElementById("bday").value) || 0;
+  let net = gross + otPay + holidayPay + vacPay + sickPay + bdayPay - (sssVal+phil+pag);
 
-  let sss = Number(document.getElementById("sss").value) || 0;
-  let philhealth = Number(document.getElementById("philhealth").value) || 0;
-  let pagibig = Number(document.getElementById("pagibig").value) || 0;
+  last = {name:e.fname+" "+e.lname, gross, otPay, holidayPay, vacPay, sickPay, bdayPay, sssVal, phil, pag, net};
 
-  let gross = rate * days;
-  let otPay = (rate / 8) * ot * 1.25;
-  let holidayPay = holiday * rate * 2;
-
-  let vacPay = vac * rate;
-  let sickPay = sick * rate;
-  let bdayPay = bday * rate;
-
-  let totalIncome = gross + otPay + holidayPay + vacPay + sickPay + bdayPay;
-  let totalDed = sss + philhealth + pagibig;
-
-  let net = totalIncome - totalDed;
-
-  lastPayslip = {
-    name: e.fname + " " + e.lname,
-    gross, otPay, holidayPay,
-    vacPay, sickPay, bdayPay,
-    sss, philhealth, pagibig,
-    net
-  };
-
-  let table = document.getElementById("table");
-
+  // DISPLAY
   table.innerHTML += `
-    <tr>
-      <td>${e.fname} ${e.lname}</td>
-      <td>${gross.toFixed(2)}</td>
-      <td>${otPay.toFixed(2)}</td>
-      <td>${holidayPay.toFixed(2)}</td>
-      <td>${vacPay.toFixed(2)}</td>
-      <td>${sickPay.toFixed(2)}</td>
-      <td>${bdayPay.toFixed(2)}</td>
-      <td>${sss.toFixed(2)}</td>
-      <td>${philhealth.toFixed(2)}</td>
-      <td>${pagibig.toFixed(2)}</td>
-      <td><b>${net.toFixed(2)}</b></td>
-    </tr>
-  `;
+  <tr>
+    <td>${last.name}</td>
+    <td>${gross}</td>
+    <td>${otPay}</td>
+    <td>${holidayPay}</td>
+    <td>${vacPay}</td>
+    <td>${sickPay}</td>
+    <td>${bdayPay}</td>
+    <td>${sssVal}</td>
+    <td>${phil}</td>
+    <td>${pag}</td>
+    <td><b>${net}</b></td>
+  </tr>`;
 
-  alert("Salary Computed!");
+  // SAVE HISTORY
+  let h = JSON.parse(localStorage.getItem("history"))||[];
+  h.push({...last, date:new Date().toLocaleString()});
+  localStorage.setItem("history", JSON.stringify(h));
+
+  alert("Computed!");
 }
 
 // PAYSLIP
-window.openPayslip = function(){
+function payslip(){
+  if(!last){ alert("Compute first"); return; }
 
-  if(!lastPayslip){
-    alert("Compute salary first!");
-    return;
-  }
-
-  let p = lastPayslip;
-
-  let win = window.open("", "", "width=800,height=600");
-
-  win.document.write(`
-    <h2>PAYSLIP</h2>
-    <p>${p.name}</p>
-    <p>Net: ${p.net}</p>
-    <button onclick="window.print()">Print</button>
+  let w = window.open("");
+  w.document.write(`
+  <h2>Payslip</h2>
+  <p>${last.name}</p>
+  <p>Net: ${last.net}</p>
+  <button onclick="window.print()">Print</button>
   `);
 }
 
-});
 </script>
+
+</body>
+</html>
