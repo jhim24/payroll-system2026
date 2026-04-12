@@ -57,7 +57,7 @@
       margin-top:30px;
     }
 
-    /* 🔥 CARD STYLE (BUTTON STYLE) */
+    /* 🔥 CARD STYLE */
     .card {
       display:inline-block;
       min-width:140px;
@@ -84,6 +84,39 @@
       margin:5px 0 0;
       font-size:14px;
     }
+
+    /* ========================= */
+    /* 🔥 ADD ONLY (NEXT LEVEL) */
+    /* ========================= */
+
+    .stats {
+      backdrop-filter: blur(10px);
+      border:1px solid rgba(255,255,255,0.3);
+      box-shadow:0 0 15px rgba(0,255,255,0.3);
+    }
+
+    .card {
+      backdrop-filter: blur(8px);
+      border:1px solid rgba(255,255,255,0.2);
+    }
+
+    .card:hover {
+      box-shadow:0 0 20px rgba(0,255,255,0.7);
+    }
+
+    .emp:hover {box-shadow:0 0 15px lime;}
+    .pay:hover {box-shadow:0 0 15px orange;}
+    .his:hover {box-shadow:0 0 15px cyan;}
+
+    .container {
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {opacity:0; transform:translateY(20px);}
+      to {opacity:1; transform:translateY(0);}
+    }
+
   </style>
 </head>
 
@@ -103,7 +136,11 @@
     Total Records: <b id="recCount">0</b>
   </div>
 
-  <!-- 🔥 BUTTONS (NASA BABA NA) -->
+  <!-- 🔥 ADD CHART (NEW) -->
+  <br><br>
+  <canvas id="myChart" width="300" height="150"></canvas>
+
+  <!-- 🔥 BUTTONS -->
   <div class="buttons">
 
     <div class="card emp" onclick="goEmployee()">
@@ -168,6 +205,35 @@ function logout(){
   window.location.href = "login.html";
 }
 
+</script>
+
+<!-- 🔥 ADD ONLY CHART SCRIPT -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+setTimeout(()=>{
+  try{
+    let history = JSON.parse(localStorage.getItem("history")) || [];
+
+    let names = history.map(e=>e.name || "EMP");
+    let nets = history.map(e=>Number(e.net || 0));
+
+    let ctx = document.getElementById("myChart").getContext("2d");
+
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: names,
+        datasets: [{
+          label: "Net Salary",
+          data: nets,
+          borderWidth:1
+        }]
+      }
+    });
+  }catch(e){
+    console.log("Chart error:", e);
+  }
+}, 500);
 </script>
 
 </body>
