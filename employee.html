@@ -254,6 +254,7 @@ function edit(i){
   email.value=e.email;
   empid.value=e.empid;
   passport.value=e.passport;
+  position.value = e.position;
   bank.value=e.bank;
   bankAccount.value=e.bankAccount;
   sss.value=e.sss;
@@ -276,6 +277,7 @@ function del(i){
 function clear(){
   document.querySelectorAll("input").forEach(i=>i.value="");
   bank.value="";
+  position.value="";
 }
 
 function goPayroll(){
