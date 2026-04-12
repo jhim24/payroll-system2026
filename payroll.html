@@ -1,4 +1,13 @@
 <script>
+
+// 🔥 AUTO RESTORE DATA
+let backup = localStorage.getItem("employees_backup");
+
+if(!localStorage.getItem("employees") && backup){
+  localStorage.setItem("employees", backup);
+}
+
+// ✅ LOAD DATA
 let data = JSON.parse(localStorage.getItem("employees")) || [];
 let lastPayslip = null;
 
@@ -22,7 +31,7 @@ function goHistory(){
   window.location.href = "history.html";
 }
 
-// ✅ FINAL CLEAN COMPUTE
+// 💰 COMPUTE
 function compute(){
 
   let index = document.getElementById("emp").value;
@@ -52,7 +61,6 @@ function compute(){
     return;
   }
 
-  // 💰 COMPUTE
   let gross = rate * days;
   let otPay = (rate / 8) * ot * 1.25;
   let holidayPay = holiday * rate * 2;
@@ -66,7 +74,7 @@ function compute(){
 
   let net = totalIncome - totalDed;
 
-  // 📄 SAVE FOR PAYSLIP
+  // SAVE FOR PAYSLIP
   lastPayslip = {
     name: e.fname + " " + e.lname,
     gross, otPay, holidayPay,
@@ -75,7 +83,7 @@ function compute(){
     net
   };
 
-  // 💾 SAVE HISTORY
+  // SAVE HISTORY
   let history = JSON.parse(localStorage.getItem("history")) || [];
 
   history.push({
@@ -95,7 +103,7 @@ function compute(){
 
   localStorage.setItem("history", JSON.stringify(history));
 
-  // 📊 DISPLAY
+  // DISPLAY
   let table = document.getElementById("table");
 
   table.innerHTML += `
@@ -172,4 +180,5 @@ function openPayslip(){
   </html>
   `);
 }
+
 </script>
