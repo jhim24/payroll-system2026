@@ -54,6 +54,11 @@ tr:hover {
 
 <h2>📊 Payroll History</h2>
 
+<!-- 🔍 SEARCH -->
+<input onkeyup="searchHistory(this.value)" placeholder="Search name..." style="padding:8px; margin-top:10px; width:200px;">
+
+<br>
+
 <button class="back" onclick="window.location.href='payroll.html'">⬅ Back</button>
 
 <table>
@@ -67,7 +72,7 @@ tr:hover {
 <tbody id="table"></tbody>
 </table>
 
-<!-- 🔥 DETAILS TABLE OUTPUT -->
+<!-- DETAILS -->
 <div id="details" class="details"></div>
 
 <script>
@@ -85,22 +90,28 @@ function load(){
 
   history.forEach((e,i)=>{
     table.innerHTML += `
-    <tr>
-      <td onclick="view(${i})" style="cursor:pointer; color:blue;">
-        ${e.name}
-      </td>
+    <tr id="row${i}">
+      <td onclick="view(${i})" style="cursor:pointer; color:blue;">${e.name}</td>
       <td onclick="view(${i})">${e.net}</td>
       <td onclick="view(${i})">${e.date}</td>
-      <td>
-        <button class="delete" onclick="del(${i})">Delete</button>
-      </td>
+      <td><button class="delete" onclick="del(${i})">Delete</button></td>
     </tr>
     `;
   });
 }
 
-// 🔥 TABLE STYLE BREAKDOWN VIEW
+// 🔥 VIEW WITH TABLE + HIGHLIGHT + BUTTONS
 function view(i){
+
+  // REMOVE OLD HIGHLIGHT
+  document.querySelectorAll("#table tr").forEach(r=>{
+    r.style.background="";
+  });
+
+  // ADD NEW HIGHLIGHT
+  let row = document.getElementById("row"+i);
+  if(row) row.style.background="#d1ffd1";
+
   let e = history[i];
 
   document.getElementById("details").innerHTML = `
@@ -135,6 +146,11 @@ function view(i){
     </tr>
 
   </table>
+
+  <br>
+
+  <button onclick="printRecord()">🖨️ Print</button>
+  <button onclick="exportRecord()">📊 Export</button>
   `;
 }
 
@@ -146,6 +162,39 @@ function del(i){
     load();
     details.innerHTML = "";
   }
+}
+
+// PRINT
+function printRecord(){
+  let content = document.getElementById("details").innerHTML;
+  let w = window.open("");
+  w.document.write(content);
+  w.print();
+}
+
+// EXPORT
+function exportRecord(){
+  let content = document.getElementById("details").innerHTML;
+
+  let blob = new Blob([content], {type:"application/vnd.ms-excel"});
+  let a = document.createElement("a");
+
+  a.href = URL.createObjectURL(blob);
+  a.download = "payroll_record.xls";
+  a.click();
+}
+
+// SEARCH
+function searchHistory(value){
+  let rows = document.querySelectorAll("#table tr");
+
+  rows.forEach(r=>{
+    let cell = r.children[0];
+    if(!cell) return;
+
+    let text = cell.innerText.toLowerCase();
+    r.style.display = text.includes(value.toLowerCase()) ? "" : "none";
+  });
 }
 
 // INIT
