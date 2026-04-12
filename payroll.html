@@ -160,7 +160,16 @@ function compute(){
 
   let totalDed = sss + philhealth + pagibig;
   let net = totalIncome - totalDed;
+// SAVE TO HISTORY
+let history = JSON.parse(localStorage.getItem("history")) || [];
 
+history.push({
+  name: e.fname + " " + e.lname,
+  net: net,
+  date: new Date().toLocaleDateString()
+});
+
+localStorage.setItem("history", JSON.stringify(history));
   let table = document.getElementById("table");
 
   table.innerHTML += `
