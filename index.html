@@ -43,7 +43,6 @@
       text-align:center;
     }
 
-    /* 🔥 STATS BOX */
     .stats {
       background:rgba(0,0,0,0.4);
       border:2px solid white;
@@ -52,12 +51,10 @@
       display:inline-block;
     }
 
-    /* 🔥 BUTTON AREA */
     .buttons {
       margin-top:30px;
     }
 
-    /* 🔥 CARD STYLE */
     .card {
       display:inline-block;
       min-width:140px;
@@ -85,10 +82,7 @@
       font-size:14px;
     }
 
-    /* ========================= */
-    /* 🔥 ADD ONLY (NEXT LEVEL) */
-    /* ========================= */
-
+    /* 🔥 EXISTING ADD */
     .stats {
       backdrop-filter: blur(10px);
       border:1px solid rgba(255,255,255,0.3);
@@ -117,30 +111,85 @@
       to {opacity:1; transform:translateY(0);}
     }
 
+    /* ========================= */
+    /* 🔥 ULTRA ADD ONLY */
+    /* ========================= */
+
+    .sidebar {
+      position:fixed;
+      left:0;
+      top:0;
+      width:200px;
+      height:100%;
+      background:rgba(0,0,0,0.8);
+      padding:20px;
+      text-align:left;
+      z-index:999;
+    }
+
+    .sidebar h2 {
+      color:white;
+    }
+
+    .sidebar button {
+      width:100%;
+      margin:10px 0;
+      padding:10px;
+      border:none;
+      background:#333;
+      color:white;
+      cursor:pointer;
+      border-radius:5px;
+    }
+
+    .sidebar button:hover {
+      background:cyan;
+      color:black;
+    }
+
+    /* push content */
+    .container {
+      margin-left:220px;
+    }
+
+    /* dark mode */
+    .dark {
+      background:black !important;
+      color:white !important;
+    }
+
   </style>
 </head>
 
 <body>
 
+<!-- 🔥 ULTRA SIDEBAR -->
+<div class="sidebar">
+  <h2>HR</h2>
+  <button onclick="goEmployee()">👥 Employees</button>
+  <button onclick="goPayroll()">💰 Payroll</button>
+  <button onclick="goHistory()">📊 History</button>
+  <hr>
+  <button onclick="toggleMode()">🌙 Dark Mode</button>
+</div>
+
 <header>
   💼 HR DASHBOARD
+  <span style="position:absolute; left:20px;">👤 Admin</span>
   <button class="logout" onclick="logout()">Logout</button>
 </header>
 
 <div class="container">
 
-  <!-- 🔥 STATS -->
   <div class="stats">
     Total Employees: <b id="empCount">0</b> |
     Total Payroll: ₱ <b id="totalPay">0</b> |
     Total Records: <b id="recCount">0</b>
   </div>
 
-  <!-- 🔥 ADD CHART (NEW) -->
   <br><br>
   <canvas id="myChart" width="300" height="150"></canvas>
 
-  <!-- 🔥 BUTTONS -->
   <div class="buttons">
 
     <div class="card emp" onclick="goEmployee()">
@@ -173,31 +222,21 @@ if(localStorage.getItem("login") !== "true"){
 let emp = JSON.parse(localStorage.getItem("employees")) || [];
 let history = JSON.parse(localStorage.getItem("history")) || [];
 
-// TOTAL EMPLOYEES
+// TOTAL
 document.getElementById("empCount").innerText = emp.length;
 
-// TOTAL PAYROLL
 let total = 0;
 history.forEach(e=>{
   total += Number(e.net || 0);
 });
 document.getElementById("totalPay").innerText = total.toFixed(2);
 
-// TOTAL RECORDS
 document.getElementById("recCount").innerText = history.length;
 
-// NAVIGATION
-function goEmployee(){
-  window.location.href = "employee.html";
-}
-
-function goPayroll(){
-  window.location.href = "payroll.html";
-}
-
-function goHistory(){
-  window.location.href = "history.html";
-}
+// NAV
+function goEmployee(){ window.location.href="employee.html"; }
+function goPayroll(){ window.location.href="payroll.html"; }
+function goHistory(){ window.location.href="history.html"; }
 
 // LOGOUT
 function logout(){
@@ -205,9 +244,13 @@ function logout(){
   window.location.href = "login.html";
 }
 
+// 🔥 ULTRA DARK MODE
+function toggleMode(){
+  document.body.classList.toggle("dark");
+}
+
 </script>
 
-<!-- 🔥 ADD ONLY CHART SCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 setTimeout(()=>{
@@ -225,15 +268,12 @@ setTimeout(()=>{
         labels: names,
         datasets: [{
           label: "Net Salary",
-          data: nets,
-          borderWidth:1
+          data: nets
         }]
       }
     });
-  }catch(e){
-    console.log("Chart error:", e);
-  }
-}, 500);
+  }catch(e){}
+},500);
 </script>
 
 </body>
