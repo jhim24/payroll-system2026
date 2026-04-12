@@ -1,99 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Payroll System</title>
-  <style>
-    body {font-family: Arial; padding:20px; background:#fff7f0;}
-    h2 {border-bottom:3px solid green;}
-    .box {
-      border:2px solid green;
-      padding:15px;
-      border-radius:10px;
-      background:white;
-      margin-bottom:20px;
-    }
-    input, select {
-      padding:8px;
-      margin:5px;
-      width:180px;
-      border-radius:5px;
-      border:1px solid #ccc;
-    }
-    button {
-      padding:10px;
-      margin:5px;
-      border:none;
-      color:white;
-      border-radius:5px;
-      cursor:pointer;
-    }
-    .back {background:#444;}
-    .compute {background:green;}
-    .history {background:blue;}
-
-    table {
-      width:100%;
-      border-collapse:collapse;
-      border:2px solid green;
-      background:white;
-    }
-    th, td {
-      border:1px solid #ccc;
-      padding:10px;
-      text-align:center;
-    }
-    th {background:green; color:white;}
-  </style>
-</head>
-<body>
-
-<h2>💰 Payroll System (Final)</h2>
-
-<button class="back" onclick="back()">⬅ Back</button>
-
-<div class="box">
-
-<select id="emp"></select><br>
-
-<input id="rate" type="number" placeholder="Daily Rate">
-<input id="days" type="number" placeholder="Days Worked"><br>
-
-<input id="ot" type="number" placeholder="OT Hours">
-<input id="holiday" type="number" placeholder="Holiday Days"><br>
-
-<input id="vac" type="number" placeholder="Vacation Leave">
-<input id="sick" type="number" placeholder="Sick Leave">
-<input id="bday" type="number" placeholder="Birthday Leave"><br>
-
-<input id="sss" type="number" placeholder="SSS Deduction">
-<input id="philhealth" type="number" placeholder="PhilHealth">
-<input id="pagibig" type="number" placeholder="Pag-IBIG"><br>
-
-<button class="compute" onclick="compute()">Compute Salary</button>
-  <button onclick="openPayslip()">View Payslip 🧾</button>
-<button class="history" onclick="goHistory()">View History</button>
-
-</div>
-
-<table>
-<tr>
-<th>Name</th>
-<th>Gross</th>
-<th>OT</th>
-<th>Holiday</th>
-<th>Vacation</th>
-<th>Sick</th>
-<th>Birthday</th>
-<th>SSS</th>
-<th>PhilHealth</th>
-<th>Pag-IBIG</th>
-<th>Net</th>
-</tr>
-<tbody id="table"></tbody>
-</table>
-
 <script>
 let data = JSON.parse(localStorage.getItem("employees")) || [];
+let lastPayslip = null;
 
 // LOAD EMPLOYEES
 let select = document.getElementById("emp");
@@ -115,8 +22,9 @@ function goHistory(){
   window.location.href = "history.html";
 }
 
-// COMPUTE
+// ✅ FINAL CLEAN COMPUTE
 function compute(){
+
   let index = document.getElementById("emp").value;
 
   if(index === ""){
@@ -126,43 +34,48 @@ function compute(){
 
   let e = data[index];
 
-  let rate = parseFloat(document.getElementById("rate").value) || 0;
-  let days = parseFloat(document.getElementById("days").value) || 0;
-  let ot = parseFloat(document.getElementById("ot").value) || 0;
-  let holiday = parseFloat(document.getElementById("holiday").value) || 0;
-  let vac = parseFloat(document.getElementById("vac").value) || 0;
-let sick = parseFloat(document.getElementById("sick").value) || 0;
-let bday = parseFloat(document.getElementById("bday").value) || 0;
+  let rate = Number(document.getElementById("rate").value) || 0;
+  let days = Number(document.getElementById("days").value) || 0;
+  let ot = Number(document.getElementById("ot").value) || 0;
+  let holiday = Number(document.getElementById("holiday").value) || 0;
 
-  let sss = parseFloat(document.getElementById("sss").value) || 0;
-  let philhealth = parseFloat(document.getElementById("philhealth").value) || 0;
-  let pagibig = parseFloat(document.getElementById("pagibig").value) || 0;
+  let vac = Number(document.getElementById("vac").value) || 0;
+  let sick = Number(document.getElementById("sick").value) || 0;
+  let bday = Number(document.getElementById("bday").value) || 0;
+
+  let sss = Number(document.getElementById("sss").value) || 0;
+  let philhealth = Number(document.getElementById("philhealth").value) || 0;
+  let pagibig = Number(document.getElementById("pagibig").value) || 0;
 
   if(rate === 0 || days === 0){
     alert("Enter rate and days");
     return;
   }
 
+  // 💰 COMPUTE
   let gross = rate * days;
-
-  let hourly = rate / 8;
-  let otPay = ot * hourly * 1.25;
-
+  let otPay = (rate / 8) * ot * 1.25;
   let holidayPay = holiday * rate * 2;
 
- let vacPay = vac * rate;
-let sickPay = sick * rate;
-let bdayPay = bday * rate;
+  let vacPay = vac * rate;
+  let sickPay = sick * rate;
+  let bdayPay = bday * rate;
 
-let totalLeave = vacPay + sickPay + bdayPay;
-
-  let totalIncome = gross + otPay + holidayPay + totalLeave;
-
+  let totalIncome = gross + otPay + holidayPay + vacPay + sickPay + bdayPay;
   let totalDed = sss + philhealth + pagibig;
 
   let net = totalIncome - totalDed;
 
-  // SAVE HISTORY (FULL DETAILS)
+  // 📄 SAVE FOR PAYSLIP
+  lastPayslip = {
+    name: e.fname + " " + e.lname,
+    gross, otPay, holidayPay,
+    vacPay, sickPay, bdayPay,
+    sss, philhealth, pagibig,
+    net
+  };
+
+  // 💾 SAVE HISTORY
   let history = JSON.parse(localStorage.getItem("history")) || [];
 
   history.push({
@@ -171,8 +84,8 @@ let totalLeave = vacPay + sickPay + bdayPay;
     ot: otPay.toFixed(2),
     holiday: holidayPay.toFixed(2),
     vac: vacPay.toFixed(2),
-sick: sickPay.toFixed(2),
-bday: bdayPay.toFixed(2),
+    sick: sickPay.toFixed(2),
+    bday: bdayPay.toFixed(2),
     sss: sss.toFixed(2),
     philhealth: philhealth.toFixed(2),
     pagibig: pagibig.toFixed(2),
@@ -182,91 +95,7 @@ bday: bdayPay.toFixed(2),
 
   localStorage.setItem("history", JSON.stringify(history));
 
-  // DISPLAY
-  let table = document.getElementById("table");
-
-  table.innerHTML += `
-    <tr>
-      <td>${e.fname} ${e.lname}</td>
-      <td>${gross.toFixed(2)}</td>
-      <td>${otPay.toFixed(2)}</td>
-      <td>${holidayPay.toFixed(2)}</td>
-      <td>${vacPay.toFixed(2)}</td>
-<td>${sickPay.toFixed(2)}</td>
-<td>${bdayPay.toFixed(2)}</td>
-      <td>${sss.toFixed(2)}</td>
-      <td>${philhealth.toFixed(2)}</td>
-      <td>${pagibig.toFixed(2)}</td>
-      <td><b>${net.toFixed(2)}</b></td>
-    </tr>
-  `;
-}
-  let lastPayslip = null;
-
-function compute(){
-  let index = document.getElementById("emp").value;
-  if(index===""){ alert("Select employee"); return; }
-
-  let e = data[index];
-
-  let lastPayslip = null;
-
-function compute(){
-  let index = document.getElementById("emp").value;
-
-  if(index === ""){
-    alert("Select employee");
-    return;
-  }
-
-  let e = data[index];
-
-  let rate = parseFloat(document.getElementById("rate").value) || 0;
-  let days = parseFloat(document.getElementById("days").value) || 0;
-  let ot = parseFloat(document.getElementById("ot").value) || 0;
-  let holiday = parseFloat(document.getElementById("holiday").value) || 0;
-
-  let vac = parseFloat(document.getElementById("vac").value) || 0;
-  let sick = parseFloat(document.getElementById("sick").value) || 0;
-  let bday = parseFloat(document.getElementById("bday").value) || 0;
-
-  let sss = parseFloat(document.getElementById("sss").value) || 0;
-  let philhealth = parseFloat(document.getElementById("philhealth").value) || 0;
-  let pagibig = parseFloat(document.getElementById("pagibig").value) || 0;
-
-  if(rate === 0 || days === 0){
-    alert("Enter rate and days");
-    return;
-  }
-
-  // COMPUTE
-  let gross = rate * days;
-
-  let hourly = rate / 8;
-  let otPay = ot * hourly * 1.25;
-
-  let holidayPay = holiday * rate * 2;
-
-  let vacPay = vac * rate;
-  let sickPay = sick * rate;
-  let bdayPay = bday * rate;
-
-  let totalIncome = gross + otPay + holidayPay + vacPay + sickPay + bdayPay;
-
-  let totalDed = sss + philhealth + pagibig;
-
-  let net = totalIncome - totalDed;
-
-  // SAVE FOR PAYSLIP
-  lastPayslip = {
-    name: e.fname + " " + e.lname,
-    gross, otPay, holidayPay,
-    vacPay, sickPay, bdayPay,
-    sss, philhealth, pagibig,
-    net
-  };
-
-  // DISPLAY TABLE
+  // 📊 DISPLAY
   let table = document.getElementById("table");
 
   table.innerHTML += `
@@ -288,30 +117,9 @@ function compute(){
   alert("Salary Computed!");
 }
 
-  let gross = rate * days;
-  let otPay = (rate/8)*ot*1.25;
-  let holidayPay = holiday * rate * 2;
+// 🧾 PAYSLIP
+function openPayslip(){
 
-  let vacPay = vac * rate;
-  let sickPay = sick * rate;
-  let bdayPay = bday * rate;
-
-  let totalIncome = gross + otPay + holidayPay + vacPay + sickPay + bdayPay;
-  let totalDed = sss + phil + pagibig;
-  let net = totalIncome - totalDed;
-
-  // 👉 SAVE FOR PAYSLIP
-  lastPayslip = {
-    name: e.fname + " " + e.lname,
-    gross, otPay, holidayPay,
-    vacPay, sickPay, bdayPay,
-    sss, phil, pagibig,
-    net
-  };
-
-  alert("Computed! You can now view payslip.");
-}
-  function openPayslip(){
   if(!lastPayslip){
     alert("Compute salary first!");
     return;
@@ -351,7 +159,7 @@ function compute(){
 
     <tr><th>Deductions</th><th></th></tr>
     <tr><td>SSS</td><td>${p.sss}</td></tr>
-    <tr><td>PhilHealth</td><td>${p.phil}</td></tr>
+    <tr><td>PhilHealth</td><td>${p.philhealth}</td></tr>
     <tr><td>Pag-IBIG</td><td>${p.pagibig}</td></tr>
 
     <tr><td><b>Net Salary</b></td><td class="net">${p.net}</td></tr>
@@ -365,6 +173,3 @@ function compute(){
   `);
 }
 </script>
-
-</body>
-</html>
