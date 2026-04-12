@@ -1,39 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <div style="margin:20px; font-size:18px;">
-  Total Employees: <b id="totalEmp">0</b> |
-  Total Payroll: ₱ <b id="totalPay">0</b> |
-  Total Records: <b id="recCount">0</b>
-</div>
-  <header style="display:flex; justify-content:center; align-items:center; position:relative;">
-  <h2 style="margin:0;">💼 HR DASHBOARD</h2>
+  <title>HR Dashboard</title>
 
-  <!-- LOGOUT BUTTON -->
-  <button onclick="logout()" 
-    style="position:absolute; right:20px; padding:8px 15px; border:none; background:red; color:white; border-radius:5px;">
-    Logout
-  </button>
-</header>
+  <style>
     body {
-  body {
-  font-family: Arial;
-  margin:0;
-  text-align:center;
+      font-family: Arial;
+      margin:0;
+      text-align:center;
 
-  background-image: url("background.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+      background-image: url("background.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
 
-  color:white;
-}
+      color:white;
+    }
+
     header {
       background:linear-gradient(to right, blue, purple);
       color:white;
       padding:20px;
       font-size:22px;
       font-weight:bold;
+      position:relative;
+    }
+
+    .logout {
+      position:absolute;
+      right:20px;
+      top:20px;
+      padding:8px 15px;
+      border:none;
+      background:red;
+      color:white;
+      border-radius:5px;
+      cursor:pointer;
     }
 
     .container {
@@ -41,8 +43,8 @@
     }
 
     .stats {
-      background:white;
-      border:2px solid blue;
+      background:rgba(255,255,255,0.1);
+      border:2px solid white;
       padding:20px;
       border-radius:10px;
       margin-bottom:30px;
@@ -56,12 +58,12 @@
       display:inline-block;
       width:220px;
       margin:15px;
-      padding:10px;
+      padding:20px;
       border-radius:15px;
       color:white;
       cursor:pointer;
       transition:0.3s;
-      box-shadow:0 4px 10px rgba(0,0,0,0.2);
+      box-shadow:0 4px 10px rgba(0,0,0,0.3);
     }
 
     .card:hover {
@@ -77,9 +79,15 @@
 </head>
 
 <body>
+
+<header>
+  💼 HR DASHBOARD
+  <button class="logout" onclick="logout()">Logout</button>
+</header>
+
 <div class="container">
 
-  <!-- 🔥 LIVE STATS -->
+  <!-- STATS -->
   <div class="stats">
     <div><b>Total Employees:</b><br><span id="empCount">0</span></div>
     <div><b>Total Payroll:</b><br>₱ <span id="totalPay">0</span></div>
@@ -106,6 +114,11 @@
 
 <script>
 
+// 🔐 LOGIN CHECK
+if(localStorage.getItem("login") !== "true"){
+  window.location.href = "login.html";
+}
+
 // LOAD DATA
 let emp = JSON.parse(localStorage.getItem("employees")) || [];
 let history = JSON.parse(localStorage.getItem("history")) || [];
@@ -116,7 +129,7 @@ document.getElementById("empCount").innerText = emp.length;
 // TOTAL PAYROLL
 let total = 0;
 history.forEach(e=>{
-  total += Number(e.net);
+  total += Number(e.net || 0);
 });
 document.getElementById("totalPay").innerText = total.toFixed(2);
 
@@ -135,31 +148,13 @@ function goPayroll(){
 function goHistory(){
   window.location.href = "history.html";
 }
-// 🔐 LOGIN CHECK (ADD ONLY)
-if(localStorage.getItem("login") !== "true"){
-  window.location.href = "login.html";
-}
-  // 🔐 LOGOUT FIX (ADD ONLY)
-window.logout = function(){
+
+// LOGOUT
+function logout(){
   localStorage.removeItem("login");
   window.location.href = "login.html";
-  / 📊 DASHBOARD STATS (ADD ONLY)
-let emp = JSON.parse(localStorage.getItem("employees")) || [];
-let history = JSON.parse(localStorage.getItem("history")) || [];
-
-// TOTAL EMPLOYEE
-document.getElementById("totalEmp").innerText = emp.length;
-
-// TOTAL PAYROLL
-let total = 0;
-history.forEach(e=>{
-  total += Number(e.net || 0);
-});
-document.getElementById("totalPay").innerText = total.toFixed(2);
-
-// TOTAL RECORDS
-document.getElementById("recCount").innerText = history.lengt
 }
+
 </script>
 
 </body>
