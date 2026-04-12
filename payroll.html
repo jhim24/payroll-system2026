@@ -41,6 +41,7 @@
 
     .back {background:#444;}
     .compute {background:green;}
+    .history {background:blue;}
 
     table {
       width:100%;
@@ -79,12 +80,12 @@
 
 <input id="leave" type="number" placeholder="Leave Days"><br>
 
-<!-- 🔥 MANUAL GOVERNMENT -->
 <input id="sss" type="number" placeholder="SSS Deduction">
 <input id="philhealth" type="number" placeholder="PhilHealth">
 <input id="pagibig" type="number" placeholder="Pag-IBIG"><br>
 
 <button class="compute" onclick="compute()">Compute Salary</button>
+<button class="history" onclick="goHistory()">View History</button>
 
 </div>
 
@@ -121,6 +122,11 @@ function back(){
   window.location.href = "index.html";
 }
 
+// GO HISTORY
+function goHistory(){
+  window.location.href = "history.html";
+}
+
 // COMPUTE
 function compute(){
   let index = document.getElementById("emp").value;
@@ -147,7 +153,6 @@ function compute(){
     return;
   }
 
-  // BASIC
   let gross = rate * days;
 
   let hourly = rate / 8;
