@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>HR Dashboard</title>
-
+<button onclick="logout()" style="margin-top:10px;">Logout</button>
   <style>
     body {
       font-family: Arial;
@@ -121,7 +121,10 @@ function goPayroll(){
 function goHistory(){
   window.location.href = "history.html";
 }
-
+// 🔐 LOGIN CHECK (ADD ONLY)
+if(localStorage.getItem("login") !== "true"){
+  window.location.href = "login.html";
+}
 </script>
 
 </body>
