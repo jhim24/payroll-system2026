@@ -2,109 +2,28 @@
 <html>
 <head>
   <title>Payroll System</title>
-  <style>
-    body {
-      font-family: Arial;
-      padding:20px;
-      background:#fff7f0;
-    }
-
-    h2 {
-      border-bottom:3px solid green;
-      padding-bottom:5px;
-    }
-
-    .box {
-      border:2px solid green;
-      padding:15px;
-      border-radius:10px;
-      background:white;
-      margin-bottom:20px;
-    }
-
-    input, select {
-      padding:8px;
-      margin:5px;
-      width:180px;
-      border-radius:5px;
-      border:1px solid #ccc;
-    }
-
-    button {
-      padding:10px;
-      margin:5px;
-      border:none;
-      color:white;
-      border-radius:5px;
-      cursor:pointer;
-    }
-
-    .back {background:#444;}
-    .compute {background:green;}
-
-    table {
-      width:100%;
-      border-collapse:collapse;
-      border:2px solid green;
-      background:white;
-      margin-top:20px;
-    }
-
-    th, td {
-      border:1px solid #ccc;
-      padding:10px;
-      text-align:center;
-    }
-
-    th {
-      background:green;
-      color:white;
-    }
-  </style>
 </head>
 <body>
 
-<h2>💰 Payroll System (Advanced)</h2>
+<h2>💰 Payroll System</h2>
 
-<button class="back" onclick="back()">⬅ Back</button>
+<button onclick="back()">⬅ Back</button>
 
-<div class="box">
+<br><br>
 
-<select id="emp"></select><br>
+<select id="emp"></select><br><br>
 
-<input id="rate" type="number" placeholder="Daily Rate">
+<input id="rate" type="number" placeholder="Daily Rate"><br>
 <input id="days" type="number" placeholder="Days Worked"><br>
 
-<input id="ot" type="number" placeholder="OT Hours">
-<input id="holiday" type="number" placeholder="Holiday Days"><br>
+<button onclick="compute()">Compute</button>
 
-<input id="sick" type="number" placeholder="Sick Leave">
-<input id="vac" type="number" placeholder="Vacation Leave">
-<input id="bday" type="number" placeholder="Birthday Leave (1 or 0)"><br>
-
-<button class="compute" onclick="compute()">Compute Salary</button>
-
-</div>
-
-<table>
-<tr>
-<th>Name</th>
-<th>Gross</th>
-<th>OT Pay</th>
-<th>Holiday</th>
-<th>Leaves</th>
-<th>SSS</th>
-<th>PhilHealth</th>
-<th>Pag-IBIG</th>
-<th>Net Pay</th>
-</tr>
-<tbody id="table"></tbody>
-</table>
+<h3 id="result"></h3>
 
 <script>
+// LOAD EMPLOYEE DATA
 let data = JSON.parse(localStorage.getItem("employees")) || [];
 
-// LOAD EMPLOYEES
 let select = document.getElementById("emp");
 select.innerHTML = "<option value=''>Select Employee</option>";
 
@@ -114,12 +33,12 @@ data.forEach((e,i)=>{
   </option>`;
 });
 
-// BACK BUTTON
+// BACK
 function back(){
   window.location.href = "index.html";
 }
 
-// COMPUTE
+// COMPUTE (CLEAN WORKING VERSION)
 function compute(){
   let index = document.getElementById("emp").value;
 
@@ -132,11 +51,6 @@ function compute(){
 
   let rate = parseFloat(document.getElementById("rate").value) || 0;
   let days = parseFloat(document.getElementById("days").value) || 0;
-  let ot = parseFloat(document.getElementById("ot").value) || 0;
-  let holiday = parseFloat(document.getElementById("holiday").value) || 0;
-  let sick = parseFloat(document.getElementById("sick").value) || 0;
-  let vac = parseFloat(document.getElementById("vac").value) || 0;
-  let bday = parseFloat(document.getElementById("bday").value) || 0;
 
   if(rate === 0 || days === 0){
     alert("Enter rate and days");
@@ -145,53 +59,19 @@ function compute(){
 
   let gross = rate * days;
 
-  let hourly = rate / 8;
-  let otPay = ot * hourly * 1.25;
+  // SAVE HISTORY
+  let history = JSON.parse(localStorage.getItem("history")) || [];
 
-  let holidayPay = holiday * rate * 2;
+  history.push({
+    name: e.fname + " " + e.lname,
+    gross: gross,
+    date: new Date().toLocaleString()
+  });
 
-  let leavePay = (sick + vac + bday) * rate;
+  localStorage.setItem("history", JSON.stringify(history));
 
-  let totalIncome = gross + otPay + holidayPay + leavePay;
-
-  let sss = totalIncome * 0.045;
-  let philhealth = totalIncome * 0.03;
-  let pagibig = 100;
-
-  let totalDed = sss + philhealth + pagibig;
-let totalDed = sss + philhealth + pagibig;
-let net = totalIncome - totalDed;
-
-// ✅ SAVE HISTORY (FIXED)
-let history = JSON.parse(localStorage.getItem("history")) || [];
-
-let record = {
-  name: e.fname + " " + e.lname,
-  net: net.toFixed(2),
-  date: new Date().toLocaleString()
-};
-
-history.push(record);
-
-localStorage.setItem("history", JSON.stringify(history));
-
-console.log("Saved:", record);
-localStorage.setItem("history", JSON.stringify(history));
-  let table = document.getElementById("table");
-
-  table.innerHTML += `
-    <tr>
-      <td>${e.fname} ${e.lname}</td>
-      <td>${gross.toFixed(2)}</td>
-      <td>${otPay.toFixed(2)}</td>
-      <td>${holidayPay.toFixed(2)}</td>
-      <td>${leavePay.toFixed(2)}</td>
-      <td>${sss.toFixed(2)}</td>
-      <td>${philhealth.toFixed(2)}</td>
-      <td>${pagibig.toFixed(2)}</td>
-      <td><b>${net.toFixed(2)}</b></td>
-    </tr>
-  `;
+  document.getElementById("result").innerHTML =
+    "Gross Salary: " + gross;
 }
 </script>
 
