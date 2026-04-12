@@ -227,7 +227,9 @@ function openPayslip(){
   <button onclick="window.print()">Print</button>
   `);
 }
-
+if(localStorage.getItem("login") !== "true"){
+  window.location.href = "login.html";
+}
 </script>
 
 </body>
