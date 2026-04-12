@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Payroll History</h2>
+<table border="1">
+<tr><th>Name</th><th>Net</th><th>Date</th></tr>
+<tbody id="hist"></tbody>
+</table>
+
+<script>
+let h = JSON.parse(localStorage.getItem("history")) || [];
+
+h.forEach(e=>{
+  hist.innerHTML += `
+  <tr>
+    <td>${e.name}</td>
+    <td>${e.net}</td>
+    <td>${e.date}</td>
+  </tr>`;
+});
+</script>
+
+</body>
+</html>
