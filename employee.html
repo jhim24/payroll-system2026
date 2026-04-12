@@ -280,6 +280,9 @@ render();
     r.style.display = text.includes(value.toLowerCase()) ? "" : "none";
   });
 }
+  if(localStorage.getItem("login") !== "true"){
+  window.location.href = "login.html";
+}
 </script>
 
 </body>
