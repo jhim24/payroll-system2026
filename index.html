@@ -1,1 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HR Dashboard</title>
 
+  <style>
+    body {
+      font-family: Arial;
+      margin:0;
+      background:#eef3ff;
+      text-align:center;
+    }
+
+    header {
+      background:linear-gradient(to right, blue, purple);
+      color:white;
+      padding:20px;
+      font-size:22px;
+      font-weight:bold;
+    }
+
+    .container {
+      padding:30px;
+    }
+
+    .stats {
+      background:white;
+      border:2px solid blue;
+      padding:20px;
+      border-radius:10px;
+      margin-bottom:30px;
+      display:flex;
+      justify-content:center;
+      gap:30px;
+      flex-wrap:wrap;
+    }
+
+    .card {
+      display:inline-block;
+      width:220px;
+      margin:15px;
+      padding:25px;
+      border-radius:15px;
+      color:white;
+      cursor:pointer;
+      transition:0.3s;
+      box-shadow:0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .card:hover {
+      transform:scale(1.05);
+    }
+
+    .emp {background:green;}
+    .pay {background:orange;}
+    .his {background:blue;}
+
+    h3 {margin-top:10px;}
+  </style>
+</head>
+
+<body>
+
+<header>💼 HR DASHBOARD</header>
+
+<div class="container">
+
+  <!-- 🔥 LIVE STATS -->
+  <div class="stats">
+    <div><b>Total Employees:</b><br><span id="empCount">0</span></div>
+    <div><b>Total Payroll:</b><br>₱ <span id="totalPay">0</span></div>
+    <div><b>Total Records:</b><br><span id="recCount">0</span></div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <div class="card emp" onclick="goEmployee()">
+    👥
+    <h3>Employee List</h3>
+  </div>
+
+  <div class="card pay" onclick="goPayroll()">
+    💰
+    <h3>Payroll</h3>
+  </div>
+
+  <div class="card his" onclick="goHistory()">
+    📊
+    <h3>History</h3>
+  </div>
+
+</div>
+
+<script>
+
+// LOAD DATA
+let emp = JSON.parse(localStorage.getItem("employees")) || [];
+let history = JSON.parse(localStorage.getItem("history")) || [];
+
+// TOTAL EMPLOYEES
+document.getElementById("empCount").innerText = emp.length;
+
+// TOTAL PAYROLL
+let total = 0;
+history.forEach(e=>{
+  total += Number(e.net);
+});
+document.getElementById("totalPay").innerText = total.toFixed(2);
+
+// TOTAL RECORDS
+document.getElementById("recCount").innerText = history.length;
+
+// NAVIGATION
+function goEmployee(){
+  window.location.href = "employee.html";
+}
+
+function goPayroll(){
+  window.location.href = "payroll.html";
+}
+
+function goHistory(){
+  window.location.href = "history.html";
+}
+
+</script>
+
+</body>
+</html>
