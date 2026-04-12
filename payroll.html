@@ -3,17 +3,8 @@
 <head>
   <title>Payroll System</title>
   <style>
-    body {
-      font-family: Arial;
-      padding:20px;
-      background:#fff7f0;
-    }
-
-    h2 {
-      border-bottom:3px solid green;
-      padding-bottom:5px;
-    }
-
+    body {font-family: Arial; padding:20px; background:#fff7f0;}
+    h2 {border-bottom:3px solid green;}
     .box {
       border:2px solid green;
       padding:15px;
@@ -21,7 +12,6 @@
       background:white;
       margin-bottom:20px;
     }
-
     input, select {
       padding:8px;
       margin:5px;
@@ -29,7 +19,6 @@
       border-radius:5px;
       border:1px solid #ccc;
     }
-
     button {
       padding:10px;
       margin:5px;
@@ -38,7 +27,6 @@
       border-radius:5px;
       cursor:pointer;
     }
-
     .back {background:#444;}
     .compute {background:green;}
     .history {background:blue;}
@@ -49,22 +37,17 @@
       border:2px solid green;
       background:white;
     }
-
     th, td {
       border:1px solid #ccc;
       padding:10px;
       text-align:center;
     }
-
-    th {
-      background:green;
-      color:white;
-    }
+    th {background:green; color:white;}
   </style>
 </head>
 <body>
 
-<h2>💰 Payroll System (Manual Deduction)</h2>
+<h2>💰 Payroll System (Final)</h2>
 
 <button class="back" onclick="back()">⬅ Back</button>
 
@@ -168,11 +151,18 @@ function compute(){
 
   let net = totalIncome - totalDed;
 
-  // SAVE HISTORY
+  // SAVE HISTORY (FULL DETAILS)
   let history = JSON.parse(localStorage.getItem("history")) || [];
 
   history.push({
     name: e.fname + " " + e.lname,
+    gross: gross.toFixed(2),
+    ot: otPay.toFixed(2),
+    holiday: holidayPay.toFixed(2),
+    leave: leavePay.toFixed(2),
+    sss: sss.toFixed(2),
+    philhealth: philhealth.toFixed(2),
+    pagibig: pagibig.toFixed(2),
     net: net.toFixed(2),
     date: new Date().toLocaleString()
   });
