@@ -1,18 +1,26 @@
 <script>
 
-// 🔥 AUTO RESTORE DATA
+document.addEventListener("DOMContentLoaded", function(){
+
+// 🔥 AUTO RESTORE
 let backup = localStorage.getItem("employees_backup");
 
 if(!localStorage.getItem("employees") && backup){
   localStorage.setItem("employees", backup);
 }
 
-// ✅ LOAD DATA
+// LOAD DATA
 let data = JSON.parse(localStorage.getItem("employees")) || [];
 let lastPayslip = null;
 
 // LOAD EMPLOYEES
 let select = document.getElementById("emp");
+
+if(!select){
+  alert("EMP SELECT NOT FOUND!");
+  return;
+}
+
 select.innerHTML = "<option value=''>Select Employee</option>";
 
 data.forEach((e,i)=>{
@@ -22,17 +30,17 @@ data.forEach((e,i)=>{
 });
 
 // BACK
-function back(){
+window.back = function(){
   window.location.href = "index.html";
 }
 
-// GO HISTORY
-function goHistory(){
+// HISTORY
+window.goHistory = function(){
   window.location.href = "history.html";
 }
 
-// 💰 COMPUTE
-function compute(){
+// COMPUTE
+window.compute = function(){
 
   let index = document.getElementById("emp").value;
 
@@ -45,6 +53,12 @@ function compute(){
 
   let rate = Number(document.getElementById("rate").value) || 0;
   let days = Number(document.getElementById("days").value) || 0;
+
+  if(rate === 0 || days === 0){
+    alert("Enter rate and days");
+    return;
+  }
+
   let ot = Number(document.getElementById("ot").value) || 0;
   let holiday = Number(document.getElementById("holiday").value) || 0;
 
@@ -55,11 +69,6 @@ function compute(){
   let sss = Number(document.getElementById("sss").value) || 0;
   let philhealth = Number(document.getElementById("philhealth").value) || 0;
   let pagibig = Number(document.getElementById("pagibig").value) || 0;
-
-  if(rate === 0 || days === 0){
-    alert("Enter rate and days");
-    return;
-  }
 
   let gross = rate * days;
   let otPay = (rate / 8) * ot * 1.25;
@@ -74,7 +83,6 @@ function compute(){
 
   let net = totalIncome - totalDed;
 
-  // SAVE FOR PAYSLIP
   lastPayslip = {
     name: e.fname + " " + e.lname,
     gross, otPay, holidayPay,
@@ -83,27 +91,6 @@ function compute(){
     net
   };
 
-  // SAVE HISTORY
-  let history = JSON.parse(localStorage.getItem("history")) || [];
-
-  history.push({
-    name: e.fname + " " + e.lname,
-    gross: gross.toFixed(2),
-    ot: otPay.toFixed(2),
-    holiday: holidayPay.toFixed(2),
-    vac: vacPay.toFixed(2),
-    sick: sickPay.toFixed(2),
-    bday: bdayPay.toFixed(2),
-    sss: sss.toFixed(2),
-    philhealth: philhealth.toFixed(2),
-    pagibig: pagibig.toFixed(2),
-    net: net.toFixed(2),
-    date: new Date().toLocaleString()
-  });
-
-  localStorage.setItem("history", JSON.stringify(history));
-
-  // DISPLAY
   let table = document.getElementById("table");
 
   table.innerHTML += `
@@ -125,8 +112,8 @@ function compute(){
   alert("Salary Computed!");
 }
 
-// 🧾 PAYSLIP
-function openPayslip(){
+// PAYSLIP
+window.openPayslip = function(){
 
   if(!lastPayslip){
     alert("Compute salary first!");
@@ -138,47 +125,12 @@ function openPayslip(){
   let win = window.open("", "", "width=800,height=600");
 
   win.document.write(`
-  <html>
-  <head>
-    <title>Payslip</title>
-    <style>
-      body {font-family: Arial; padding:20px;}
-      h2 {text-align:center;}
-      table {width:100%; border-collapse:collapse; margin-top:20px;}
-      td, th {border:1px solid #ccc; padding:10px;}
-      th {background:#eee;}
-      .net {color:green; font-weight:bold;}
-    </style>
-  </head>
-  <body>
-
-  <h2>🧾 COMPANY PAYSLIP</h2>
-
-  <p><b>Employee:</b> ${p.name}</p>
-
-  <table>
-    <tr><th>Earnings</th><th>Amount</th></tr>
-    <tr><td>Gross</td><td>${p.gross}</td></tr>
-    <tr><td>OT</td><td>${p.otPay}</td></tr>
-    <tr><td>Holiday</td><td>${p.holidayPay}</td></tr>
-    <tr><td>Vacation</td><td>${p.vacPay}</td></tr>
-    <tr><td>Sick</td><td>${p.sickPay}</td></tr>
-    <tr><td>Birthday</td><td>${p.bdayPay}</td></tr>
-
-    <tr><th>Deductions</th><th></th></tr>
-    <tr><td>SSS</td><td>${p.sss}</td></tr>
-    <tr><td>PhilHealth</td><td>${p.philhealth}</td></tr>
-    <tr><td>Pag-IBIG</td><td>${p.pagibig}</td></tr>
-
-    <tr><td><b>Net Salary</b></td><td class="net">${p.net}</td></tr>
-  </table>
-
-  <br><br>
-  <button onclick="window.print()">🖨️ Print</button>
-
-  </body>
-  </html>
+    <h2>PAYSLIP</h2>
+    <p>${p.name}</p>
+    <p>Net: ${p.net}</p>
+    <button onclick="window.print()">Print</button>
   `);
 }
 
+});
 </script>
