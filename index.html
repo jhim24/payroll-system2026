@@ -155,10 +155,12 @@ th:first-child {
     <tbody id="table"></tbody>
   </table>
 </div>
-<input onkeyup="search(0,this.value)" placeholder="Search First">
-<input onkeyup="search(1,this.value)" placeholder="Search Middle">
-<input onkeyup="search(2,this.value)" placeholder="Search Last">
-<input onkeyup="search(6,this.value)" placeholder="Search Email">
+<div style="margin-top:10px;">
+  <input onkeyup="search(0,this.value)" placeholder="Search First">
+  <input onkeyup="search(1,this.value)" placeholder="Search Middle">
+  <input onkeyup="search(2,this.value)" placeholder="Search Last">
+  <input onkeyup="search(6,this.value)" placeholder="Search Email">
+</div>
 <script>
 let data = JSON.parse(localStorage.getItem("employees")) || [];
 let editIndex = -1;
