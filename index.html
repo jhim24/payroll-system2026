@@ -1,107 +1,201 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Simple Payroll System</title>
+  <title>HR System</title>
   <style>
-    body {
-      font-family: Arial;
-      padding:20px;
-      background:#f5f5f5;
-    }
-
-    h2 {color:#333;}
-
-    input {
-      padding:8px;
-      margin:5px;
-      width:150px;
-    }
+    body {font-family: Arial; padding:20px; background:#eef3ff;}
+    h2 {border-bottom:3px solid blue;}
 
     button {
-      padding:10px;
-      background:green;
-      color:white;
-      border:none;
-      cursor:pointer;
+      padding:10px; margin:5px;
+      border:none; color:white;
+      border-radius:5px; cursor:pointer;
     }
 
-    button:hover {
-      background:darkgreen;
+    .nav {background:green;}
+    .add {background:green;}
+    .update {background:orange;}
+    .delete {background:red;}
+    .edit {background:gray;}
+
+    .box {
+      border:2px solid blue;
+      padding:15px;
+      border-radius:10px;
+      background:white;
+    }
+
+    input, select {
+      padding:8px; margin:5px; width:180px;
     }
 
     table {
-      width:100%;
-      margin-top:20px;
+      width:100%; margin-top:20px;
       border-collapse:collapse;
       background:white;
+      border:2px solid blue;
+      font-size:12px;
     }
 
     th, td {
       border:1px solid #ccc;
-      padding:10px;
+      padding:8px;
       text-align:center;
     }
 
-    th {
-      background:#333;
-      color:white;
-    }
+    th {background:blue; color:white;}
   </style>
 </head>
 <body>
 
-<h2>💰 Automated Payroll System</h2>
+<h2>👥 Employee Master List</h2>
 
-<input type="text" id="name" placeholder="Employee Name">
-<input type="number" id="rate" placeholder="Daily Rate">
-<input type="number" id="days" placeholder="Days Worked">
-<input type="number" id="deduction" placeholder="Deductions">
+<button class="nav" onclick="goPayroll()">Go to Payroll 💰</button>
 
-<br>
+<div class="box">
 
-<button onclick="addEmployee()">Add Employee</button>
+<input id="fname" placeholder="First Name">
+<input id="mname" placeholder="Middle Name">
+<input id="lname" placeholder="Last Name"><br>
+
+<input type="date" id="birthday">
+<input id="age" placeholder="Age" readonly><br>
+
+<input id="empid" placeholder="Employee ID">
+
+<select id="bank">
+<option value="">Bank</option>
+<option>BDO</option>
+<option>BPI</option>
+<option>Metrobank</option>
+<option>Landbank</option>
+</select>
+
+<input id="bankAccount" placeholder="Account Number"><br>
+
+<input id="sss" placeholder="SSS">
+<input id="philhealth" placeholder="PhilHealth">
+<input id="pagibig" placeholder="Pag-IBIG"><br>
+
+<button class="add" onclick="add()">Add</button>
+<button class="update" onclick="update()">Update</button>
+<button onclick="location.reload()">Refresh</button>
+
+</div>
 
 <table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Gross Pay</th>
-      <th>Deductions</th>
-      <th>Net Pay</th>
-    </tr>
-  </thead>
-  <tbody id="payrollTable"></tbody>
+<tr>
+<th>First</th>
+<th>Middle</th>
+<th>Last</th>
+<th>Age</th>
+<th>ID</th>
+<th>Bank</th>
+<th>Account</th>
+<th>SSS</th>
+<th>PhilHealth</th>
+<th>Pag-IBIG</th>
+<th>Action</th>
+</tr>
+<tbody id="table"></tbody>
 </table>
 
 <script>
-function addEmployee() {
-  let name = document.getElementById("name").value;
-  let rate = parseFloat(document.getElementById("rate").value) || 0;
-  let days = parseFloat(document.getElementById("days").value) || 0;
-  let deduction = parseFloat(document.getElementById("deduction").value) || 0;
+let data = JSON.parse(localStorage.getItem("employees")) || [];
+let editIndex = -1;
 
-  let gross = rate * days;
-  let net = gross - deduction;
+birthday.onchange = function(){
+  let b = new Date(this.value);
+  let t = new Date();
+  let ageVal = t.getFullYear() - b.getFullYear();
+  age.value = ageVal;
+};
 
-  let table = document.getElementById("payrollTable");
-
-  let row = `
-    <tr>
-      <td>${name}</td>
-      <td>${gross.toFixed(2)}</td>
-      <td>${deduction.toFixed(2)}</td>
-      <td>${net.toFixed(2)}</td>
-    </tr>
-  `;
-
-  table.innerHTML += row;
-
-  // clear inputs after add
-  document.getElementById("name").value = "";
-  document.getElementById("rate").value = "";
-  document.getElementById("days").value = "";
-  document.getElementById("deduction").value = "";
+function save(){
+  localStorage.setItem("employees", JSON.stringify(data));
 }
+
+function render(){
+  table.innerHTML="";
+  data.forEach((e,i)=>{
+    table.innerHTML += `
+    <tr>
+      <td>${e.fname}</td>
+      <td>${e.mname}</td>
+      <td>${e.lname}</td>
+      <td>${e.age}</td>
+      <td>${e.empid}</td>
+      <td>${e.bank}</td>
+      <td>${e.bankAccount}</td>
+      <td>${e.sss}</td>
+      <td>${e.philhealth}</td>
+      <td>${e.pagibig}</td>
+      <td>
+        <button class="edit" onclick="edit(${i})">Edit</button>
+        <button class="delete" onclick="del(${i})">Delete</button>
+      </td>
+    </tr>`;
+  });
+}
+
+function getForm(){
+  return {
+    fname: fname.value,
+    mname: mname.value,
+    lname: lname.value,
+    birthday: birthday.value,
+    age: age.value,
+    empid: empid.value,
+    bank: bank.value,
+    bankAccount: bankAccount.value,
+    sss: sss.value,
+    philhealth: philhealth.value,
+    pagibig: pagibig.value
+  };
+}
+
+function add(){
+  data.push(getForm());
+  save(); render(); clear();
+}
+
+function edit(i){
+  let e=data[i]; editIndex=i;
+  fname.value=e.fname;
+  mname.value=e.mname;
+  lname.value=e.lname;
+  birthday.value=e.birthday;
+  age.value=e.age;
+  empid.value=e.empid;
+  bank.value=e.bank;
+  bankAccount.value=e.bankAccount;
+  sss.value=e.sss;
+  philhealth.value=e.philhealth;
+  pagibig.value=e.pagibig;
+}
+
+function update(){
+  if(editIndex==-1) return;
+  data[editIndex]=getForm();
+  save(); render(); clear();
+  editIndex=-1;
+}
+
+function del(i){
+  data.splice(i,1);
+  save(); render();
+}
+
+function clear(){
+  document.querySelectorAll("input").forEach(i=>i.value="");
+  bank.value="";
+}
+
+function goPayroll(){
+  window.location.href="payroll.html";
+}
+
+render();
 </script>
 
 </body>

@@ -49,9 +49,9 @@
 <br><br>
 
 <select id="emp"></select>
-<input id="rate" placeholder="Rate">
-<input id="days" placeholder="Days">
-<input id="deduction" placeholder="Deduction">
+<input id="rate" placeholder="Daily Rate">
+<input id="days" placeholder="Days Worked">
+<input id="deduction" placeholder="Other Deduction">
 
 <button class="compute" onclick="compute()">Compute</button>
 
@@ -59,7 +59,7 @@
 <tr>
 <th>Name</th>
 <th>Gross</th>
-<th>Deduction</th>
+<th>Deductions</th>
 <th>Net</th>
 </tr>
 <tbody id="table"></tbody>
@@ -75,7 +75,9 @@ function back(){
 function load(){
   emp.innerHTML="<option>Select Employee</option>";
   data.forEach((e,i)=>{
-    emp.innerHTML += `<option value="${i}">${e.fname} ${e.lname}</option>`;
+    emp.innerHTML += `<option value="${i}">
+      ${e.fname} ${e.lname}
+    </option>`;
   });
 }
 
@@ -83,14 +85,17 @@ function compute(){
   let i=emp.value;
   let e=data[i];
 
-  if(!e){ alert("Select employee"); return; }
+  if(!e){
+    alert("Select employee");
+    return;
+  }
 
-  let r=+rate.value||0;
-  let d=+days.value||0;
-  let ded=+deduction.value||0;
+  let rate = +rate.value || 0;
+  let days = +days.value || 0;
+  let ded = +deduction.value || 0;
 
-  let gross=r*d;
-  let net=gross-ded;
+  let gross = rate * days;
+  let net = gross - ded;
 
   table.innerHTML += `
   <tr>
