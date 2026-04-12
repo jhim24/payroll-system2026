@@ -117,18 +117,30 @@ function view(i){
   <div class="details">
     <h3>${e.name}</h3>
 
-    <div class="line"><span>Gross</span><span>${e.gross}</span></div>
-    <div class="line"><span>OT</span><span>${e.ot}</span></div>
-    <div class="line"><span>Holiday</span><span>${e.holiday}</span></div>
-    <div class="line"><span>Leave</span><span>${e.leave}</span></div>
+    <table style="width:100%; border-collapse:collapse;">
+      <tr>
+        <th style="text-align:left;">Type</th>
+        <th style="text-align:right;">Amount</th>
+      </tr>
 
-    <br>
+      <tr><td>Gross</td><td style="text-align:right;">${e.gross}</td></tr>
+      <tr><td>OT</td><td style="text-align:right;">${e.ot}</td></tr>
+      <tr><td>Holiday</td><td style="text-align:right;">${e.holiday}</td></tr>
+      <tr><td>Leave</td><td style="text-align:right;">${e.leave}</td></tr>
 
-    <div class="line"><span>SSS</span><span>${e.sss}</span></div>
-    <div class="line"><span>PhilHealth</span><span>${e.philhealth}</span></div>
-    <div class="line"><span>Pag-IBIG</span><span>${e.pagibig}</span></div>
+      <tr><td colspan="2"><hr></td></tr>
 
-    <div class="net">Net: ${e.net}</div>
+      <tr><td>SSS</td><td style="text-align:right;">${e.sss}</td></tr>
+      <tr><td>PhilHealth</td><td style="text-align:right;">${e.philhealth}</td></tr>
+      <tr><td>Pag-IBIG</td><td style="text-align:right;">${e.pagibig}</td></tr>
+
+      <tr><td colspan="2"><hr></td></tr>
+
+      <tr>
+        <td><b>Net</b></td>
+        <td style="text-align:right; color:green;"><b>${e.net}</b></td>
+      </tr>
+    </table>
   </div>
   `;
 }
