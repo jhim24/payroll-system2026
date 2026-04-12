@@ -61,17 +61,24 @@
 <input type="date" id="birthday">
 <input id="age" placeholder="Age" readonly><br>
 
-<input id="empid" placeholder="Employee ID">
+<input id="address" placeholder="Address">
+<input id="contact" placeholder="Contact Number"><br>
+
+<input id="email" placeholder="Email">
+<input id="empid" placeholder="Employee ID"><br>
+
+<input id="passport" placeholder="Passport">
 
 <select id="bank">
-<option value="">Bank</option>
+<option value="">Select Bank</option>
 <option>BDO</option>
 <option>BPI</option>
 <option>Metrobank</option>
 <option>Landbank</option>
+<option>UnionBank</option>
 </select>
 
-<input id="bankAccount" placeholder="Account Number"><br>
+<input id="bankAccount" placeholder="Bank Account"><br>
 
 <input id="sss" placeholder="SSS">
 <input id="philhealth" placeholder="PhilHealth">
@@ -85,16 +92,11 @@
 
 <table>
 <tr>
-<th>First</th>
-<th>Middle</th>
-<th>Last</th>
-<th>Age</th>
-<th>ID</th>
-<th>Bank</th>
-<th>Account</th>
-<th>SSS</th>
-<th>PhilHealth</th>
-<th>Pag-IBIG</th>
+<th>First</th><th>Middle</th><th>Last</th>
+<th>Age</th><th>Address</th><th>Contact</th><th>Email</th>
+<th>ID</th><th>Passport</th>
+<th>Bank</th><th>Account</th>
+<th>SSS</th><th>PhilHealth</th><th>Pag-IBIG</th>
 <th>Action</th>
 </tr>
 <tbody id="table"></tbody>
@@ -104,6 +106,7 @@
 let data = JSON.parse(localStorage.getItem("employees")) || [];
 let editIndex = -1;
 
+// AGE AUTO
 birthday.onchange = function(){
   let b = new Date(this.value);
   let t = new Date();
@@ -124,7 +127,11 @@ function render(){
       <td>${e.mname}</td>
       <td>${e.lname}</td>
       <td>${e.age}</td>
+      <td>${e.address}</td>
+      <td>${e.contact}</td>
+      <td>${e.email}</td>
       <td>${e.empid}</td>
+      <td>${e.passport}</td>
       <td>${e.bank}</td>
       <td>${e.bankAccount}</td>
       <td>${e.sss}</td>
@@ -145,7 +152,11 @@ function getForm(){
     lname: lname.value,
     birthday: birthday.value,
     age: age.value,
+    address: address.value,
+    contact: contact.value,
+    email: email.value,
     empid: empid.value,
+    passport: passport.value,
     bank: bank.value,
     bankAccount: bankAccount.value,
     sss: sss.value,
@@ -166,7 +177,11 @@ function edit(i){
   lname.value=e.lname;
   birthday.value=e.birthday;
   age.value=e.age;
+  address.value=e.address;
+  contact.value=e.contact;
+  email.value=e.email;
   empid.value=e.empid;
+  passport.value=e.passport;
   bank.value=e.bank;
   bankAccount.value=e.bankAccount;
   sss.value=e.sss;
