@@ -35,9 +35,7 @@ th, td {
 
 th {background:blue; color:white;}
 
-tr:hover {
-  background:#f1f1f1;
-}
+tr:hover {background:#f1f1f1;}
 
 .details {
   margin-top:20px;
@@ -54,8 +52,29 @@ tr:hover {
 
 <h2>📊 Payroll History</h2>
 
+<!-- 🔥 DASHBOARD (ADD ONLY) -->
+<div id="dashboard" style="
+background:white;
+border:2px solid blue;
+padding:15px;
+border-radius:10px;
+margin-top:10px;
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+">
+<div><b>Total Records:</b> <span id="totalRec">0</span></div>
+<div><b>Total Net:</b> ₱ <span id="totalNet">0</span></div>
+<div><b>Employees:</b> <span id="totalEmp">0</span></div>
+</div>
+
 <!-- 🔍 SEARCH -->
 <input onkeyup="searchHistory(this.value)" placeholder="Search name..." style="padding:8px; margin-top:10px; width:200px;">
+
+<!-- 📅 DATE FILTER -->
+<br><br>
+<input type="date" onchange="filterDate(this.value)">
+<button onclick="resetFilter()">Reset</button>
 
 <br>
 
@@ -72,7 +91,6 @@ tr:hover {
 <tbody id="table"></tbody>
 </table>
 
-<!-- DETAILS -->
 <div id="details" class="details"></div>
 
 <script>
@@ -85,6 +103,7 @@ function load(){
 
   if(history.length === 0){
     table.innerHTML = "<tr><td colspan='4'>No records found</td></tr>";
+    updateDashboard([]);
     return;
   }
 
@@ -98,17 +117,18 @@ function load(){
     </tr>
     `;
   });
+
+  // 🔥 ADD ONLY (dashboard update)
+  updateDashboard(history);
 }
 
-// 🔥 VIEW WITH TABLE + HIGHLIGHT + BUTTONS
+// VIEW
 function view(i){
 
-  // REMOVE OLD HIGHLIGHT
   document.querySelectorAll("#table tr").forEach(r=>{
     r.style.background="";
   });
 
-  // ADD NEW HIGHLIGHT
   let row = document.getElementById("row"+i);
   if(row) row.style.background="#d1ffd1";
 
@@ -195,6 +215,44 @@ function searchHistory(value){
     let text = cell.innerText.toLowerCase();
     r.style.display = text.includes(value.toLowerCase()) ? "" : "none";
   });
+}
+
+// 🔥 DASHBOARD FUNCTION (ADD ONLY)
+function updateDashboard(data){
+
+  document.getElementById("totalRec").innerText = data.length;
+
+  let total = 0;
+  let empSet = new Set();
+
+  data.forEach(e=>{
+    total += Number(e.net);
+    empSet.add(e.name);
+  });
+
+  document.getElementById("totalNet").innerText = total.toFixed(2);
+  document.getElementById("totalEmp").innerText = empSet.size;
+}
+
+// DATE FILTER
+function filterDate(date){
+
+  let rows = document.querySelectorAll("#table tr");
+
+  rows.forEach((r,i)=>{
+    let e = history[i];
+    if(!e) return;
+
+    r.style.display = e.date.includes(date) ? "" : "none";
+  });
+
+  let filtered = history.filter(e=>e.date.includes(date));
+  updateDashboard(filtered);
+}
+
+// RESET
+function resetFilter(){
+  load();
 }
 
 // INIT
