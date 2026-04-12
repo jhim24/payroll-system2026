@@ -1,248 +1,115 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Payroll System</title>
+<title>Payroll History</title>
 
 <style>
 body {font-family:Arial; padding:20px; background:#eef3ff;}
-h2 {border-bottom:3px solid green;}
-
-.box {
-  border:2px solid green;
-  padding:15px;
-  border-radius:10px;
-  background:white;
-}
-
-input, select {
-  padding:8px;
-  margin:5px;
-  width:160px;
-}
+h2 {border-bottom:3px solid blue;}
 
 button {
-  padding:10px;
-  margin:5px;
+  padding:8px;
   border:none;
   color:white;
   border-radius:5px;
   cursor:pointer;
 }
 
-.compute {background:green;}
 .back {background:#444;}
-.history {background:blue;}
+.delete {background:red;}
 
 table {
   width:100%;
-  margin-top:20px;
   border-collapse:collapse;
+  margin-top:20px;
   background:white;
+  border:2px solid blue;
 }
 
 th, td {
   border:1px solid #ccc;
-  padding:8px;
+  padding:10px;
   text-align:center;
 }
 
-th {background:green; color:white;}
+th {background:blue; color:white;}
+
+.details {
+  margin-top:20px;
+  padding:20px;
+  border:2px solid green;
+  border-radius:10px;
+  background:white;
+}
 </style>
 </head>
 
 <body>
 
-<h2>💰 Payroll System</h2>
+<h2>📊 Payroll History</h2>
 
-<button class="back" onclick="back()">⬅ Back</button>
-<button class="history" onclick="goHistory()">History</button>
-
-<div class="box">
-
-<select id="emp"></select><br>
-
-<input id="rate" placeholder="Daily Rate">
-<input id="days" placeholder="Days Worked"><br>
-
-<input id="ot" placeholder="OT Hours">
-<input id="holiday" placeholder="Holiday"><br>
-
-<input id="vac" placeholder="Vacation">
-<input id="sick" placeholder="Sick">
-<input id="bday" placeholder="Birthday"><br>
-
-<input id="sss" placeholder="SSS">
-<input id="philhealth" placeholder="PhilHealth">
-<input id="pagibig" placeholder="Pag-IBIG"><br>
-
-<button class="compute" onclick="compute()">Compute Salary</button>
-<button onclick="openPayslip()">Payslip 🧾</button>
-
-</div>
+<button class="back" onclick="window.location.href='payroll.html'">⬅ Back</button>
 
 <table>
 <tr>
 <th>Name</th>
-<th>Gross</th>
-<th>OT</th>
-<th>Holiday</th>
-<th>Vacation</th>
-<th>Sick</th>
-<th>Birthday</th>
-<th>SSS</th>
-<th>PhilHealth</th>
-<th>Pag-IBIG</th>
 <th>Net</th>
+<th>Date</th>
+<th>Action</th>
 </tr>
+
 <tbody id="table"></tbody>
 </table>
 
+<div id="details" class="details"></div>
+
 <script>
 
-// LOAD EMPLOYEES
-let data = JSON.parse(localStorage.getItem("employees")) || [];
-let lastPayslip = null;
+let history = JSON.parse(localStorage.getItem("history")) || [];
 
-// DROPDOWN
-let emp = document.getElementById("emp");
-emp.innerHTML = "<option value=''>Select Employee</option>";
+function load(){
+  table.innerHTML = "";
 
-data.forEach((e,i)=>{
-  emp.innerHTML += `<option value="${i}">
-    ${e.fname} ${e.lname}
-  </option>`;
-});
-
-// NAV
-function back(){
-  window.location.href="index.html";
-}
-
-function goHistory(){
-  window.location.href="history.html";
-}
-
-// ✅ FIXED COMPUTE + HISTORY SAVE
-function compute(){
-
-  let i = document.getElementById("emp").value;
-
-  if(i===""){
-    alert("Select employee");
-    return;
-  }
-
-  let e = data[i];
-
-  let rateVal = Number(document.getElementById("rate").value) || 0;
-  let daysVal = Number(document.getElementById("days").value) || 0;
-
-  if(rateVal===0 || daysVal===0){
-    alert("Enter rate & days");
-    return;
-  }
-
-  let otVal = Number(document.getElementById("ot").value) || 0;
-  let holidayVal = Number(document.getElementById("holiday").value) || 0;
-
-  let vacVal = Number(document.getElementById("vac").value) || 0;
-  let sickVal = Number(document.getElementById("sick").value) || 0;
-  let bdayVal = Number(document.getElementById("bday").value) || 0;
-
-  let sssVal = Number(document.getElementById("sss").value) || 0;
-  let philVal = Number(document.getElementById("philhealth").value) || 0;
-  let pagVal = Number(document.getElementById("pagibig").value) || 0;
-
-  // COMPUTE
-  let gross = rateVal * daysVal;
-  let otPay = (rateVal / 8) * otVal * 1.25;
-  let holidayPay = holidayVal * rateVal * 2;
-
-  let vacPay = vacVal * rateVal;
-  let sickPay = sickVal * rateVal;
-  let bdayPay = bdayVal * rateVal;
-
-  let totalIncome = gross + otPay + holidayPay + vacPay + sickPay + bdayPay;
-  let totalDed = sssVal + philVal + pagVal;
-
-  let net = totalIncome - totalDed;
-
-  // SAVE FOR PAYSLIP
-  lastPayslip = {
-    name: e.fname + " " + e.lname,
-    gross, otPay, holidayPay,
-    vacPay, sickPay, bdayPay,
-    sss: sssVal,
-    philhealth: philVal,
-    pagibig: pagVal,
-    net
-  };
-
-  // 🔥 SAVE HISTORY (FIXED KEYS)
-  let history = JSON.parse(localStorage.getItem("history")) || [];
-
-  history.push({
-    name: lastPayslip.name,
-    gross: gross.toFixed(2),
-    ot: otPay.toFixed(2),
-    holiday: holidayPay.toFixed(2),
-    vac: vacPay.toFixed(2),
-    sick: sickPay.toFixed(2),
-    bday: bdayPay.toFixed(2),
-    sss: sssVal.toFixed(2),
-    philhealth: philVal.toFixed(2),
-    pagibig: pagVal.toFixed(2),
-    net: net.toFixed(2),
-    date: new Date().toLocaleString()
+  history.forEach((e,i)=>{
+    table.innerHTML += `
+    <tr>
+      <td onclick="view(${i})">${e.name}</td>
+      <td>${e.net}</td>
+      <td>${e.date}</td>
+      <td><button class="delete" onclick="del(${i})">Delete</button></td>
+    </tr>
+    `;
   });
+}
 
-  localStorage.setItem("history", JSON.stringify(history));
+function view(i){
+  let e = history[i];
 
-  // DISPLAY
-  let table = document.getElementById("table");
-
-  table.innerHTML += `
-  <tr>
-    <td>${lastPayslip.name}</td>
-    <td>${gross.toFixed(2)}</td>
-    <td>${otPay.toFixed(2)}</td>
-    <td>${holidayPay.toFixed(2)}</td>
-    <td>${vacPay.toFixed(2)}</td>
-    <td>${sickPay.toFixed(2)}</td>
-    <td>${bdayPay.toFixed(2)}</td>
-    <td>${sssVal.toFixed(2)}</td>
-    <td>${philVal.toFixed(2)}</td>
-    <td>${pagVal.toFixed(2)}</td>
-    <td><b>${net.toFixed(2)}</b></td>
-  </tr>
+  details.innerHTML = `
+  <h3>${e.name}</h3>
+  <p>Gross: ${e.gross}</p>
+  <p>OT: ${e.ot}</p>
+  <p>Holiday: ${e.holiday}</p>
+  <p>Vacation: ${e.vac}</p>
+  <p>Sick: ${e.sick}</p>
+  <p>Birthday: ${e.bday}</p>
+  <p>SSS: ${e.sss}</p>
+  <p>PhilHealth: ${e.philhealth}</p>
+  <p>Pag-IBIG: ${e.pagibig}</p>
+  <h3>Net: ${e.net}</h3>
   `;
-
-  alert("Salary Computed & Saved!");
 }
 
-// PAYSLIP
-function openPayslip(){
-
-  if(!lastPayslip){
-    alert("Compute salary first!");
-    return;
+function del(i){
+  if(confirm("Delete?")){
+    history.splice(i,1);
+    localStorage.setItem("history", JSON.stringify(history));
+    load();
+    details.innerHTML="";
   }
-
-  let p = lastPayslip;
-
-  let win = window.open("", "", "width=800,height=600");
-
-  win.document.write(`
-  <html>
-  <body>
-  <h2>Payslip</h2>
-  <p>${p.name}</p>
-  <p>Net: ${p.net}</p>
-  <button onclick="window.print()">Print</button>
-  </body>
-  </html>
-  `);
 }
+
+load();
 
 </script>
 
