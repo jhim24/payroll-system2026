@@ -114,37 +114,33 @@ function view(i){
   let e = history[i];
 
   details.innerHTML = `
-  <div class="details">
-    <h3>${e.name}</h3>
+  <table style="width:100%; border-collapse:collapse; margin-top:20px; border:2px solid green;">
+    <tr style="background:green; color:white;">
+      <th>Name</th>
+      <th>Gross</th>
+      <th>OT</th>
+      <th>Holiday</th>
+      <th>Leave</th>
+      <th>SSS</th>
+      <th>PhilHealth</th>
+      <th>Pag-IBIG</th>
+      <th>Net</th>
+    </tr>
 
-    <table style="width:100%; border-collapse:collapse;">
-      <tr>
-        <th style="text-align:left;">Type</th>
-        <th style="text-align:right;">Amount</th>
-      </tr>
-
-      <tr><td>Gross</td><td style="text-align:right;">${e.gross}</td></tr>
-      <tr><td>OT</td><td style="text-align:right;">${e.ot}</td></tr>
-      <tr><td>Holiday</td><td style="text-align:right;">${e.holiday}</td></tr>
-      <tr><td>Leave</td><td style="text-align:right;">${e.leave}</td></tr>
-
-      <tr><td colspan="2"><hr></td></tr>
-
-      <tr><td>SSS</td><td style="text-align:right;">${e.sss}</td></tr>
-      <tr><td>PhilHealth</td><td style="text-align:right;">${e.philhealth}</td></tr>
-      <tr><td>Pag-IBIG</td><td style="text-align:right;">${e.pagibig}</td></tr>
-
-      <tr><td colspan="2"><hr></td></tr>
-
-      <tr>
-        <td><b>Net</b></td>
-        <td style="text-align:right; color:green;"><b>${e.net}</b></td>
-      </tr>
-    </table>
-  </div>
+    <tr>
+      <td>${e.name}</td>
+      <td>${e.gross}</td>
+      <td>${e.ot}</td>
+      <td>${e.holiday}</td>
+      <td>${e.leave}</td>
+      <td>${e.sss}</td>
+      <td>${e.philhealth}</td>
+      <td>${e.pagibig}</td>
+      <td><b style="color:green;">${e.net}</b></td>
+    </tr>
+  </table>
   `;
 }
-
 // DELETE
 function del(i){
   if(confirm("Delete this record?")){
