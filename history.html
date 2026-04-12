@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Payroll History</title>
+
   <style>
     body {
       font-family: Arial;
@@ -19,9 +20,10 @@
       color:white;
       border-radius:5px;
       cursor:pointer;
+      margin:5px;
     }
 
-    .back {background:#444; margin-bottom:10px;}
+    .back {background:#444;}
     .delete {background:red;}
 
     table {
@@ -50,17 +52,16 @@
     .details {
       margin-top:20px;
       padding:20px;
-      border:2px solid blue;
+      border:2px solid green;
       border-radius:10px;
       background:white;
-      max-width:500px;
     }
 
     .line {
       display:flex;
       justify-content:space-between;
-      padding:5px 0;
       border-bottom:1px dashed #ccc;
+      padding:5px 0;
     }
 
     .net {
@@ -71,6 +72,7 @@
     }
   </style>
 </head>
+
 <body>
 
 <h2>📊 Payroll History</h2>
@@ -84,28 +86,38 @@
 <th>Date</th>
 <th>Action</th>
 </tr>
+
 <tbody id="table"></tbody>
 </table>
 
-<div id="details"></div>
+<div id="details" class="details"></div>
 
 <script>
+
+// LOAD HISTORY
 let history = JSON.parse(localStorage.getItem("history")) || [];
 
 // LOAD TABLE
 function load(){
+  let table = document.getElementById("table");
   table.innerHTML = "";
+
+  if(history.length === 0){
+    table.innerHTML = "<tr><td colspan='4'>No records found</td></tr>";
+    return;
+  }
 
   history.forEach((e,i)=>{
     table.innerHTML += `
     <tr>
-      <td onclick="view(${i})">${e.name}</td>
+      <td onclick="view(${i})" style="cursor:pointer;">${e.name}</td>
       <td onclick="view(${i})">${e.net}</td>
       <td onclick="view(${i})">${e.date}</td>
       <td>
         <button class="delete" onclick="del(${i})">Delete</button>
       </td>
-    </tr>`;
+    </tr>
+    `;
   });
 }
 
@@ -113,45 +125,32 @@ function load(){
 function view(i){
   let e = history[i];
 
-  details.innerHTML = `
-  <table style="width:100%; border-collapse:collapse; margin-top:20px; border:2px solid green;">
-    <tr style="background:green; color:white;">
-      <th>Name</th>
-      <th>Gross</th>
-      <th>OT</th>
-      <th>Holiday</th>
-      <th>Vacation</th>
-      <th>Sick</th>
-      <th>Birthday</th>
-      <th>SSS</th>
-      <th>PhilHealth</th>
-      <th>Pag-IBIG</th>
-      <th>Net</th>
-    </tr>
+  document.getElementById("details").innerHTML = `
+    <h3>${e.name}</h3>
 
-    <tr>
-      <td>${e.name}</td>
-      <td>${e.gross}</td>
-      <td>${e.ot}</td>
-      <td>${e.holiday}</td>
-      <td>${e.vac}</td>
-      <td>${e.sick}</td>
-      <td>${e.bday}</td>
-      <td>${e.sss}</td>
-      <td>${e.philhealth}</td>
-      <td>${e.pagibig}</td>
-      <td><b style="color:green;">${e.net}</b></td>
-    </tr>
-  </table>
+    <div class="line"><span>Gross</span><span>${e.gross}</span></div>
+    <div class="line"><span>OT</span><span>${e.ot}</span></div>
+    <div class="line"><span>Holiday</span><span>${e.holiday}</span></div>
+
+    <div class="line"><span>Vacation</span><span>${e.vac}</span></div>
+    <div class="line"><span>Sick</span><span>${e.sick}</span></div>
+    <div class="line"><span>Birthday</span><span>${e.bday}</span></div>
+
+    <div class="line"><span>SSS</span><span>${e.sss}</span></div>
+    <div class="line"><span>PhilHealth</span><span>${e.philhealth}</span></div>
+    <div class="line"><span>Pag-IBIG</span><span>${e.pagibig}</span></div>
+
+    <div class="net">Net: ${e.net}</div>
   `;
 }
+
 // DELETE
 function del(i){
   if(confirm("Delete this record?")){
     history.splice(i,1);
     localStorage.setItem("history", JSON.stringify(history));
     load();
-    details.innerHTML = "";
+    document.getElementById("details").innerHTML = "";
   }
 }
 
@@ -162,6 +161,7 @@ function back(){
 
 // INIT
 load();
+
 </script>
 
 </body>
