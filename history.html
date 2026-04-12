@@ -13,6 +13,7 @@ button {
   color:white;
   border-radius:5px;
   cursor:pointer;
+  margin:5px;
 }
 
 .back {background:#444;}
@@ -34,12 +35,17 @@ th, td {
 
 th {background:blue; color:white;}
 
+tr:hover {
+  background:#f1f1f1;
+}
+
 .details {
   margin-top:20px;
-  padding:20px;
+  padding:10px;
   border:2px solid green;
   border-radius:10px;
   background:white;
+  overflow-x:auto;
 }
 </style>
 </head>
@@ -61,54 +67,88 @@ th {background:blue; color:white;}
 <tbody id="table"></tbody>
 </table>
 
+<!-- 🔥 DETAILS TABLE OUTPUT -->
 <div id="details" class="details"></div>
 
 <script>
 
 let history = JSON.parse(localStorage.getItem("history")) || [];
 
+// LOAD TABLE
 function load(){
   table.innerHTML = "";
+
+  if(history.length === 0){
+    table.innerHTML = "<tr><td colspan='4'>No records found</td></tr>";
+    return;
+  }
 
   history.forEach((e,i)=>{
     table.innerHTML += `
     <tr>
-      <td onclick="view(${i})">${e.name}</td>
-      <td>${e.net}</td>
-      <td>${e.date}</td>
-      <td><button class="delete" onclick="del(${i})">Delete</button></td>
+      <td onclick="view(${i})" style="cursor:pointer; color:blue;">
+        ${e.name}
+      </td>
+      <td onclick="view(${i})">${e.net}</td>
+      <td onclick="view(${i})">${e.date}</td>
+      <td>
+        <button class="delete" onclick="del(${i})">Delete</button>
+      </td>
     </tr>
     `;
   });
 }
 
+// 🔥 TABLE STYLE BREAKDOWN VIEW
 function view(i){
   let e = history[i];
 
-  details.innerHTML = `
-  <h3>${e.name}</h3>
-  <p>Gross: ${e.gross}</p>
-  <p>OT: ${e.ot}</p>
-  <p>Holiday: ${e.holiday}</p>
-  <p>Vacation: ${e.vac}</p>
-  <p>Sick: ${e.sick}</p>
-  <p>Birthday: ${e.bday}</p>
-  <p>SSS: ${e.sss}</p>
-  <p>PhilHealth: ${e.philhealth}</p>
-  <p>Pag-IBIG: ${e.pagibig}</p>
-  <h3>Net: ${e.net}</h3>
+  document.getElementById("details").innerHTML = `
+  <table style="min-width:900px; border-collapse:collapse; border:2px solid green;">
+
+    <tr style="background:green; color:white;">
+      <th>Name</th>
+      <th>Gross</th>
+      <th>OT</th>
+      <th>Holiday</th>
+      <th>Vacation</th>
+      <th>Sick</th>
+      <th>Birthday</th>
+      <th>SSS</th>
+      <th>PhilHealth</th>
+      <th>Pag-IBIG</th>
+      <th>Net</th>
+    </tr>
+
+    <tr>
+      <td>${e.name}</td>
+      <td>${e.gross}</td>
+      <td>${e.ot}</td>
+      <td>${e.holiday}</td>
+      <td>${e.vac}</td>
+      <td>${e.sick}</td>
+      <td>${e.bday}</td>
+      <td>${e.sss}</td>
+      <td>${e.philhealth}</td>
+      <td>${e.pagibig}</td>
+      <td><b style="color:green;">${e.net}</b></td>
+    </tr>
+
+  </table>
   `;
 }
 
+// DELETE
 function del(i){
-  if(confirm("Delete?")){
+  if(confirm("Delete this record?")){
     history.splice(i,1);
     localStorage.setItem("history", JSON.stringify(history));
     load();
-    details.innerHTML="";
+    details.innerHTML = "";
   }
 }
 
+// INIT
 load();
 
 </script>
