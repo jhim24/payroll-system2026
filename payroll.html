@@ -1,27 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Payroll Test</title>
+  <title>Payroll System</title>
 </head>
 <body>
 
-<h2>💰 Payroll Test (Working)</h2>
+<h2>💰 Payroll System (Advanced)</h2>
+
+<button onclick="back()">⬅ Back</button>
+
+<br><br>
 
 <select id="emp"></select><br><br>
 
-<input id="rate" type="number" placeholder="Rate"><br>
-<input id="days" type="number" placeholder="Days"><br>
+<input id="rate" type="number" placeholder="Daily Rate"><br>
+<input id="days" type="number" placeholder="Days Worked"><br>
 
-<button onclick="compute()">Compute</button>
+<input id="ot" type="number" placeholder="OT Hours"><br>
+<input id="holiday" type="number" placeholder="Holiday Days"><br>
+
+<input id="sick" type="number" placeholder="Sick Leave"><br>
+<input id="vac" type="number" placeholder="Vacation Leave"><br>
+<input id="bday" type="number" placeholder="Birthday Leave (1 or 0)"><br><br>
+
+<button onclick="compute()">Compute Salary</button>
 
 <h3 id="result"></h3>
 
 <script>
 let data = JSON.parse(localStorage.getItem("employees")) || [];
 
-// LOAD EMPLOYEE
+// LOAD EMPLOYEES
 let select = document.getElementById("emp");
-select.innerHTML = "<option value=''>Select</option>";
+select.innerHTML = "<option value=''>Select Employee</option>";
 
 data.forEach((e,i)=>{
   select.innerHTML += `<option value="${i}">
@@ -29,21 +40,63 @@ data.forEach((e,i)=>{
   </option>`;
 });
 
-// COMPUTE (SIMPLE VERSION)
+// BACK
+function back(){
+  window.location.href = "index.html";
+}
+
+// COMPUTE (WORKING VERSION)
 function compute(){
   let index = document.getElementById("emp").value;
-  let rate = document.getElementById("rate").value;
-  let days = document.getElementById("days").value;
 
   if(index === ""){
     alert("Select employee");
     return;
   }
 
+  let rate = parseFloat(document.getElementById("rate").value) || 0;
+  let days = parseFloat(document.getElementById("days").value) || 0;
+  let ot = parseFloat(document.getElementById("ot").value) || 0;
+  let holiday = parseFloat(document.getElementById("holiday").value) || 0;
+  let sick = parseFloat(document.getElementById("sick").value) || 0;
+  let vac = parseFloat(document.getElementById("vac").value) || 0;
+  let bday = parseFloat(document.getElementById("bday").value) || 0;
+
+  // BASIC
   let gross = rate * days;
 
-  document.getElementById("result").innerHTML =
-    "Gross Pay: " + gross;
+  // OT (1.25x)
+  let hourly = rate / 8;
+  let otPay = ot * hourly * 1.25;
+
+  // HOLIDAY (double pay)
+  let holidayPay = holiday * rate * 2;
+
+  // LEAVES (paid)
+  let leavePay = (sick + vac + bday) * rate;
+
+  let totalIncome = gross + otPay + holidayPay + leavePay;
+
+  // DEDUCTIONS
+  let sss = totalIncome * 0.045;
+  let philhealth = totalIncome * 0.03;
+  let pagibig = 100;
+
+  let totalDed = sss + philhealth + pagibig;
+  let net = totalIncome - totalDed;
+
+  document.getElementById("result").innerHTML = `
+    Gross: ${gross.toFixed(2)} <br>
+    OT Pay: ${otPay.toFixed(2)} <br>
+    Holiday Pay: ${holidayPay.toFixed(2)} <br>
+    Leave Pay: ${leavePay.toFixed(2)} <br><br>
+
+    SSS: ${sss.toFixed(2)} <br>
+    PhilHealth: ${philhealth.toFixed(2)} <br>
+    Pag-IBIG: ${pagibig.toFixed(2)} <br><br>
+
+    <b>Net Pay: ${net.toFixed(2)}</b>
+  `;
 }
 </script>
 
