@@ -2,32 +2,111 @@
 <html>
 <head>
   <title>Payroll System</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding:20px;
+      background:#fff7f0;
+    }
+
+    h2 {
+      border-bottom:3px solid green;
+      padding-bottom:5px;
+    }
+
+    .box {
+      border:2px solid green;
+      padding:15px;
+      border-radius:10px;
+      background:white;
+      margin-bottom:20px;
+    }
+
+    input, select {
+      padding:8px;
+      margin:5px;
+      width:180px;
+      border-radius:5px;
+      border:1px solid #ccc;
+    }
+
+    button {
+      padding:10px;
+      margin:5px;
+      border:none;
+      color:white;
+      border-radius:5px;
+      cursor:pointer;
+    }
+
+    .back {background:#444;}
+    .compute {background:green;}
+
+    table {
+      width:100%;
+      border-collapse:collapse;
+      border:2px solid green;
+      background:white;
+    }
+
+    th, td {
+      border:1px solid #ccc;
+      padding:10px;
+      text-align:center;
+    }
+
+    th {
+      background:green;
+      color:white;
+    }
+  </style>
 </head>
 <body>
 
-<h2>💰 Payroll System (Advanced + Deductions)</h2>
+<h2>💰 Payroll System (Manual Deduction)</h2>
 
-<button onclick="back()">⬅ Back</button>
+<button class="back" onclick="back()">⬅ Back</button>
 
-<br><br>
+<div class="box">
 
-<select id="emp"></select><br><br>
+<select id="emp"></select><br>
 
-<input id="rate" type="number" placeholder="Daily Rate"><br>
+<input id="rate" type="number" placeholder="Daily Rate">
 <input id="days" type="number" placeholder="Days Worked"><br>
 
-<input id="ot" type="number" placeholder="OT Hours"><br>
+<input id="ot" type="number" placeholder="OT Hours">
 <input id="holiday" type="number" placeholder="Holiday Days"><br>
 
-<input id="leave" type="number" placeholder="Total Leave Days"><br><br>
+<input id="leave" type="number" placeholder="Leave Days"><br>
 
-<button onclick="compute()">Compute</button>
+<!-- 🔥 MANUAL GOVERNMENT -->
+<input id="sss" type="number" placeholder="SSS Deduction">
+<input id="philhealth" type="number" placeholder="PhilHealth">
+<input id="pagibig" type="number" placeholder="Pag-IBIG"><br>
 
-<h3 id="result"></h3>
+<button class="compute" onclick="compute()">Compute Salary</button>
+
+</div>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Gross</th>
+<th>OT</th>
+<th>Holiday</th>
+<th>Leave</th>
+<th>SSS</th>
+<th>PhilHealth</th>
+<th>Pag-IBIG</th>
+<th>Net</th>
+</tr>
+<tbody id="table"></tbody>
+</table>
 
 <script>
 let data = JSON.parse(localStorage.getItem("employees")) || [];
 
+// LOAD EMPLOYEES
 let select = document.getElementById("emp");
 select.innerHTML = "<option value=''>Select Employee</option>";
 
@@ -37,10 +116,12 @@ data.forEach((e,i)=>{
   </option>`;
 });
 
+// BACK
 function back(){
   window.location.href = "index.html";
 }
 
+// COMPUTE
 function compute(){
   let index = document.getElementById("emp").value;
 
@@ -56,6 +137,10 @@ function compute(){
   let ot = parseFloat(document.getElementById("ot").value) || 0;
   let holiday = parseFloat(document.getElementById("holiday").value) || 0;
   let leave = parseFloat(document.getElementById("leave").value) || 0;
+
+  let sss = parseFloat(document.getElementById("sss").value) || 0;
+  let philhealth = parseFloat(document.getElementById("philhealth").value) || 0;
+  let pagibig = parseFloat(document.getElementById("pagibig").value) || 0;
 
   if(rate === 0 || days === 0){
     alert("Enter rate and days");
@@ -74,12 +159,8 @@ function compute(){
 
   let totalIncome = gross + otPay + holidayPay + leavePay;
 
-  // 💰 DEDUCTIONS
-  let sss = totalIncome * 0.045;
-  let philhealth = totalIncome * 0.03;
-  let pagibig = 100;
-
   let totalDed = sss + philhealth + pagibig;
+
   let net = totalIncome - totalDed;
 
   // SAVE HISTORY
@@ -93,17 +174,21 @@ function compute(){
 
   localStorage.setItem("history", JSON.stringify(history));
 
-  document.getElementById("result").innerHTML = `
-    Gross: ${gross.toFixed(2)} <br>
-    OT: ${otPay.toFixed(2)} <br>
-    Holiday: ${holidayPay.toFixed(2)} <br>
-    Leave: ${leavePay.toFixed(2)} <br><br>
+  // DISPLAY
+  let table = document.getElementById("table");
 
-    SSS: ${sss.toFixed(2)} <br>
-    PhilHealth: ${philhealth.toFixed(2)} <br>
-    Pag-IBIG: ${pagibig.toFixed(2)} <br><br>
-
-    <b>Net Salary: ${net.toFixed(2)}</b>
+  table.innerHTML += `
+    <tr>
+      <td>${e.fname} ${e.lname}</td>
+      <td>${gross.toFixed(2)}</td>
+      <td>${otPay.toFixed(2)}</td>
+      <td>${holidayPay.toFixed(2)}</td>
+      <td>${leavePay.toFixed(2)}</td>
+      <td>${sss.toFixed(2)}</td>
+      <td>${philhealth.toFixed(2)}</td>
+      <td>${pagibig.toFixed(2)}</td>
+      <td><b>${net.toFixed(2)}</b></td>
+    </tr>
   `;
 }
 </script>
