@@ -54,8 +54,8 @@ th {background:green; color:white;}
 
 <h2>💰 Payroll System</h2>
 
-<button class="back" onclick="back()">⬅ Back</button>
-<button class="history" onclick="goHistory()">History</button>
+<button class="back" onclick="window.location.href='index.html'">⬅ Back</button>
+<button class="history" onclick="window.location.href='history.html'">History</button>
 
 <div class="box">
 
@@ -103,7 +103,7 @@ th {background:green; color:white;}
 let data = JSON.parse(localStorage.getItem("employees")) || [];
 let lastPayslip = null;
 
-// LOAD DROPDOWN
+// DROPDOWN
 let emp = document.getElementById("emp");
 emp.innerHTML = "<option value=''>Select Employee</option>";
 
@@ -113,16 +113,7 @@ data.forEach((e,i)=>{
   </option>`;
 });
 
-// NAVIGATION
-function back(){
-  window.location.href="index.html";
-}
-
-function goHistory(){
-  window.location.href="history.html";
-}
-
-// ✅ FIXED COMPUTE FUNCTION
+// COMPUTE
 function compute(){
 
   let i = document.getElementById("emp").value;
@@ -153,7 +144,6 @@ function compute(){
   let philVal = Number(document.getElementById("philhealth").value) || 0;
   let pagVal = Number(document.getElementById("pagibig").value) || 0;
 
-  // COMPUTE
   let gross = rateVal * daysVal;
   let otPay = (rateVal / 8) * otVal * 1.25;
   let holidayPay = holidayVal * rateVal * 2;
@@ -167,7 +157,6 @@ function compute(){
 
   let net = totalIncome - totalDed;
 
-  // SAVE FOR PAYSLIP
   lastPayslip = {
     name: e.fname + " " + e.lname,
     gross, otPay, holidayPay,
@@ -178,7 +167,27 @@ function compute(){
     net
   };
 
-  // DISPLAY TABLE
+  // SAVE HISTORY
+  let history = JSON.parse(localStorage.getItem("history")) || [];
+
+  history.push({
+    name: lastPayslip.name,
+    gross: gross.toFixed(2),
+    ot: otPay.toFixed(2),
+    holiday: holidayPay.toFixed(2),
+    vac: vacPay.toFixed(2),
+    sick: sickPay.toFixed(2),
+    bday: bdayPay.toFixed(2),
+    sss: sssVal.toFixed(2),
+    philhealth: philVal.toFixed(2),
+    pagibig: pagVal.toFixed(2),
+    net: net.toFixed(2),
+    date: new Date().toLocaleString()
+  });
+
+  localStorage.setItem("history", JSON.stringify(history));
+
+  // DISPLAY
   let table = document.getElementById("table");
 
   table.innerHTML += `
@@ -197,12 +206,11 @@ function compute(){
   </tr>
   `;
 
-  alert("Salary Computed!");
+  alert("Salary Computed & Saved!");
 }
 
-// 🧾 PAYSLIP
+// PAYSLIP
 function openPayslip(){
-
   if(!lastPayslip){
     alert("Compute salary first!");
     return;
@@ -213,47 +221,10 @@ function openPayslip(){
   let win = window.open("", "", "width=800,height=600");
 
   win.document.write(`
-  <html>
-  <head>
-  <title>Payslip</title>
-  <style>
-  body {font-family:Arial; padding:20px;}
-  h2 {text-align:center;}
-  table {width:100%; border-collapse:collapse;}
-  td,th {border:1px solid #ccc; padding:10px;}
-  th {background:#eee;}
-  .net {color:green; font-weight:bold;}
-  </style>
-  </head>
-
-  <body>
-
-  <h2>🧾 COMPANY PAYSLIP</h2>
-
-  <p><b>Employee:</b> ${p.name}</p>
-
-  <table>
-    <tr><th>Earnings</th><th>Amount</th></tr>
-    <tr><td>Gross</td><td>${p.gross}</td></tr>
-    <tr><td>OT</td><td>${p.otPay}</td></tr>
-    <tr><td>Holiday</td><td>${p.holidayPay}</td></tr>
-    <tr><td>Vacation</td><td>${p.vacPay}</td></tr>
-    <tr><td>Sick</td><td>${p.sickPay}</td></tr>
-    <tr><td>Birthday</td><td>${p.bdayPay}</td></tr>
-
-    <tr><th>Deductions</th><th></th></tr>
-    <tr><td>SSS</td><td>${p.sss}</td></tr>
-    <tr><td>PhilHealth</td><td>${p.philhealth}</td></tr>
-    <tr><td>Pag-IBIG</td><td>${p.pagibig}</td></tr>
-
-    <tr><td><b>Net Salary</b></td><td class="net">${p.net}</td></tr>
-  </table>
-
-  <br><br>
-  <button onclick="window.print()">🖨️ Print</button>
-
-  </body>
-  </html>
+  <h2>Payslip</h2>
+  <p>${p.name}</p>
+  <p>Net: ${p.net}</p>
+  <button onclick="window.print()">Print</button>
   `);
 }
 
