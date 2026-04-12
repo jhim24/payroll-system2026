@@ -125,6 +125,11 @@ function goHistory(){
 if(localStorage.getItem("login") !== "true"){
   window.location.href = "login.html";
 }
+  // 🔐 LOGOUT FIX (ADD ONLY)
+window.logout = function(){
+  localStorage.removeItem("login");
+  window.location.href = "login.html";
+}
 </script>
 
 </body>
