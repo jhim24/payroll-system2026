@@ -269,6 +269,17 @@ function goPayroll(){
 }
 
 render();
+  function search(col, value){
+  let rows = document.querySelectorAll("#table tr");
+
+  rows.forEach(r=>{
+    let cell = r.children[col];
+    if(!cell) return;
+
+    let text = cell.innerText.toLowerCase();
+    r.style.display = text.includes(value.toLowerCase()) ? "" : "none";
+  });
+}
 </script>
 
 </body>
