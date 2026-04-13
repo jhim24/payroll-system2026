@@ -150,73 +150,31 @@
       color:white !important;
     }
 
-    /* ========================= */
-    /* 📱 MOBILE (ADD ONLY) */
-    /* ========================= */
     @media (max-width:768px){
-
       .sidebar {
         position:relative !important;
         width:100% !important;
-        height:auto !important;
         display:flex !important;
-        justify-content:space-around !important;
-        align-items:center !important;
-        padding:10px !important;
       }
-
-      .sidebar h2 { display:none; }
-
-      .sidebar button {
-        width:auto !important;
-        font-size:12px;
-        padding:8px;
-      }
-
-      .container {
-        margin-left:0 !important;
-        padding:15px !important;
-      }
-
-      .stats {
-        width:100% !important;
-        font-size:14px;
-      }
-
-      .card {
-        display:block !important;
-        width:100% !important;
-        margin:10px auto;
-      }
-
-      header {
-        font-size:18px;
-        padding:15px;
-      }
-
-      .logout {
-        top:10px;
-        right:10px;
-        font-size:12px;
-        padding:5px 10px;
-      }
-
-      canvas {
-        width:100% !important;
-        height:auto !important;
-      }
+      .container { margin-left:0 !important; }
+      .card { display:block !important; width:100% !important; }
     }
 
-    /* 🔥 GLASS OVERLAY */
     body::before {
       content:"";
       position:fixed;
-      top:0;
-      left:0;
       width:100%;
       height:100%;
       background:rgba(0,0,0,0.3);
       z-index:-1;
+    }
+
+    /* 🔥 ADD ONLY BOX STYLE */
+    .extra-box {
+      background:rgba(0,0,0,0.5);
+      padding:15px;
+      border-radius:10px;
+      margin-top:20px;
     }
 
   </style>
@@ -255,17 +213,26 @@
   <canvas id="myChart"></canvas>
 
   <div class="buttons">
-
     <div class="card emp" onclick="goEmployee()">👥<h3>Employee List</h3></div>
     <div class="card pay" onclick="goPayroll()">💰<h3>Payroll</h3></div>
     <div class="card his" onclick="goHistory()">📊<h3>History</h3></div>
-
   </div>
 
   <br>
   <button onclick="downloadPDF()" style="padding:8px 15px; border:none; background:#444; color:white; border-radius:5px;">
     Download Report 📄
   </button>
+
+  <!-- 🔥 ADD ONLY DASHBOARD -->
+  <div class="extra-box">
+    <h3>📊 Attendance Summary</h3>
+    <canvas id="attChart"></canvas>
+  </div>
+
+  <div class="extra-box">
+    <h3>💰 Auto Payroll Preview</h3>
+    <div id="autoPay"></div>
+  </div>
 
 </div>
 
@@ -289,7 +256,6 @@ function goEmployee(){ window.location.href="employee.html"; }
 function goPayroll(){ window.location.href="payroll.html"; }
 function goHistory(){ window.location.href="history.html"; }
 
-/* ✅ ADD ONLY */
 function goAttendance(){
   window.location.href = "attendance.html";
 }
@@ -317,6 +283,7 @@ function downloadPDF(){
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
 setTimeout(()=>{
   let history = JSON.parse(localStorage.getItem("history")) || [];
@@ -333,6 +300,49 @@ setTimeout(()=>{
     }
   });
 },500);
+
+// 🔥 ADD ONLY
+setTimeout(()=>{
+  let attendance = JSON.parse(localStorage.getItem("attendance")) || [];
+
+  let present=0, late=0, absent=0;
+
+  attendance.forEach(a=>{
+    if(a.status==="Present") present++;
+    if(a.status==="Late") late++;
+    if(a.status==="Absent") absent++;
+  });
+
+  let ctx2 = document.getElementById("attChart");
+
+  if(ctx2){
+    new Chart(ctx2, {
+      type:"pie",
+      data:{
+        labels:["Present","Late","Absent"],
+        datasets:[{
+          data:[present,late,absent]
+        }]
+      }
+    });
+  }
+
+  let summary={};
+  attendance.forEach(a=>{
+    if(!summary[a.name]) summary[a.name]={p:0,l:0};
+    if(a.status==="Present") summary[a.name].p++;
+    if(a.status==="Late") summary[a.name].l++;
+  });
+
+  let output="";
+  for(let n in summary){
+    let days = summary[n].p + (summary[n].l*0.5);
+    output += `<div>${n} → ${days} days</div>`;
+  }
+
+  document.getElementById("autoPay").innerHTML = output;
+
+},1000);
 </script>
 
 </body>
