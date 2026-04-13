@@ -223,6 +223,7 @@ function render(){
 }
 
 function getForm(){
+function getForm(){
   return {
     fname: fname.value,
     mname: mname.value,
@@ -231,7 +232,7 @@ function getForm(){
     age: age.value,
     address: address.value,
     contact: contact.value,
-    email: email.value,
+    email: email.value, // ✅ FIXED
     empid: empid.value,
     passport: passport.value,
     position: position.value,
@@ -242,7 +243,6 @@ function getForm(){
     pagibig: pagibig.value
   };
 }
-
 function add(){
   let form = getForm();
 
