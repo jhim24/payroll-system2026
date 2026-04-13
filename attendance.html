@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Attendance System</title>
+  <title>Auto Attendance System</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -58,7 +58,7 @@
 
 <body>
 
-<h2>🕒 Attendance Sheet</h2>
+<h2>🕒 AUTO ATTENDANCE</h2>
 
 <button class="nav" onclick="back()">⬅ Back to Dashboard</button>
 
@@ -68,12 +68,6 @@
 <input type="date" id="date">
 <input type="time" id="timeIn">
 <input type="time" id="timeOut">
-
-<select id="status">
-  <option>Present</option>
-  <option>Late</option>
-  <option>Absent</option>
-</select>
 
 <br>
 
@@ -86,6 +80,7 @@
       <th>Date</th>
       <th>Time In</th>
       <th>Time Out</th>
+      <th>Hours</th>
       <th>Status</th>
       <th>Action</th>
     </tr>
@@ -96,18 +91,14 @@
 
 <script>
 
-// LOAD EMPLOYEES
+// LOAD DATA
 let employees = JSON.parse(localStorage.getItem("employees")) || [];
 let attendance = JSON.parse(localStorage.getItem("attendance")) || [];
 
-let empSelect = document.getElementById("emp");
-
-empSelect.innerHTML = "<option value=''>Select Employee</option>";
-
+// LOAD EMPLOYEES
+emp.innerHTML = "<option value=''>Select Employee</option>";
 employees.forEach((e,i)=>{
-  empSelect.innerHTML += `<option value="${i}">
-    ${e.fname} ${e.lname}
-  </option>`;
+  emp.innerHTML += `<option value="${i}">${e.fname} ${e.lname}</option>`;
 });
 
 // SAVE
@@ -115,27 +106,29 @@ function save(){
   localStorage.setItem("attendance", JSON.stringify(attendance));
 }
 
-// RENDER
-function render(){
-  table.innerHTML="";
+// COMPUTE HOURS
+function computeHours(inTime, outTime){
+  if(!inTime || !outTime) return 0;
 
-  attendance.forEach((a,i)=>{
-    table.innerHTML += `
-    <tr>
-      <td>${a.name}</td>
-      <td>${a.date}</td>
-      <td>${a.timeIn}</td>
-      <td>${a.timeOut}</td>
-      <td>${a.status}</td>
-      <td>
-        <button class="delete" onclick="del(${i})">Delete</button>
-      </td>
-    </tr>
-    `;
-  });
+  let start = new Date("2020-01-01 " + inTime);
+  let end = new Date("2020-01-01 " + outTime);
+
+  let diff = (end - start) / (1000 * 60 * 60);
+  return diff > 0 ? diff.toFixed(2) : 0;
 }
 
-// ADD ATTENDANCE
+// AUTO STATUS
+function getStatus(timeIn){
+  if(!timeIn) return "Absent";
+
+  let lateTime = new Date("2020-01-01 09:15"); // late after 9:15
+  let actual = new Date("2020-01-01 " + timeIn);
+
+  if(actual > lateTime) return "Late";
+  return "Present";
+}
+
+// ADD
 function add(){
 
   let index = emp.value;
@@ -147,12 +140,16 @@ function add(){
 
   let e = employees[index];
 
+  let hours = computeHours(timeIn.value, timeOut.value);
+  let status = getStatus(timeIn.value);
+
   let record = {
     name: e.fname + " " + e.lname,
     date: date.value,
     timeIn: timeIn.value,
     timeOut: timeOut.value,
-    status: status.value
+    hours: hours,
+    status: status
   };
 
   attendance.push(record);
@@ -166,6 +163,27 @@ function del(i){
   attendance.splice(i,1);
   save();
   render();
+}
+
+// RENDER
+function render(){
+  table.innerHTML="";
+
+  attendance.forEach((a,i)=>{
+    table.innerHTML += `
+    <tr>
+      <td>${a.name}</td>
+      <td>${a.date}</td>
+      <td>${a.timeIn}</td>
+      <td>${a.timeOut}</td>
+      <td>${a.hours}</td>
+      <td>${a.status}</td>
+      <td>
+        <button class="delete" onclick="del(${i})">Delete</button>
+      </td>
+    </tr>
+    `;
+  });
 }
 
 // BACK
