@@ -1,64 +1,55 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Attendance</title>
+  <title>Attendance System</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    body {
+    body{
       font-family: Arial;
       padding:20px;
       background:#eef3ff;
       text-align:center;
     }
 
-    h2 {
+    h2{
       border-bottom:3px solid blue;
     }
 
-    .box {
-      background:white;
-      border:2px solid blue;
-      padding:15px;
-      border-radius:10px;
-      margin-bottom:20px;
-    }
-
-    input, select {
+    input, select{
       padding:8px;
       margin:5px;
       width:180px;
     }
 
-    button {
+    button{
       padding:10px;
       margin:5px;
       border:none;
-      border-radius:5px;
       color:white;
+      border-radius:5px;
       cursor:pointer;
     }
 
-    .add {background:green;}
-    .back {background:#444;}
+    .add{background:green;}
+    .delete{background:red;}
+    .nav{background:blue;}
 
-    table {
+    table{
       width:100%;
+      margin-top:20px;
       border-collapse:collapse;
       background:white;
-      margin-top:20px;
-      border:2px solid blue;
+      font-size:12px;
     }
 
-    th, td {
+    th, td{
       border:1px solid #ccc;
-      padding:10px;
-      text-align:center;
+      padding:8px;
     }
 
-    th {
+    th{
       background:blue;
       color:white;
     }
@@ -67,41 +58,51 @@
 
 <body>
 
-<h2>🕒 Attendance System</h2>
+<h2>🕒 Attendance Sheet</h2>
 
-<button class="back" onclick="back()">⬅ Back</button>
+<button class="nav" onclick="back()">⬅ Back to Dashboard</button>
 
-<div class="box">
+<br><br>
 
-<select id="emp"></select><br>
-
+<select id="emp"></select>
 <input type="date" id="date">
+<input type="time" id="timeIn">
+<input type="time" id="timeOut">
+
 <select id="status">
   <option>Present</option>
-  <option>Absent</option>
   <option>Late</option>
-</select><br>
+  <option>Absent</option>
+</select>
 
-<button class="add" onclick="add()">Save Attendance</button>
+<br>
 
-</div>
+<button class="add" onclick="add()">Add Attendance</button>
 
 <table>
-<tr>
-<th>Name</th>
-<th>Date</th>
-<th>Status</th>
-<th>Action</th>
-</tr>
-<tbody id="table"></tbody>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Date</th>
+      <th>Time In</th>
+      <th>Time Out</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+
+  <tbody id="table"></tbody>
 </table>
 
 <script>
 
+// LOAD EMPLOYEES
 let employees = JSON.parse(localStorage.getItem("employees")) || [];
 let attendance = JSON.parse(localStorage.getItem("attendance")) || [];
 
 let empSelect = document.getElementById("emp");
+
+empSelect.innerHTML = "<option value=''>Select Employee</option>";
 
 employees.forEach((e,i)=>{
   empSelect.innerHTML += `<option value="${i}">
@@ -109,50 +110,70 @@ employees.forEach((e,i)=>{
   </option>`;
 });
 
+// SAVE
 function save(){
   localStorage.setItem("attendance", JSON.stringify(attendance));
 }
 
-function load(){
-  table.innerHTML = "";
+// RENDER
+function render(){
+  table.innerHTML="";
 
   attendance.forEach((a,i)=>{
     table.innerHTML += `
     <tr>
       <td>${a.name}</td>
       <td>${a.date}</td>
+      <td>${a.timeIn}</td>
+      <td>${a.timeOut}</td>
       <td>${a.status}</td>
-      <td><button onclick="del(${i})">Delete</button></td>
+      <td>
+        <button class="delete" onclick="del(${i})">Delete</button>
+      </td>
     </tr>
     `;
   });
 }
 
+// ADD ATTENDANCE
 function add(){
-  let i = emp.value;
-  let e = employees[i];
 
-  attendance.push({
+  let index = emp.value;
+
+  if(index===""){
+    alert("Select employee");
+    return;
+  }
+
+  let e = employees[index];
+
+  let record = {
     name: e.fname + " " + e.lname,
     date: date.value,
+    timeIn: timeIn.value,
+    timeOut: timeOut.value,
     status: status.value
-  });
+  };
+
+  attendance.push(record);
 
   save();
-  load();
+  render();
 }
 
+// DELETE
 function del(i){
   attendance.splice(i,1);
   save();
-  load();
+  render();
 }
 
+// BACK
 function back(){
-  window.location.href = "index.html";
+  window.location.href="index.html";
 }
 
-load();
+render();
 
 </script>
 
