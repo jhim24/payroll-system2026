@@ -229,6 +229,10 @@
   <button onclick="goEmployee()">👥 Employees</button>
   <button onclick="goPayroll()">💰 Payroll</button>
   <button onclick="goHistory()">📊 History</button>
+
+  <!-- ✅ ADD ONLY -->
+  <button onclick="goAttendance()">🕒 Attendance</button>
+
   <hr>
   <button onclick="toggleMode()">🌙 Dark Mode</button>
 </div>
@@ -284,6 +288,11 @@ document.getElementById("recCount").innerText = history.length;
 function goEmployee(){ window.location.href="employee.html"; }
 function goPayroll(){ window.location.href="payroll.html"; }
 function goHistory(){ window.location.href="history.html"; }
+
+/* ✅ ADD ONLY */
+function goAttendance(){
+  window.location.href = "attendance.html";
+}
 
 function logout(){
   localStorage.removeItem("login");
