@@ -2,7 +2,9 @@
 <html>
 <head>
   <title>HR Dashboard</title>
-
+<!-- 🔥 FIREBASE (ADD ONLY) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <!-- 🔥 ADD ONLY MOBILE VIEW -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -698,6 +700,50 @@ document.querySelector("header").appendChild(clock);
 setInterval(()=>{
   clock.innerText = new Date().toLocaleTimeString();
 },1000);
+  // ===============================
+// 🔥 FIREBASE INIT (FIXED)
+// ===============================
+const firebaseConfig = {
+  apiKey: "AIzaSyCZG7xQaHaCtD_evrziUqdKqHJsVOQf3A8",
+  authDomain: "hr-system-18fee.firebaseapp.com",
+  projectId: "hr-system-18fee",
+  storageBucket: "hr-system-18fee.firebasestorage.app",
+  messagingSenderId: "728683790974",
+  appId: "1:728683790974:web:cdd98776fe128d79228e2f"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+  // ===============================
+// 🔥 AUTO SYNC SAVE
+// ===============================
+function saveToCloud(){
+  let employees = JSON.parse(localStorage.getItem("employees")) || [];
+
+  db.collection("employees").doc("list").set({
+    data: employees
+  });
+}
+
+// AUTO SAVE EVERY 3 SEC
+setInterval(()=>{
+  saveToCloud();
+},3000);
+  // ===============================
+// 🔥 REALTIME LOAD FROM CLOUD
+// ===============================
+db.collection("employees").doc("list")
+.onSnapshot((doc)=>{
+
+  if(doc.exists){
+    let data = doc.data().data || [];
+
+    localStorage.setItem("employees", JSON.stringify(data));
+
+    console.log("🔥 Synced from Firebase");
+  }
+
+});
 </script>
 
 </body>
