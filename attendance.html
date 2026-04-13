@@ -1,1 +1,160 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Attendance</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial;
+      padding:20px;
+      background:#eef3ff;
+      text-align:center;
+    }
+
+    h2 {
+      border-bottom:3px solid blue;
+    }
+
+    .box {
+      background:white;
+      border:2px solid blue;
+      padding:15px;
+      border-radius:10px;
+      margin-bottom:20px;
+    }
+
+    input, select {
+      padding:8px;
+      margin:5px;
+      width:180px;
+    }
+
+    button {
+      padding:10px;
+      margin:5px;
+      border:none;
+      border-radius:5px;
+      color:white;
+      cursor:pointer;
+    }
+
+    .add {background:green;}
+    .back {background:#444;}
+
+    table {
+      width:100%;
+      border-collapse:collapse;
+      background:white;
+      margin-top:20px;
+      border:2px solid blue;
+    }
+
+    th, td {
+      border:1px solid #ccc;
+      padding:10px;
+      text-align:center;
+    }
+
+    th {
+      background:blue;
+      color:white;
+    }
+  </style>
+</head>
+
+<body>
+
+<h2>🕒 Attendance System</h2>
+
+<button class="back" onclick="back()">⬅ Back</button>
+
+<div class="box">
+
+<select id="emp"></select><br>
+
+<input type="date" id="date">
+<select id="status">
+  <option>Present</option>
+  <option>Absent</option>
+  <option>Late</option>
+</select><br>
+
+<button class="add" onclick="add()">Save Attendance</button>
+
+</div>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Date</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+<tbody id="table"></tbody>
+</table>
+
+<script>
+
+let employees = JSON.parse(localStorage.getItem("employees")) || [];
+let attendance = JSON.parse(localStorage.getItem("attendance")) || [];
+
+let empSelect = document.getElementById("emp");
+
+employees.forEach((e,i)=>{
+  empSelect.innerHTML += `<option value="${i}">
+    ${e.fname} ${e.lname}
+  </option>`;
+});
+
+function save(){
+  localStorage.setItem("attendance", JSON.stringify(attendance));
+}
+
+function load(){
+  table.innerHTML = "";
+
+  attendance.forEach((a,i)=>{
+    table.innerHTML += `
+    <tr>
+      <td>${a.name}</td>
+      <td>${a.date}</td>
+      <td>${a.status}</td>
+      <td><button onclick="del(${i})">Delete</button></td>
+    </tr>
+    `;
+  });
+}
+
+function add(){
+  let i = emp.value;
+  let e = employees[i];
+
+  attendance.push({
+    name: e.fname + " " + e.lname,
+    date: date.value,
+    status: status.value
+  });
+
+  save();
+  load();
+}
+
+function del(i){
+  attendance.splice(i,1);
+  save();
+  load();
+}
+
+function back(){
+  window.location.href = "index.html";
+}
+
+load();
+
+</script>
+
+</body>
+</html>
