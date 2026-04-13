@@ -94,7 +94,10 @@ th:first-child {
 <button class="nav" onclick="goPayroll()">Go to Payroll 💰</button>
 
 <div class="box">
+<br><br>
 
+<button onclick="exportData()">Export Employees 💾</button>
+<input type="file" onchange="importData(event)">
 <input id="fname" placeholder="First Name">
 <input id="mname" placeholder="Middle Name">
 <input id="lname" placeholder="Last Name"><br>
@@ -300,6 +303,37 @@ render();
 }
   if(localStorage.getItem("login") !== "true"){
   window.location.href = "login.html";
+}
+  // ===============================
+// 🔥 EXPORT / IMPORT EMPLOYEE
+// ===============================
+
+function exportData(){
+  let data = {
+    employees: localStorage.getItem("employees")
+  };
+
+  let blob = new Blob([JSON.stringify(data)], {type:"application/json"});
+  let a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "employees.json";
+  a.click();
+}
+
+function importData(e){
+  let file = e.target.files[0];
+
+  let reader = new FileReader();
+  reader.onload = function(){
+    let data = JSON.parse(reader.result);
+
+    localStorage.setItem("employees", data.employees);
+
+    alert("Employees Imported!");
+    location.reload();
+  };
+
+  reader.readAsText(file);
 }
 </script>
 
