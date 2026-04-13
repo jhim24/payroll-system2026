@@ -198,21 +198,21 @@ function render(){
   data.forEach((e,i)=>{
     table.innerHTML += `
     <tr>
-      <td>${e.fname}</td>
-      <td>${e.mname}</td>
-      <td>${e.lname}</td>
-      <td>${e.age}</td>
-      <td>${e.address}</td>
-      <td>${e.contact}</td>
-      <td>${e.email}</td>
-      <td>${e.empid}</td>
-      <td>${e.passport}</td>
-      <td>${e.position || ""}</td>
-      <td>${e.bank}</td>
-      <td>${e.bankAccount}</td>
-      <td>${e.sss}</td>
-      <td>${e.philhealth}</td>
-      <td>${e.pagibig}</td>
+      <td>${e.fname || ""}</td>
+<td>${e.mname || ""}</td>
+<td>${e.lname || ""}</td>
+<td>${e.age || ""}</td>
+<td>${e.address || ""}</td>
+<td>${e.contact || ""}</td>
+<td>${e.email || ""}</td>
+<td>${e.empid || ""}</td>
+<td>${e.passport || ""}</td>
+<td>${e.position || ""}</td>
+<td>${e.bank || ""}</td>
+<td>${e.bankAccount || ""}</td>
+<td>${e.sss || ""}</td>
+<td>${e.philhealth || ""}</td>
+<td>${e.pagibig || ""}</td>
       <td>
         <button class="edit" onclick="edit(${i})">Edit</button>
         <button class="delete" onclick="del(${i})">Delete</button>
