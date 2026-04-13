@@ -196,7 +196,17 @@ function render(){
   table.innerHTML="";
 
   data.forEach((e,i)=>{
-    table.innerHTML += `
+
+  // 🚫 SKIP BLANK DATA (FINAL FILTER)
+  if(
+    !e ||
+    (!e.fname && !e.lname && !e.email) ||
+    (e.fname === "" && e.lname === "" && e.email === "")
+  ){
+    return;
+  }
+
+  table.innerHTML += `
     <tr>
       <td>${e.fname || ""}</td>
 <td>${e.mname || ""}</td>
@@ -245,13 +255,23 @@ function getForm(){
 function add(){
   let form = getForm();
 
-  data.push(form);
-  save(); render(); clear();
+  // 🚫 BLOCK BLANK INPUT
+  if(
+    !form.fname?.trim() &&
+    !form.lname?.trim() &&
+    !form.email?.trim()
+  ){
+    alert("Empty data not allowed!");
+    return;
+  }
 
-  // 🔥 SAVE TO FIREBASE
+  data.push(form);
+  save(); 
+  render(); 
+  clear();
+
   db.collection("employees").add(form);
 }
-
 function edit(i){
   let e=data[i]; editIndex=i;
   fname.value=e.fname;
@@ -367,6 +387,21 @@ db.collection("employees").onSnapshot(snapshot => {
   });
 
   render();
+});
+  // 🔥 AUTO DELETE BLANK SA FIREBASE
+db.collection("employees").get().then(snapshot=>{
+  snapshot.forEach(doc=>{
+    let d = doc.data();
+
+    if(
+      !d ||
+      (!d.fname && !d.lname && !d.email) ||
+      (d.fname === "" && d.lname === "" && d.email === "")
+    ){
+      db.collection("employees").doc(doc.id).delete();
+      console.log("Deleted blank:", doc.id);
+    }
+  });
 });
 </script>
 
