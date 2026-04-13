@@ -403,6 +403,17 @@ db.collection("employees").get().then(snapshot=>{
     }
   });
 });
+  function safeReset(){
+  if(!confirm("Delete all employees?")) return;
+
+  localStorage.removeItem("employees");
+
+  db.collection("employees").get().then(snap=>{
+    snap.forEach(doc=> db.collection("employees").doc(doc.id).delete());
+  });
+
+  location.reload();
+}
 </script>
 
 </body>
