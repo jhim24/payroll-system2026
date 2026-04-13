@@ -343,6 +343,145 @@ setTimeout(()=>{
   document.getElementById("autoPay").innerHTML = output;
 
 },1000);
+  // ===============================
+// 🔥 AUTO TIME-IN SYSTEM (SMART)
+// ===============================
+function autoTimeInSystem(){
+  let employees = JSON.parse(localStorage.getItem("employees")) || [];
+  let attendance = JSON.parse(localStorage.getItem("attendance")) || [];
+
+  let today = new Date().toLocaleDateString();
+  let now = new Date();
+
+  employees.forEach(e=>{
+    let name = (e.fname || "") + " " + (e.lname || "");
+
+    let exist = attendance.find(a=>a.name===name && a.date===today);
+
+    if(!exist){
+      let hour = now.getHours();
+
+      let status = "Present";
+      if(hour >= 9) status = "Late";
+
+      attendance.push({
+        name: name,
+        date: today,
+        timeIn: now.toLocaleTimeString(),
+        status: status
+      });
+    }
+  });
+
+  localStorage.setItem("attendance", JSON.stringify(attendance));
+}
+
+// AUTO RUN
+setTimeout(()=>{
+  autoTimeInSystem();
+},1200);
+
+
+// ===============================
+// 🔥 AUTO PAYROLL (REAL COMPUTE)
+// ===============================
+function autoPayrollFromAttendance(){
+
+  let attendance = JSON.parse(localStorage.getItem("attendance")) || [];
+  let employees = JSON.parse(localStorage.getItem("employees")) || [];
+
+  let summary = {};
+
+  attendance.forEach(a=>{
+    if(!summary[a.name]) summary[a.name] = 0;
+
+    if(a.status==="Present") summary[a.name]+=1;
+    if(a.status==="Late") summary[a.name]+=0.5;
+  });
+
+  let output = "";
+
+  employees.forEach(e=>{
+    let name = (e.fname || "") + " " + (e.lname || "");
+    let rate = Number(e.rate || 0);
+
+    let days = summary[name] || 0;
+    let salary = days * rate;
+
+    output += `
+      <div style="padding:5px;">
+        💼 ${name}<br>
+        Days: ${days} | Salary: ₱ ${salary.toFixed(2)}
+      </div>
+    `;
+  });
+
+  let box = document.getElementById("autoPay");
+  if(box) box.innerHTML = output;
+}
+
+// AUTO RUN
+setTimeout(()=>{
+  autoPayrollFromAttendance();
+},1800);
+
+
+// ===============================
+// 🔥 AUTO ABSENT DETECTION
+// ===============================
+setTimeout(()=>{
+  let employees = JSON.parse(localStorage.getItem("employees")) || [];
+  let attendance = JSON.parse(localStorage.getItem("attendance")) || [];
+
+  let today = new Date().toLocaleDateString();
+
+  employees.forEach(e=>{
+    let name = (e.fname || "") + " " + (e.lname || "");
+
+    let exist = attendance.find(a=>a.name===name && a.date===today);
+
+    if(!exist){
+      attendance.push({
+        name:name,
+        date:today,
+        status:"Absent"
+      });
+    }
+  });
+
+  localStorage.setItem("attendance", JSON.stringify(attendance));
+},3000);
+
+
+// ===============================
+// 🔥 LIVE DASHBOARD REFRESH
+// ===============================
+setInterval(()=>{
+  let history = JSON.parse(localStorage.getItem("history")) || [];
+
+  let total = 0;
+  history.forEach(e=> total += Number(e.net || 0));
+
+  let el = document.getElementById("totalPay");
+  if(el) el.innerText = total.toFixed(2);
+
+},4000);
+
+
+// ===============================
+// 🔥 REAL-TIME CLOCK (HEADER)
+// ===============================
+let clock = document.createElement("div");
+clock.style.position="absolute";
+clock.style.right="120px";
+clock.style.top="20px";
+clock.style.fontSize="13px";
+
+document.querySelector("header").appendChild(clock);
+
+setInterval(()=>{
+  clock.innerText = new Date().toLocaleTimeString();
+},1000);
 </script>
 
 </body>
