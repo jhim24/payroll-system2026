@@ -252,6 +252,30 @@ td button {
   margin: 2px;
   width: auto;
 }
+  /* ===== FINAL TABLE FIX ===== */
+
+/* 🔥 LAHAT NG TEXT = HINDI BABABA */
+th, td {
+  white-space: nowrap !important; /* no line break */
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* 🔥 TABLE SCROLL (para hindi masira layout) */
+.table-container {
+  overflow-x: auto;
+}
+
+/* 🔥 BUTTONS SIDE BY SIDE */
+td:last-child {
+  white-space: nowrap;
+}
+
+td:last-child button {
+  display: inline-block !important;
+  margin: 2px;
+  width: auto;
+}
 </style>
   
 </head>
