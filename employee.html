@@ -66,8 +66,17 @@ table {
 
 th, td {
   border:1px solid #ccc;
-  padding:4px;
+
+  padding:4px 6px;        /* 👉 adjust row size */
   text-align:center;
+
+  white-space:normal;     /* ✅ para mag wrap */
+  word-break:break-word;  /* ✅ para hindi lumabas sa box */
+
+  line-height:1.3;        /* ✅ auto height */
+  font-size:12px;
+
+  vertical-align:top;     /* optional */
 }
 
 th {
