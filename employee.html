@@ -298,6 +298,32 @@ td:last-child button {
   display: inline-block !important;
   margin: 2px;
 }
+  /* ===== FULL READABLE TEXT FIX ===== */
+
+/* 🔥 ALLOW TEXT TO WRAP (BABABA PROPERLY) */
+th, td {
+  white-space: normal !important;   /* pwede na bumaba */
+  word-break: break-word;           /* break long words */
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* 🔥 BIGGER SPACE FOR ADDRESS */
+td:nth-child(5) { /* Address column */
+  min-width: 220px;
+}
+
+/* 🔥 OPTIONAL: email/contact */
+td:nth-child(6),
+td:nth-child(7) {
+  min-width: 160px;
+}
+
+/* 🔥 BUTTONS SIDE BY SIDE */
+td:last-child button {
+  display: inline-block !important;
+  margin: 2px;
+}
 </style>
   
 </head>
