@@ -37,17 +37,37 @@ button {
   border-radius:12px;
   background:green;
   box-shadow:0 5px 20px rgba(0,0,0,0.08);
-  padding:5px;
+  padding:10px;
+}
+
+/* 🔥 GRID SYSTEM */
+.form-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap:8px;
+}
+
+/* 🔥 UNIFORM SIZE */
+.form-grid input,
+.form-grid select{
+  width:100% !important;
+  height:35px;
+  box-sizing:border-box;
+}
+
+/* 🔥 BUTTON AREA */
+.form-actions{
+  margin-top:10px;
+  text-align:center;
 }
 
 input, select {
   padding:5px;
-  margin:5px;
-  width:180px;
   border-radius:5px;
   border:1px solid #ccc;
 }
 
+/* TABLE */
 .table-container {
   width:100%;
   overflow-x:auto;
@@ -66,18 +86,20 @@ table {
 
 th, td {
   border:1px solid #ccc;
-  padding:4px 4px;
+  padding:4px;
   text-align:center;
   white-space:normal;
   word-break:break-word;
-  line-height:1.1;
-  font-size:12px;
-  vertical-align:top;
+  line-height:1.2;
 }
 
 th {
   background:linear-gradient(to right, #4facfe, #00c6ff);
   color:white;
+}
+
+tbody tr:hover{
+  background:#f1f7ff;
 }
 </style>
 </head>
@@ -93,36 +115,39 @@ th {
 <button onclick="exportData()">Export Employees 💾</button>
 <input type="file" onchange="importData(event)">
 
+<!-- 🔥 GRID START -->
+<div class="form-grid">
+
 <input id="fname" placeholder="First Name">
 <input id="mname" placeholder="Middle Name">
-<input id="lname" placeholder="Last Name"><br>
+<input id="lname" placeholder="Last Name">
 
 <input type="date" id="birthday">
-<input id="age" placeholder="Age" readonly><br>
+<input id="age" placeholder="Age" readonly>
 
 <input id="address" placeholder="Address">
-<input id="contact" placeholder="Contact Number"><br>
+<input id="contact" placeholder="Contact Number">
 
 <input id="email" placeholder="Email">
-<input id="empid" placeholder="Employee ID"><br>
+<input id="empid" placeholder="Employee ID">
 
 <input id="passport" placeholder="Passport">
 
-<!-- 🔥 ADD GOVERNMENT ID -->
+<!-- 🔥 GOVERNMENT ID -->
 <select id="govType">
-  <option value="">Select Government ID</option>
-  <option>UMID</option>
-  <option>PHILHEALTH</option>
-  <option>LICENSE</option>
-  <option>PASSPORT</option>
-  <option>NATIONAL ID</option>
-  <option>POSTAL ID</option>
+<option value="">Gov ID Type</option>
+<option>UMID</option>
+<option>PHILHEALTH</option>
+<option>LICENSE</option>
+<option>PASSPORT</option>
+<option>NATIONAL ID</option>
+<option>POSTAL ID</option>
 </select>
 
-<input id="govID" placeholder="Enter ID Number">
+<input id="govID" placeholder="ID Number">
 
 <select id="position">
-<option value="">Select Position</option>
+<option value="">Position</option>
 <option>GENERAL MANAGER</option>
 <option>MANAGER</option>
 <option>SUPERVISOR</option>
@@ -133,7 +158,7 @@ th {
 </select>
 
 <select id="bank">
-<option value="">Select Bank</option>
+<option value="">Bank</option>
 <option>BDO</option>
 <option>BPI</option>
 <option>Metrobank</option>
@@ -141,15 +166,20 @@ th {
 <option>UnionBank</option>
 </select>
 
-<input id="bankAccount" placeholder="Bank Account"><br>
+<input id="bankAccount" placeholder="Bank Account">
 
 <input id="sss" placeholder="SSS">
 <input id="philhealth" placeholder="PhilHealth">
-<input id="pagibig" placeholder="Pag-IBIG"><br>
+<input id="pagibig" placeholder="Pag-IBIG">
 
+</div>
+<!-- 🔥 GRID END -->
+
+<div class="form-actions">
 <button class="add" onclick="add()">Add</button>
-<button class="update" onclick="update()">Update</button>
+<button class="update" onclick="add()">Update</button>
 <button onclick="safeReset()">Reset All</button>
+</div>
 
 </div>
 
@@ -157,9 +187,9 @@ th {
 <table>
 <thead>
 <tr>
-<th>First Name</th>
-<th>Middle Name</th>
-<th>Last Name</th>
+<th>First</th>
+<th>Middle</th>
+<th>Last</th>
 <th>Age</th>
 <th>Address</th>
 <th>Contact</th>
@@ -177,15 +207,8 @@ th {
 <th>Action</th>
 </tr>
 </thead>
-
 <tbody id="table"></tbody>
 </table>
-</div>
-
-<div style="margin-top:10px;">
-<input onkeyup="search(0,this.value)" placeholder="Search First">
-<input onkeyup="search(2,this.value)" placeholder="Search Last">
-<input onkeyup="search(6,this.value)" placeholder="Search Email">
 </div>
 
 <script>
@@ -195,7 +218,7 @@ govType.onchange = function(){
   govID.placeholder = "Enter " + this.value + " Number";
 };
 
-// FIREBASE INIT
+// FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyCZG7xQaHaCtD_evrziUqdKqHJsVOQf3A8",
   authDomain: "hr-system-18fee.firebaseapp.com",
@@ -208,12 +231,14 @@ const db = firebase.firestore();
 let data = [];
 let editId = null;
 
+// AGE
 birthday.onchange = function(){
   let b = new Date(this.value);
   let t = new Date();
   age.value = t.getFullYear() - b.getFullYear();
 };
 
+// FORM
 function getForm(){
   return {
     fname: fname.value,
@@ -236,15 +261,26 @@ function getForm(){
   };
 }
 
+// ADD / UPDATE
 function add(){
   let form = getForm();
-  db.collection("employees").add(form);
+
+  if(editId){
+    db.collection("employees").doc(editId).update(form);
+    editId = null;
+    alert("Updated!");
+  } else {
+    db.collection("employees").add(form);
+  }
+
   clear();
 }
 
+// EDIT
 function edit(i){
   let e = data[i];
   editId = e.id;
+
   for(let key in e){
     if(document.getElementById(key)){
       document.getElementById(key).value = e[key];
@@ -252,10 +288,13 @@ function edit(i){
   }
 }
 
+// DELETE
 function del(i){
+  if(!confirm("Delete employee?")) return;
   db.collection("employees").doc(data[i].id).delete();
 }
 
+// CLEAR
 function clear(){
   document.querySelectorAll("input").forEach(i=>i.value="");
   bank.value="";
@@ -263,6 +302,7 @@ function clear(){
   govType.value="";
 }
 
+// RENDER
 function render(){
   table.innerHTML="";
   data.forEach((e,i)=>{
@@ -293,6 +333,7 @@ function render(){
   });
 }
 
+// LIVE
 db.collection("employees").onSnapshot(snapshot=>{
   data=[];
   snapshot.forEach(doc=>{
@@ -303,8 +344,24 @@ db.collection("employees").onSnapshot(snapshot=>{
   render();
 });
 
+// RESET
+function safeReset(){
+  if(!confirm("Delete ALL employees?")) return;
+  db.collection("employees").get().then(snap=>{
+    snap.forEach(doc=>{
+      db.collection("employees").doc(doc.id).delete();
+    });
+  });
+}
+
+// NAV
 function goPayroll(){
   window.location.href="payroll.html";
+}
+
+// LOGIN
+if(localStorage.getItem("login")!=="true"){
+  window.location.href="login.html";
 }
 
 </script>
