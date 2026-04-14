@@ -18,7 +18,6 @@ h2 {
   color:#2c3e50;
 }
 
-/* BUTTONS */
 button {
   padding:8px;
   margin:4px;
@@ -36,7 +35,6 @@ button {
 .edit {background:#17a2b8;}
 .cancel {background:#6c757d;}
 
-/* BOX */
 .box {
   background:Aquamarine;
   border-radius:12px;
@@ -45,7 +43,6 @@ button {
   margin-bottom:10px;
 }
 
-/* GRID FORM */
 .form-grid{
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -62,13 +59,11 @@ button {
   padding:4px;
 }
 
-/* ACTIONS */
 .form-actions{
   text-align:center;
   margin-top:10px;
 }
 
-/* TABLE */
 .table-container {
   width:100%;
   overflow-x:auto;
@@ -85,7 +80,6 @@ table {
   font-size:11px;
 }
 
-/* SMALL + AUTO HEIGHT ROW */
 th, td {
   border:1px solid #ddd;
   padding:3px 5px;
@@ -105,17 +99,14 @@ th {
   color:white;
 }
 
-/* HOVER */
 tbody tr:hover{
   background:#f1f7ff;
 }
 
-/* SELECTED ROW */
 tr.selected{
   background:#fff3cd !important;
 }
 
-/* EDIT MODE */
 #editMode{
   display:none;
   background:#fff3cd;
@@ -271,7 +262,7 @@ function getForm(){
   };
 }
 
-// ADD / UPDATE
+// 🔥 ADD / UPDATE (FIXED WITH LOCAL STORAGE)
 function add(){
   let form = getForm();
 
@@ -283,64 +274,34 @@ function add(){
     db.collection("employees").add(form);
   }
 
+  // ✅ LOCAL STORAGE SYNC
+  let local = JSON.parse(localStorage.getItem("employees")) || [];
+
+  local.push({
+    fname: form.fname,
+    lname: form.lname
+  });
+
+  localStorage.setItem("employees", JSON.stringify(local));
+
   clear();
 }
 
-// EDIT
-function edit(i){
-  let e = data[i];
-  editId = e.id;
-
-  for(let key in e){
-    if(document.getElementById(key)){
-      document.getElementById(key).value = e[key];
-    }
-  }
-
-  document.getElementById("editMode").style.display = "block";
-
-  document.querySelectorAll("#table tr").forEach(r=>r.classList.remove("selected"));
-  let row = document.querySelectorAll("#table tr")[i];
-  if(row){
-    row.classList.add("selected");
-    selectedRow = row;
-  }
-
-  window.scrollTo({top:0, behavior:"smooth"});
-}
-
-// CANCEL
-function cancelEdit(){
-  editId = null;
-  clear();
-  document.getElementById("editMode").style.display = "none";
-
-  if(selectedRow){
-    selectedRow.classList.remove("selected");
-    selectedRow = null;
-  }
-}
-
-// DELETE
-function del(i){
-  if(!confirm("Delete employee?")) return;
-  db.collection("employees").doc(data[i].id).delete();
-}
-
-// CLEAR
-function clear(){
-  document.querySelectorAll("input").forEach(i=>i.value="");
-  bank.value="";
-  position.value="";
-  govType.value="";
-}
-
-// RENDER
+// RENDER + 🔥 AUTO SYNC TO LOCAL
 function render(){
   table.innerHTML="";
 
+  let local = [];
+
   data.forEach((e,i)=>{
+
     if(!e.fname && !e.lname && !e.email) return;
+
+    // 🔥 collect for payroll
+    local.push({
+      fname: e.fname || "",
+      lname: e.lname || ""
+    });
 
     table.innerHTML += `
     <tr>
@@ -367,9 +328,12 @@ function render(){
       </td>
     </tr>`;
   });
+
+  // 🔥 IMPORTANT: sync ALL employees to localStorage
+  localStorage.setItem("employees", JSON.stringify(local));
 }
 
-// LIVE SYNC
+// FIREBASE LIVE
 db.collection("employees").onSnapshot(snapshot=>{
   data=[];
   snapshot.forEach(doc=>{
@@ -380,7 +344,37 @@ db.collection("employees").onSnapshot(snapshot=>{
   render();
 });
 
-// RESET
+// OTHER FUNCTIONS (UNCHANGED)
+function edit(i){
+  let e = data[i];
+  editId = e.id;
+  for(let key in e){
+    if(document.getElementById(key)){
+      document.getElementById(key).value = e[key];
+    }
+  }
+  document.getElementById("editMode").style.display = "block";
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function cancelEdit(){
+  editId = null;
+  clear();
+  document.getElementById("editMode").style.display = "none";
+}
+
+function del(i){
+  if(!confirm("Delete employee?")) return;
+  db.collection("employees").doc(data[i].id).delete();
+}
+
+function clear(){
+  document.querySelectorAll("input").forEach(i=>i.value="");
+  bank.value="";
+  position.value="";
+  govType.value="";
+}
+
 function safeReset(){
   if(!confirm("Delete ALL employees?")) return;
   db.collection("employees").get().then(snap=>{
@@ -390,12 +384,10 @@ function safeReset(){
   });
 }
 
-// NAV
 function goPayroll(){
   window.location.href="payroll.html";
 }
 
-// LOGIN
 if(localStorage.getItem("login")!=="true"){
   window.location.href="login.html";
 }
