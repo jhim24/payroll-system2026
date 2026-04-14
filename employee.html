@@ -415,6 +415,30 @@ td:last-child button {
   display: inline-block !important;
   margin: 2px;
 }
+  /* ===== HORIZONTAL TABLE (LEFT ↔ RIGHT) ===== */
+
+/* 🔥 NO WRAP (ONE LINE LANG) */
+th, td {
+  white-space: nowrap;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* 🔥 PALAPADIN TABLE */
+table {
+  min-width: 1800px; /* pwede pa taasan */
+}
+
+/* 🔥 ENABLE SIDE SCROLL */
+.table-container {
+  overflow-x: auto;
+}
+
+/* 🔥 BUTTONS FIX */
+td:last-child button {
+  display: inline-block !important;
+  margin: 2px;
+}
 </style>
   
 </head>
