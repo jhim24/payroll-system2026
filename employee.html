@@ -45,15 +45,18 @@ button {
 
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5 per row */
-  gap: 15px;
-  margin-top: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  margin-top: 15px;
 }
-.form-grid input, .form-grid select {
-  padding:10px;
-  border-radius:6px;
-  border:1px solid #ccc;
-  width:100%;
+.form-grid input,
+.form-grid select {
+  padding: 12px;
+  height: 45px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* ACTIONS */
