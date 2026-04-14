@@ -9,68 +9,121 @@
 <style>
 body {
   font-family: Arial;
-  padding:20px;
-  background:#eef3ff;
+  padding:10px;
+  background: linear-gradient(135deg, #f5f7fa, #e4ecf7);
 }
 
 h2 {
-  border-bottom:3px solid blue;
+  border-bottom:2px solid #007bff;
+  color:#2c3e50;
 }
 
+/* BUTTONS */
 button {
-  padding:10px;
-  margin:5px;
+  padding:8px;
+  margin:4px;
   border:none;
   color:white;
   border-radius:5px;
   cursor:pointer;
+  font-size:12px;
 }
 
-.nav {background:green;}
-.add {background:green;}
-.update {background:orange;}
-.delete {background:red;}
-.edit {background:gray;}
+.nav {background:#28a745;}
+.add {background:#007bff;}
+.update {background:#ffc107;}
+.delete {background:#dc3545;}
+.edit {background:#17a2b8;}
+.cancel {background:#6c757d;}
 
+/* BOX */
 .box {
-  border:2px solid blue;
-  padding:5px;
-  border-radius:10px;
   background:white;
+  border-radius:12px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.08);
+  padding:10px;
+  margin-bottom:10px;
 }
 
-input, select {
-  padding:8px;
-  margin:5px;
-  width:180px;
+/* GRID FORM */
+.form-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap:6px;
+}
+
+.form-grid input,
+.form-grid select{
+  width:100%;
+  height:30px;
+  font-size:12px;
+  border-radius:6px;
+  border:1px solid #ccc;
+  padding:4px;
+}
+
+/* ACTIONS */
+.form-actions{
+  text-align:center;
+  margin-top:10px;
 }
 
 /* TABLE */
 .table-container {
   width:100%;
   overflow-x:auto;
+  background:white;
+  border-radius:12px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.08);
+  padding:10px;
 }
 
 table {
   min-width:1400px;
   width:100%;
-  margin-top:5px;
   border-collapse:collapse;
-  background:white;
-  border:2px solid blue;
-  font-size:12px;
+  font-size:11px;
 }
 
+/* SMALL + AUTO HEIGHT ROW */
 th, td {
-  border:1px solid #ccc;
-  padding:5px;
-  text-align:center;
-  white-space:nowrap;
+  border:1px solid #ddd;
+  padding:3px 5px;
+  font-size:11px;
+  white-space:normal;
+  word-break:break-word;
+  line-height:1.2;
+  vertical-align:top;
+}
+
+td{
+  max-width:120px;
 }
 
 th {
-  background:blue;
+  background:linear-gradient(to right, #4facfe, #00c6ff);
   color:white;
+}
+
+/* HOVER */
+tbody tr:hover{
+  background:#f1f7ff;
+}
+
+/* SELECTED ROW */
+tr.selected{
+  background:#fff3cd !important;
+}
+
+/* EDIT MODE */
+#editMode{
+  display:none;
+  background:#fff3cd;
+  border:1px solid #ffeeba;
+  padding:5px;
+  border-radius:5px;
+  margin-bottom:5px;
+  font-size:12px;
 }
 </style>
 </head>
@@ -83,43 +136,64 @@ th {
 
 <div class="box">
 
+<div id="editMode">✏️ Editing employee...</div>
+
+<div class="form-grid">
+
 <input id="fname" placeholder="First Name">
 <input id="mname" placeholder="Middle Name">
-<input id="lname" placeholder="Last Name"><br>
+<input id="lname" placeholder="Last Name">
 
 <input type="date" id="birthday">
-<input id="age" placeholder="Age" readonly><br>
+<input id="age" placeholder="Age" readonly>
 
 <input id="address" placeholder="Address">
-<input id="contact" placeholder="Contact"><br>
+<input id="contact" placeholder="Contact">
 
 <input id="email" placeholder="Email">
-<input id="empid" placeholder="Employee ID"><br>
+<input id="empid" placeholder="Employee ID">
 
 <input id="passport" placeholder="Passport">
 
+<select id="govType">
+<option value="">Gov ID</option>
+<option>UMID</option>
+<option>PHILHEALTH</option>
+<option>LICENSE</option>
+<option>PASSPORT</option>
+<option>NATIONAL ID</option>
+<option>POSTAL ID</option>
+</select>
+
+<input id="govID" placeholder="ID Number">
+
 <select id="position">
-<option value="">Select Position</option>
+<option value="">Position</option>
 <option>MANAGER</option>
 <option>SUPERVISOR</option>
 <option>ADMIN</option>
 </select>
 
 <select id="bank">
-<option value="">Select Bank</option>
+<option value="">Bank</option>
 <option>BDO</option>
 <option>BPI</option>
 <option>Metrobank</option>
 </select>
 
-<input id="bankAccount" placeholder="Bank Account"><br>
+<input id="bankAccount" placeholder="Account">
 
 <input id="sss" placeholder="SSS">
 <input id="philhealth" placeholder="PhilHealth">
-<input id="pagibig" placeholder="Pag-IBIG"><br>
+<input id="pagibig" placeholder="Pag-IBIG">
 
-<button class="add" onclick="add()">Add</button>
-<button class="update" onclick="update()">Update</button>
+</div>
+
+<div class="form-actions">
+<button class="add" onclick="add()">Save</button>
+<button class="cancel" onclick="cancelEdit()">Cancel</button>
+<button class="delete" onclick="safeReset()">Reset</button>
+</div>
 
 </div>
 
@@ -127,15 +201,17 @@ th {
 <table>
 <thead>
 <tr>
-<th>First Name</th>
-<th>Middle Name</th>
-<th>Last Name</th>
+<th>First</th>
+<th>Middle</th>
+<th>Last</th>
 <th>Age</th>
 <th>Address</th>
 <th>Contact</th>
 <th>Email</th>
 <th>ID</th>
 <th>Passport</th>
+<th>Gov</th>
+<th>Gov ID</th>
 <th>Position</th>
 <th>Bank</th>
 <th>Account</th>
@@ -145,7 +221,6 @@ th {
 <th>Action</th>
 </tr>
 </thead>
-
 <tbody id="table"></tbody>
 </table>
 </div>
@@ -164,6 +239,7 @@ const db = firebase.firestore();
 
 let data = [];
 let editId = null;
+let selectedRow = null;
 
 // AGE AUTO
 birthday.onchange = function(){
@@ -184,6 +260,8 @@ function getForm(){
     email: email.value,
     empid: empid.value,
     passport: passport.value,
+    govType: govType.value,
+    govID: govID.value,
     position: position.value,
     bank: bank.value,
     bankAccount: bankAccount.value,
@@ -193,10 +271,18 @@ function getForm(){
   };
 }
 
-// ADD
+// ADD / UPDATE
 function add(){
   let form = getForm();
-  db.collection("employees").add(form);
+
+  if(editId){
+    db.collection("employees").doc(editId).update(form);
+    cancelEdit();
+    alert("Updated!");
+  } else {
+    db.collection("employees").add(form);
+  }
+
   clear();
 }
 
@@ -210,20 +296,34 @@ function edit(i){
       document.getElementById(key).value = e[key];
     }
   }
+
+  document.getElementById("editMode").style.display = "block";
+
+  document.querySelectorAll("#table tr").forEach(r=>r.classList.remove("selected"));
+  let row = document.querySelectorAll("#table tr")[i];
+  if(row){
+    row.classList.add("selected");
+    selectedRow = row;
+  }
+
+  window.scrollTo({top:0, behavior:"smooth"});
 }
 
-// UPDATE
-function update(){
-  if(!editId) return;
-
-  let form = getForm();
-  db.collection("employees").doc(editId).update(form);
+// CANCEL
+function cancelEdit(){
   editId = null;
   clear();
+  document.getElementById("editMode").style.display = "none";
+
+  if(selectedRow){
+    selectedRow.classList.remove("selected");
+    selectedRow = null;
+  }
 }
 
 // DELETE
 function del(i){
+  if(!confirm("Delete employee?")) return;
   db.collection("employees").doc(data[i].id).delete();
 }
 
@@ -232,12 +332,16 @@ function clear(){
   document.querySelectorAll("input").forEach(i=>i.value="");
   bank.value="";
   position.value="";
+  govType.value="";
 }
 
 // RENDER
 function render(){
   table.innerHTML="";
+
   data.forEach((e,i)=>{
+    if(!e.fname && !e.lname && !e.email) return;
+
     table.innerHTML += `
     <tr>
       <td>${e.fname||""}</td>
@@ -249,6 +353,8 @@ function render(){
       <td>${e.email||""}</td>
       <td>${e.empid||""}</td>
       <td>${e.passport||""}</td>
+      <td>${e.govType||""}</td>
+      <td>${e.govID||""}</td>
       <td>${e.position||""}</td>
       <td>${e.bank||""}</td>
       <td>${e.bankAccount||""}</td>
@@ -263,7 +369,7 @@ function render(){
   });
 }
 
-// LIVE
+// LIVE SYNC
 db.collection("employees").onSnapshot(snapshot=>{
   data=[];
   snapshot.forEach(doc=>{
@@ -274,9 +380,24 @@ db.collection("employees").onSnapshot(snapshot=>{
   render();
 });
 
+// RESET
+function safeReset(){
+  if(!confirm("Delete ALL employees?")) return;
+  db.collection("employees").get().then(snap=>{
+    snap.forEach(doc=>{
+      db.collection("employees").doc(doc.id).delete();
+    });
+  });
+}
+
 // NAV
 function goPayroll(){
   window.location.href="payroll.html";
+}
+
+// LOGIN
+if(localStorage.getItem("login")!=="true"){
+  window.location.href="login.html";
 }
 
 </script>
