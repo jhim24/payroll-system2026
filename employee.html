@@ -51,7 +51,7 @@ input, select {
 .table-container {
   width:100%;
   overflow-x:auto;
-  background:light green;
+  background:lightgreen;
   border-radius:12px;
   box-shadow:0 5px 20px rgba(0,0,0,0.08);
   padding:5px;
@@ -66,17 +66,13 @@ table {
 
 th, td {
   border:1px solid #ccc;
-
-  padding:4px 4px;        /* 👉 adjust row size */
+  padding:4px 4px;
   text-align:center;
-
-  white-space:normal;     /* ✅ para mag wrap */
-  word-break:break-word;  /* ✅ para hindi lumabas sa box */
-
-  line-height:1.1;        /* ✅ auto height */
+  white-space:normal;
+  word-break:break-word;
+  line-height:1.1;
   font-size:12px;
-
-  vertical-align:top;     /* optional */
+  vertical-align:top;
 }
 
 th {
@@ -111,6 +107,19 @@ th {
 <input id="empid" placeholder="Employee ID"><br>
 
 <input id="passport" placeholder="Passport">
+
+<!-- 🔥 ADD GOVERNMENT ID -->
+<select id="govType">
+  <option value="">Select Government ID</option>
+  <option>UMID</option>
+  <option>PHILHEALTH</option>
+  <option>LICENSE</option>
+  <option>PASSPORT</option>
+  <option>NATIONAL ID</option>
+  <option>POSTAL ID</option>
+</select>
+
+<input id="govID" placeholder="Enter ID Number">
 
 <select id="position">
 <option value="">Select Position</option>
@@ -157,6 +166,8 @@ th {
 <th>Email</th>
 <th>ID</th>
 <th>Passport</th>
+<th>Gov Type</th>
+<th>Gov ID</th>
 <th>Position</th>
 <th>Bank</th>
 <th>Account</th>
@@ -179,7 +190,12 @@ th {
 
 <script>
 
-// 🔥 FIREBASE INIT
+// 🔥 AUTO PLACEHOLDER
+govType.onchange = function(){
+  govID.placeholder = "Enter " + this.value + " Number";
+};
+
+// FIREBASE INIT
 const firebaseConfig = {
   apiKey: "AIzaSyCZG7xQaHaCtD_evrziUqdKqHJsVOQf3A8",
   authDomain: "hr-system-18fee.firebaseapp.com",
@@ -192,28 +208,12 @@ const db = firebase.firestore();
 let data = [];
 let editId = null;
 
-// AGE AUTO
 birthday.onchange = function(){
   let b = new Date(this.value);
   let t = new Date();
   age.value = t.getFullYear() - b.getFullYear();
 };
 
-// VALIDATION
-function isValid(form){
-  return form.fname || form.lname || form.email;
-}
-
-// DUPLICATE
-function isDuplicate(form){
-  return data.some(e =>
-    e.fname === form.fname &&
-    e.lname === form.lname &&
-    e.empid === form.empid
-  );
-}
-
-// GET FORM
 function getForm(){
   return {
     fname: fname.value,
@@ -225,6 +225,8 @@ function getForm(){
     email: email.value,
     empid: empid.value,
     passport: passport.value,
+    govType: govType.value,
+    govID: govID.value,
     position: position.value,
     bank: bank.value,
     bankAccount: bankAccount.value,
@@ -234,35 +236,15 @@ function getForm(){
   };
 }
 
-// ADD / UPDATE
 function add(){
   let form = getForm();
-
-  if(!isValid(form)){
-    alert("Empty not allowed");
-    return;
-  }
-
-  if(editId){
-    db.collection("employees").doc(editId).update(form);
-    editId = null;
-    alert("Updated!");
-  } else {
-    if(isDuplicate(form)){
-      alert("Duplicate employee");
-      return;
-    }
-    db.collection("employees").add(form);
-  }
-
+  db.collection("employees").add(form);
   clear();
 }
 
-// EDIT
 function edit(i){
   let e = data[i];
   editId = e.id;
-
   for(let key in e){
     if(document.getElementById(key)){
       document.getElementById(key).value = e[key];
@@ -270,26 +252,20 @@ function edit(i){
   }
 }
 
-// DELETE
 function del(i){
-  if(!confirm("Delete employee?")) return;
   db.collection("employees").doc(data[i].id).delete();
 }
 
-// CLEAR
 function clear(){
   document.querySelectorAll("input").forEach(i=>i.value="");
   bank.value="";
   position.value="";
+  govType.value="";
 }
 
-// RENDER
 function render(){
   table.innerHTML="";
-
   data.forEach((e,i)=>{
-    if(!e.fname && !e.lname && !e.email) return;
-
     table.innerHTML += `
     <tr>
       <td>${e.fname||""}</td>
@@ -301,6 +277,8 @@ function render(){
       <td>${e.email||""}</td>
       <td>${e.empid||""}</td>
       <td>${e.passport||""}</td>
+      <td>${e.govType||""}</td>
+      <td>${e.govID||""}</td>
       <td>${e.position||""}</td>
       <td>${e.bank||""}</td>
       <td>${e.bankAccount||""}</td>
@@ -308,78 +286,25 @@ function render(){
       <td>${e.philhealth||""}</td>
       <td>${e.pagibig||""}</td>
       <td>
-        <button class="edit" onclick="edit(${i})">Edit</button>
-        <button class="delete" onclick="del(${i})">Delete</button>
+        <button onclick="edit(${i})">Edit</button>
+        <button onclick="del(${i})">Delete</button>
       </td>
-    </tr>
-    `;
+    </tr>`;
   });
 }
 
-// FIREBASE LIVE
 db.collection("employees").onSnapshot(snapshot=>{
   data=[];
   snapshot.forEach(doc=>{
     let d=doc.data();
-    if(!d.fname && !d.lname && !d.email) return;
     d.id=doc.id;
     data.push(d);
   });
   render();
 });
 
-// SEARCH
-function search(col,val){
-  let rows=document.querySelectorAll("#table tr");
-  rows.forEach(r=>{
-    let text=r.children[col].innerText.toLowerCase();
-    r.style.display=text.includes(val.toLowerCase())?"":"none";
-  });
-}
-
-// EXPORT
-function exportData(){
-  let blob=new Blob([JSON.stringify(data)],{type:"application/json"});
-  let a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="employees.json";
-  a.click();
-}
-
-// IMPORT
-function importData(e){
-  let file=e.target.files[0];
-  let reader=new FileReader();
-  reader.onload=function(){
-    let d=JSON.parse(reader.result);
-
-    JSON.parse(d.employees || "[]").forEach(emp=>{
-      db.collection("employees").add(emp);
-    });
-
-    alert("Imported!");
-  };
-  reader.readAsText(file);
-}
-
-// RESET
-function safeReset(){
-  if(!confirm("Delete ALL employees?")) return;
-  db.collection("employees").get().then(snap=>{
-    snap.forEach(doc=>{
-      db.collection("employees").doc(doc.id).delete();
-    });
-  });
-}
-
-// NAV
 function goPayroll(){
   window.location.href="payroll.html";
-}
-
-// LOGIN
-if(localStorage.getItem("login")!=="true"){
-  window.location.href="login.html";
 }
 
 </script>
