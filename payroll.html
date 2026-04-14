@@ -32,8 +32,6 @@ button {
 .compute {background:green;}
 .back {background:#444;}
 .history {background:blue;}
-
-/* ✅ ADD ONLY */
 .auto {background:purple;}
 
 table {
@@ -43,13 +41,46 @@ table {
   background:white;
 }
 
+/* ================================= */
+/* 🔥 ADD ONLY EXCEL STYLE */
+/* ================================= */
+
 th, td {
-  border:1px solid #ccc;
-  padding:8px;
+  border:1px solid #999 !important;
+  padding:6px !important;
   text-align:center;
+  font-size:12px;
 }
 
-th {background:green; color:white;}
+th {
+  background:linear-gradient(to right, #2e7d32, #1b5e20);
+  color:white;
+  position:sticky;
+  top:0;
+}
+
+/* zebra rows */
+tbody tr:nth-child(even){
+  background:#f4f9f4;
+}
+
+/* hover */
+tbody tr:hover{
+  background:#c8e6c9;
+}
+
+/* selected row */
+tr.selected{
+  background:#a5d6a7 !important;
+}
+
+/* scroll */
+.table-container{
+  max-height:400px;
+  overflow:auto;
+  border:2px solid green;
+}
+
 </style>
 </head>
 
@@ -80,12 +111,12 @@ th {background:green; color:white;}
 
 <button class="compute" onclick="compute()">Compute Salary</button>
 <button onclick="openPayslip()">Payslip 🧾</button>
-
-<!-- ✅ ADD ONLY BUTTON -->
 <button class="auto" onclick="autoAttendance()">Auto from Attendance ⚡</button>
 
 </div>
 
+<!-- 🔥 ADD ONLY WRAPPER -->
+<div class="table-container">
 <table>
 <tr>
 <th>Name</th>
@@ -102,6 +133,7 @@ th {background:green; color:white;}
 </tr>
 <tbody id="table"></tbody>
 </table>
+</div>
 
 <script>
 
@@ -213,7 +245,7 @@ function compute(){
   alert("Salary Computed & Saved!");
 }
 
-// ✅ ADD ONLY AUTO FUNCTION
+// 🔥 AUTO FROM ATTENDANCE
 function autoAttendance(){
 
   let i = document.getElementById("emp").value;
@@ -247,6 +279,18 @@ function autoAttendance(){
 
   alert("✅ Auto-filled from attendance!");
 }
+
+// 🔥 ROW SELECT (EXCEL FEEL)
+document.addEventListener("click", function(e){
+  let row = e.target.closest("tr");
+  if(!row || !row.parentElement) return;
+
+  document.querySelectorAll("tbody tr").forEach(r=>{
+    r.classList.remove("selected");
+  });
+
+  row.classList.add("selected");
+});
 
 // PAYSLIP
 function openPayslip(){
