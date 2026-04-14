@@ -53,6 +53,25 @@
       background:blue;
       color:white;
     }
+
+    /* 🔥 TIMESHEET STYLE (ADD ONLY) */
+    #timesheet{
+      margin-top:10px;
+      border-collapse:collapse;
+      width:100%;
+    }
+
+    #timesheet th, #timesheet td{
+      border:1px solid #333;
+      padding:5px;
+      font-size:12px;
+      text-align:center;
+    }
+
+    #timesheet th{
+      background:#dbe3f3;
+      color:black;
+    }
   </style>
 </head>
 
@@ -89,6 +108,52 @@
   <tbody id="table"></tbody>
 </table>
 
+<!-- 🔥 ADDED TIMESHEET SECTION -->
+<hr>
+
+<h2>📊 TIMESHEET VIEW</h2>
+
+<div>
+  <label>Department:</label>
+  <input id="dept">
+
+  <label>Supervisor:</label>
+  <input id="supervisor">
+
+  <label>Date:</label>
+  <input type="date" id="tdate">
+
+  <label>Rate:</label>
+  <input id="rate" placeholder="₱/hr">
+</div>
+
+<table id="timesheet">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Time In</th>
+      <th>Time Out</th>
+      <th>OT</th>
+      <th>Total Hours</th>
+      <th>Pay</th>
+    </tr>
+  </thead>
+
+  <tbody id="timesheetBody"></tbody>
+
+  <tfoot>
+    <tr>
+      <th colspan="4">Total Hours</th>
+      <th id="totalHours"></th>
+      <th></th>
+    </tr>
+    <tr>
+      <th colspan="5">Total Pay</th>
+      <th id="totalPay"></th>
+    </tr>
+  </tfoot>
+</table>
+
 <script>
 
 // LOAD DATA
@@ -121,7 +186,7 @@ function computeHours(inTime, outTime){
 function getStatus(timeIn){
   if(!timeIn) return "Absent";
 
-  let lateTime = new Date("2020-01-01 09:15"); // late after 9:15
+  let lateTime = new Date("2020-01-01 09:15");
   let actual = new Date("2020-01-01 " + timeIn);
 
   if(actual > lateTime) return "Late";
@@ -184,7 +249,51 @@ function render(){
     </tr>
     `;
   });
+
+  // 🔥 AUTO UPDATE TIMESHEET
+  generateTimesheet();
 }
+
+// 🔥 TIMESHEET FUNCTION
+function generateTimesheet(){
+
+  let body = document.getElementById("timesheetBody");
+  body.innerHTML = "";
+
+  let totalH = 0;
+  let totalP = 0;
+  let rate = parseFloat(document.getElementById("rate").value) || 0;
+
+  attendance.forEach(a=>{
+
+    let hours = parseFloat(a.hours) || 0;
+    let pay = hours * rate;
+
+    totalH += hours;
+    totalP += pay;
+
+    body.innerHTML += `
+      <tr>
+        <td>${a.name}</td>
+        <td>${a.timeIn}</td>
+        <td>${a.timeOut}</td>
+        <td>0</td>
+        <td>${hours}</td>
+        <td>${pay.toFixed(2)}</td>
+      </tr>
+    `;
+  });
+
+  document.getElementById("totalHours").innerText = totalH.toFixed(2);
+  document.getElementById("totalPay").innerText = totalP.toFixed(2);
+}
+
+// 🔥 AUTO UPDATE RATE
+document.addEventListener("input", function(e){
+  if(e.target.id === "rate"){
+    generateTimesheet();
+  }
+});
 
 // BACK
 function back(){
