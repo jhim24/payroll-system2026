@@ -193,6 +193,61 @@ tr {
 tbody tr:nth-child(even) {
   background:rgba(0,0,0,0.04);
 }
+  /* 🔥 EXCEL STYLE TABLE */
+
+/* full grid */
+table {
+  border-collapse: collapse !important;
+  border:2px solid #444 !important;
+}
+
+/* all cells */
+th, td {
+  border:1px solid #888 !important;
+  padding:6px !important;
+  font-size:12px;
+}
+
+/* header like excel */
+th {
+  background:#2b579a !important;
+  color:white !important;
+  position:sticky;
+  top:0;
+  z-index:2;
+}
+
+/* zebra rows */
+tbody tr:nth-child(even) {
+  background:#f5f7fa !important;
+}
+
+/* hover highlight */
+tbody tr:hover {
+  background:#dbe9ff !important;
+}
+
+/* selected row effect */
+tr.selected {
+  background:#a7c7ff !important;
+}
+
+/* column lines stronger */
+td {
+  border-right:1px solid #666 !important;
+}
+
+/* smooth scroll container */
+.table-container {
+  max-height:400px;
+  overflow:auto;
+  border:2px solid #444;
+}
+
+/* optional: cursor like excel */
+td {
+  cursor:pointer;
+}
 </style>
 </head>
 
@@ -384,6 +439,18 @@ load();
 if(localStorage.getItem("login") !== "true"){
   window.location.href = "login.html";
 }
+  // 🔥 CLICK ROW = SELECT (EXCEL FEEL)
+document.addEventListener("click", function(e){
+  let row = e.target.closest("tr");
+
+  if(!row || !row.parentElement.id === "table") return;
+
+  document.querySelectorAll("#table tr").forEach(r=>{
+    r.classList.remove("selected");
+  });
+
+  row.classList.add("selected");
+});
 </script>
 
 </body>
