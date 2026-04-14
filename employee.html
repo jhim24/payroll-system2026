@@ -48,7 +48,6 @@ button {
   gap:6px;
 }
 
-/* INPUT SIZE */
 .form-grid input,
 .form-grid select{
   width:100%;
@@ -56,7 +55,6 @@ button {
   font-size:12px;
 }
 
-/* BUTTON AREA */
 .form-actions{
   margin-top:8px;
   text-align:center;
@@ -84,21 +82,16 @@ table {
   font-size:11px;
 }
 
-/* 🔥 COMPACT ROW FIX */
 th, td {
   border:1px solid #ccc;
-
-  padding:2px 4px;      /* 🔥 maliit */
+  padding:2px 4px;
   font-size:11px;
-
   white-space:normal;
   word-break:break-word;
-
-  line-height:1.1;      /* 🔥 auto height */
+  line-height:1.1;
   vertical-align:top;
 }
 
-/* 🔥 LIMIT WIDTH */
 td {
   max-width:120px;
 }
@@ -108,7 +101,6 @@ th {
   color:white;
 }
 
-/* 🔥 HOVER */
 tbody tr:hover{
   background:#e3f2fd;
 }
@@ -253,17 +245,24 @@ function getForm(){
     empid: empid.value,
     passport: passport.value,
     govType: govType.value,
-    govID: govID.value
+    govID: govID.value,
+    position: position.value,
+    bank: bank.value,
+    bankAccount: bankAccount.value,
+    sss: sss.value,
+    philhealth: philhealth.value,
+    pagibig: pagibig.value
   };
 }
 
-// ADD
+// ADD / UPDATE
 function add(){
   let form = getForm();
 
   if(editId){
     db.collection("employees").doc(editId).update(form);
     editId = null;
+    alert("Updated!");
   } else {
     db.collection("employees").add(form);
   }
@@ -271,17 +270,35 @@ function add(){
   clear();
 }
 
+// EDIT FUNCTION (FIXED)
+function edit(i){
+  let e = data[i];
+  editId = e.id;
+
+  for(let key in e){
+    if(document.getElementById(key)){
+      document.getElementById(key).value = e[key];
+    }
+  }
+
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
 // DELETE
 function del(i){
+  if(!confirm("Delete employee?")) return;
   db.collection("employees").doc(data[i].id).delete();
 }
 
 // CLEAR
 function clear(){
   document.querySelectorAll("input").forEach(i=>i.value="");
+  bank.value="";
+  position.value="";
+  govType.value="";
 }
 
-// RENDER
+// RENDER (WITH EDIT BUTTON)
 function render(){
   table.innerHTML="";
   data.forEach((e,i)=>{
@@ -305,7 +322,8 @@ function render(){
       <td>${e.philhealth||""}</td>
       <td>${e.pagibig||""}</td>
       <td>
-        <button onclick="del(${i})">Delete</button>
+        <button class="edit" onclick="edit(${i})">Edit</button>
+        <button class="delete" onclick="del(${i})">Delete</button>
       </td>
     </tr>`;
   });
