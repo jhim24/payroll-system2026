@@ -24,7 +24,7 @@ button {
   border:none;
   color:white;
   border-radius:5px;
-  cursor:touch;
+  cursor:pointer;
   font-size:12px;
 }
 
@@ -42,18 +42,15 @@ button {
   padding:10px;
 }
 
-/* EDIT MODE */
 #editMode{
   display:none;
   background:yellow;
-  border:1px solid #ffeeba;
   padding:5px;
   border-radius:5px;
   margin-bottom:5px;
   font-size:12px;
 }
 
-/* GRID */
 .form-grid{
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -77,13 +74,11 @@ input, select {
   border:1px solid #ccc;
 }
 
-/* TABLE */
 .table-container {
   width:100%;
   overflow-x:auto;
   background:LightGray;
   border-radius:8px;
-  box-shadow:0 15px 20px rgba(8,0,0,0.08);
   padding:10px;
 }
 
@@ -98,23 +93,14 @@ th, td {
   border:1px solid #ccc;
   padding:2px 4px;
   font-size:11px;
-  white-space:normal;
   word-break:break-word;
-  line-height:1.1;
 }
-
-td { max-width:120px; }
 
 th {
   background:linear-gradient(to right, #4facfe, #00c6ff);
   color:white;
 }
 
-tbody tr:hover{
-  background:#e3f2fd;
-}
-
-/* 🔥 SELECTED ROW */
 tr.selected{
   background:#fff3cd !important;
 }
@@ -129,7 +115,6 @@ tr.selected{
 
 <div class="box">
 
-<!-- 🔥 EDIT MODE INDICATOR -->
 <div id="editMode">✏️ Editing employee...</div>
 
 <div class="form-grid">
@@ -221,8 +206,9 @@ tr.selected{
 
 <script>
 
+// FIREBASE CONFIG
 const firebaseConfig = {
-  apiKey: "AIzaSy...",
+  apiKey: "AIzaSyCZG7xQaHaCtD_evrziUqdKqHJsVOQf3A8",
   authDomain: "hr-system-18fee.firebaseapp.com",
   projectId: "hr-system-18fee",
 };
@@ -234,27 +220,27 @@ let data = [];
 let editId = null;
 let selectedRow = null;
 
-// AGE
+// AGE AUTO
 birthday.onchange = function(){
   let b = new Date(this.value);
   let t = new Date();
   age.value = t.getFullYear() - b.getFullYear();
 };
 
-// FORM
+// GET FORM
 function getForm(){
   return {
-    fname: fname.value,
-    mname: mname.value,
-    lname: lname.value,
+    fname: fname.value.trim(),
+    mname: mname.value.trim(),
+    lname: lname.value.trim(),
     age: age.value,
     address: address.value,
     contact: contact.value,
     email: email.value,
     empid: empid.value,
     passport: passport.value,
-    govType: govType.value,
-    govID: govID.value,
+    govType: govType.value || "N/A",
+    govID: govID.value || "-",
     position: position.value,
     bank: bank.value,
     bankAccount: bankAccount.value,
@@ -268,10 +254,14 @@ function getForm(){
 function add(){
   let form = getForm();
 
+  if(!form.fname && !form.lname){
+    alert("Enter name!");
+    return;
+  }
+
   if(editId){
     db.collection("employees").doc(editId).update(form);
     cancelEdit();
-    alert("Updated!");
   } else {
     db.collection("employees").add(form);
   }
@@ -290,7 +280,6 @@ function edit(i){
     }
   }
 
-  // 🔥 highlight row
   document.querySelectorAll("tr").forEach(r=>r.classList.remove("selected"));
   let row = document.querySelectorAll("#table tr")[i];
   if(row){
@@ -298,9 +287,7 @@ function edit(i){
     selectedRow = row;
   }
 
-  // 🔥 show edit mode
   document.getElementById("editMode").style.display = "block";
-
   window.scrollTo({top:0, behavior:"smooth"});
 }
 
@@ -308,18 +295,13 @@ function edit(i){
 function cancelEdit(){
   editId = null;
   clear();
-
   document.getElementById("editMode").style.display = "none";
-
-  if(selectedRow){
-    selectedRow.classList.remove("selected");
-    selectedRow = null;
-  }
+  if(selectedRow) selectedRow.classList.remove("selected");
 }
 
 // DELETE
 function del(i){
-  if(!confirm("Delete employee?")) return;
+  if(!confirm("Delete?")) return;
   db.collection("employees").doc(data[i].id).delete();
 }
 
@@ -346,8 +328,8 @@ function render(){
       <td>${e.email||""}</td>
       <td>${e.empid||""}</td>
       <td>${e.passport||""}</td>
-      <td>${e.govType||""}</td>
-      <td>${e.govID||""}</td>
+      <td>${e.govType||"N/A"}</td>
+      <td>${e.govID||"-"}</td>
       <td>${e.position||""}</td>
       <td>${e.bank||""}</td>
       <td>${e.bankAccount||""}</td>
@@ -362,12 +344,16 @@ function render(){
   });
 }
 
-// LIVE
+// LIVE LOAD
 db.collection("employees").onSnapshot(snapshot=>{
   data=[];
   snapshot.forEach(doc=>{
     let d=doc.data();
     d.id=doc.id;
+
+    if(!d.govType) d.govType="N/A";
+    if(!d.govID) d.govID="-";
+
     data.push(d);
   });
   render();
@@ -378,8 +364,14 @@ function goPayroll(){
   window.location.href="payroll.html";
 }
 
-if(localStorage.getItem("login")!=="true"){
-  window.location.href="login.html";
+// RESET
+function safeReset(){
+  if(!confirm("Delete ALL employees?")) return;
+  db.collection("employees").get().then(snap=>{
+    snap.forEach(doc=>{
+      db.collection("employees").doc(doc.id).delete();
+    });
+  });
 }
 
 </script>
