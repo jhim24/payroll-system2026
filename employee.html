@@ -2,170 +2,81 @@
 <html>
 <head>
   <title>HR System</title>
+
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <style>
-    body {
-      font-family: Arial;
-      padding:20px;
-      background:#eef3ff;
-    }
 
-    h2 {
-      border-bottom:3px solid blue;
-    }
-
-    button {
-      padding:10px;
-      margin:5px;
-      border:none;
-      color:white;
-      border-radius:5px;
-      cursor:pointer;
-    }
-
-    .nav {background:green;}
-    .add {background:green;}
-    .update {background:orange;}
-    .delete {background:red;}
-    .edit {background:gray;}
-
-    .box {
-      border:2px solid blue;
-      padding:5px;
-      border-radius:10px;
-      background:white;
-    }
-
-    input, select {
-      padding:8px;
-      margin:5px;
-      width:180px;
-    }
-
-    /* 🔥 SCROLL TABLE */
-    .table-container {
-      width:100%;
-      overflow-x:auto;
-    }
-
-    table {
-      min-width:1400px;
-      width:100%;
-      margin-top:5px;
-      border-collapse:collapse;
-      background:white;
-      border:2px solid blue;
-      font-size:12px;
-      row-height: 5px;
-    }
-
-    th, td {
-  border:1px solid #ccc;
-  padding:1px;        /* 🔥 LIIT SPACE */
-  text-align:center;
-  white-space:nowrap;
-   line-height:2.2;     /* 🔥 LIIT HEIGHT */
-  font-size:12px;     /* 🔥 optional liit text */
-  row-height: 5px;
+<style>
+body {
+  font-family: Arial;
+  padding:20px;
+  background: linear-gradient(135deg, #f5f7fa, #e4ecf7);
 }
 
-    th {
-      background:blue;
-      color:white;
-      position:sticky;
-      top:0;
-      row-height: 5px;
-    }
-    th:first-child, td:first-child {
-  position: sticky;
-  left: 0;
-  background: #fff;
-  z-index: 1;
+h2 {
+  border-bottom:3px solid blue;
+  color:#2c3e50;
 }
 
-th:first-child {
-  background: blue;
-  color: white;
-  z-index: 2;
-}/* ================================= */
-/* 🔥 EMPLOYEE PREMIUM LIGHT GLOW UI */
-/* ================================= */
-
-/* clean light background */
-body{
-  background: linear-gradient(135deg, #f5f7fa, #e4ecf7) !important;
+button {
+  padding:10px;
+  margin:5px;
+  border:none;
+  color:white;
+  border-radius:5px;
+  cursor:pointer;
 }
 
-/* remove dark overlays if meron */
-body::before{
-  display:none !important;
-}
+.nav {background:green;}
+.add {background:green;}
+.update {background:orange;}
+.delete {background:red;}
+.edit {background:gray;}
 
-/* 🔥 FORM BOX (yung input area mo) */
-.box{
-  background:white !important;
+.box {
   border-radius:12px;
+  background:white;
   box-shadow:0 5px 20px rgba(0,0,0,0.08);
-  border:1px solid rgba(0,0,0,0.05);
+  padding:10px;
 }
 
-/* 🔥 TABLE CONTAINER */
-.table-container{
-  background:white !important;
+input, select {
+  padding:8px;
+  margin:5px;
+  width:180px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+.table-container {
+  width:100%;
+  overflow-x:auto;
+  background:white;
   border-radius:12px;
   box-shadow:0 5px 20px rgba(0,0,0,0.08);
   padding:5px;
 }
 
-/* 🔥 TABLE STYLE */
-table{
-  background:white !important;
+table {
+  min-width:1400px;
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
 }
 
-/* 🔥 TABLE HEADER */
-th{
-  background:linear-gradient(to right, #4facfe, #00c6ff) !important;
+th, td {
+  border:1px solid #ccc;
+  padding:4px;
+  text-align:center;
+}
+
+th {
+  background:linear-gradient(to right, #4facfe, #00c6ff);
   color:white;
 }
-
-/* 🔥 ROW HOVER */
-tbody tr:hover{
-  background:#f1f7ff !important;
-}
-
-/* 🔥 INPUT STYLE */
-input, select{
-  background:white;
-  border:1px solid #ccc;
-  border-radius:8px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.05);
-}
-
-/* 🔥 INPUT FOCUS */
-input:focus, select:focus{
-  outline:none;
-  border:1px solid #007bff;
-  box-shadow:0 0 8px rgba(0,123,255,0.3);
-}
-
-/* 🔥 BUTTON STYLE */
-button{
-  box-shadow:0 3px 8px rgba(0,0,0,0.1);
-}
-
-button:hover{
-  transform:scale(1.05);
-  box-shadow:0 5px 15px rgba(0,123,255,0.3);
-}
-
-/* 🔥 TITLE */
-h2{
-  color:#2c3e50;
-  text-shadow:0 2px 5px rgba(0,0,0,0.1);
-}
-  </style>
+</style>
 </head>
+
 <body>
 
 <h2>👥 Employee Master List</h2>
@@ -173,10 +84,10 @@ h2{
 <button class="nav" onclick="goPayroll()">Go to Payroll 💰</button>
 
 <div class="box">
-<br><br>
 
 <button onclick="exportData()">Export Employees 💾</button>
 <input type="file" onchange="importData(event)">
+
 <input id="fname" placeholder="First Name">
 <input id="mname" placeholder="Middle Name">
 <input id="lname" placeholder="Last Name"><br>
@@ -191,16 +102,18 @@ h2{
 <input id="empid" placeholder="Employee ID"><br>
 
 <input id="passport" placeholder="Passport">
+
 <select id="position">
-  <option value="">Select Position</option>
-  <option>GENERAL MANAGER</option>
-  <option>MANAGER</option>
-  <option>SUPERVISOR</option>
-  <option>ADMIN</option>
-  <option>WAITER</option>
-  <option>WAITRESS</option>
-  <option>CASHIER</option>
+<option value="">Select Position</option>
+<option>GENERAL MANAGER</option>
+<option>MANAGER</option>
+<option>SUPERVISOR</option>
+<option>ADMIN</option>
+<option>WAITER</option>
+<option>WAITRESS</option>
+<option>CASHIER</option>
 </select>
+
 <select id="bank">
 <option value="">Select Bank</option>
 <option>BDO</option>
@@ -218,46 +131,57 @@ h2{
 
 <button class="add" onclick="add()">Add</button>
 <button class="update" onclick="update()">Update</button>
-<button onclick="location.reload()">Refresh</button>
+<button onclick="safeReset()">Reset All</button>
 
 </div>
 
-<!-- ✅ FIXED TABLE -->
 <div class="table-container">
-  <table>
-    <thead>
-      <tr>
-        <th>First Name</th>
-        <th>Middle Name</th>
-        <th>Last Name</th>
-        <th>Age</th>
-        <th>Address</th>
-        <th>Contact</th>
-        <th>Email</th>
-        <th>ID</th>
-        <th>Passport</th>
-        <th>Position</th>
-        <th>Bank</th>
-        <th>Account</th>
-        <th>SSS</th>
-        <th>PhilHealth</th>
-        <th>Pag-IBIG</th>
-        <th>Action</th>
-      </tr>
-    </thead>
+<table>
+<thead>
+<tr>
+<th>First Name</th>
+<th>Middle Name</th>
+<th>Last Name</th>
+<th>Age</th>
+<th>Address</th>
+<th>Contact</th>
+<th>Email</th>
+<th>ID</th>
+<th>Passport</th>
+<th>Position</th>
+<th>Bank</th>
+<th>Account</th>
+<th>SSS</th>
+<th>PhilHealth</th>
+<th>Pag-IBIG</th>
+<th>Action</th>
+</tr>
+</thead>
 
-    <tbody id="table"></tbody>
-  </table>
+<tbody id="table"></tbody>
+</table>
 </div>
+
 <div style="margin-top:10px;">
-  <input onkeyup="search(0,this.value)" placeholder="Search First">
-  <input onkeyup="search(1,this.value)" placeholder="Search Middle">
-  <input onkeyup="search(2,this.value)" placeholder="Search Last">
-  <input onkeyup="search(6,this.value)" placeholder="Search Email">
+<input onkeyup="search(0,this.value)" placeholder="Search First">
+<input onkeyup="search(2,this.value)" placeholder="Search Last">
+<input onkeyup="search(6,this.value)" placeholder="Search Email">
 </div>
+
 <script>
-let data = JSON.parse(localStorage.getItem("employees")) || [];
-let editIndex = -1;
+
+// 🔥 FIREBASE INIT
+const firebaseConfig = {
+  apiKey: "AIzaSyCZG7xQaHaCtD_evrziUqdKqHJsVOQf3A8",
+  authDomain: "hr-system-18fee.firebaseapp.com",
+  projectId: "hr-system-18fee",
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+let data = [];
+let editId = null;
 
 // AGE AUTO
 birthday.onchange = function(){
@@ -266,60 +190,30 @@ birthday.onchange = function(){
   age.value = t.getFullYear() - b.getFullYear();
 };
 
-function save(){
-  localStorage.setItem("employees", JSON.stringify(data));
+// VALIDATION
+function isValid(form){
+  return form.fname || form.lname || form.email;
 }
 
-function render(){
-  table.innerHTML="";
-
-  data.forEach((e,i)=>{
-
-  // 🚫 SKIP BLANK DATA (FINAL FILTER)
-  if(
-    !e ||
-    (!e.fname && !e.lname && !e.email) ||
-    (e.fname === "" && e.lname === "" && e.email === "")
-  ){
-    return;
-  }
-
-  table.innerHTML += `
-    <tr>
-      <td>${e.fname || ""}</td>
-<td>${e.mname || ""}</td>
-<td>${e.lname || ""}</td>
-<td>${e.age || ""}</td>
-<td>${e.address || ""}</td>
-<td>${e.contact || ""}</td>
-<td>${e.email || ""}</td>
-<td>${e.empid || ""}</td>
-<td>${e.passport || ""}</td>
-<td>${e.position || ""}</td>
-<td>${e.bank || ""}</td>
-<td>${e.bankAccount || ""}</td>
-<td>${e.sss || ""}</td>
-<td>${e.philhealth || ""}</td>
-<td>${e.pagibig || ""}</td>
-      <td>
-        <button class="edit" onclick="edit(${i})">Edit</button>
-        <button class="delete" onclick="del(${i})">Delete</button>
-      </td>
-    </tr>
-    `;
-  });
+// DUPLICATE
+function isDuplicate(form){
+  return data.some(e =>
+    e.fname === form.fname &&
+    e.lname === form.lname &&
+    e.empid === form.empid
+  );
 }
 
+// GET FORM
 function getForm(){
   return {
     fname: fname.value,
     mname: mname.value,
     lname: lname.value,
-    birthday: birthday.value,
     age: age.value,
     address: address.value,
     contact: contact.value,
-    email: email.value, // ✅ FIXED
+    email: email.value,
     empid: empid.value,
     passport: passport.value,
     position: position.value,
@@ -330,168 +224,155 @@ function getForm(){
     pagibig: pagibig.value
   };
 }
+
+// ADD / UPDATE
 function add(){
   let form = getForm();
 
-  // 🚫 BLOCK BLANK INPUT
-  if(
-    !form.fname?.trim() &&
-    !form.lname?.trim() &&
-    !form.email?.trim()
-  ){
-    alert("Empty data not allowed!");
+  if(!isValid(form)){
+    alert("Empty not allowed");
     return;
   }
 
-  data.push(form);
-  save(); 
-  render(); 
+  if(editId){
+    db.collection("employees").doc(editId).update(form);
+    editId = null;
+    alert("Updated!");
+  } else {
+    if(isDuplicate(form)){
+      alert("Duplicate employee");
+      return;
+    }
+    db.collection("employees").add(form);
+  }
+
   clear();
-
-  db.collection("employees").add(form);
 }
+
+// EDIT
 function edit(i){
-  let e=data[i]; editIndex=i;
-  fname.value=e.fname;
-  mname.value=e.mname;
-  lname.value=e.lname;
-  birthday.value=e.birthday;
-  age.value=e.age;
-  address.value=e.address;
-  contact.value=e.contact;
-  email.value=e.email;
-  empid.value=e.empid;
-  passport.value=e.passport;
-  position.value = e.position;
-  bank.value=e.bank;
-  bankAccount.value=e.bankAccount;
-  sss.value=e.sss;
-  philhealth.value=e.philhealth;
-  pagibig.value=e.pagibig;
+  let e = data[i];
+  editId = e.id;
+
+  for(let key in e){
+    if(document.getElementById(key)){
+      document.getElementById(key).value = e[key];
+    }
+  }
 }
 
-function update(){
-  if(editIndex==-1) return;
-  data[editIndex]=getForm();
-  save(); render(); clear();
-  editIndex=-1;
-}
-
+// DELETE
 function del(i){
-  data.splice(i,1);
-  save(); render();
+  if(!confirm("Delete employee?")) return;
+  db.collection("employees").doc(data[i].id).delete();
 }
 
+// CLEAR
 function clear(){
   document.querySelectorAll("input").forEach(i=>i.value="");
   bank.value="";
   position.value="";
 }
 
+// RENDER
+function render(){
+  table.innerHTML="";
+
+  data.forEach((e,i)=>{
+    if(!e.fname && !e.lname && !e.email) return;
+
+    table.innerHTML += `
+    <tr>
+      <td>${e.fname||""}</td>
+      <td>${e.mname||""}</td>
+      <td>${e.lname||""}</td>
+      <td>${e.age||""}</td>
+      <td>${e.address||""}</td>
+      <td>${e.contact||""}</td>
+      <td>${e.email||""}</td>
+      <td>${e.empid||""}</td>
+      <td>${e.passport||""}</td>
+      <td>${e.position||""}</td>
+      <td>${e.bank||""}</td>
+      <td>${e.bankAccount||""}</td>
+      <td>${e.sss||""}</td>
+      <td>${e.philhealth||""}</td>
+      <td>${e.pagibig||""}</td>
+      <td>
+        <button class="edit" onclick="edit(${i})">Edit</button>
+        <button class="delete" onclick="del(${i})">Delete</button>
+      </td>
+    </tr>
+    `;
+  });
+}
+
+// FIREBASE LIVE
+db.collection("employees").onSnapshot(snapshot=>{
+  data=[];
+  snapshot.forEach(doc=>{
+    let d=doc.data();
+    if(!d.fname && !d.lname && !d.email) return;
+    d.id=doc.id;
+    data.push(d);
+  });
+  render();
+});
+
+// SEARCH
+function search(col,val){
+  let rows=document.querySelectorAll("#table tr");
+  rows.forEach(r=>{
+    let text=r.children[col].innerText.toLowerCase();
+    r.style.display=text.includes(val.toLowerCase())?"":"none";
+  });
+}
+
+// EXPORT
+function exportData(){
+  let blob=new Blob([JSON.stringify(data)],{type:"application/json"});
+  let a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="employees.json";
+  a.click();
+}
+
+// IMPORT
+function importData(e){
+  let file=e.target.files[0];
+  let reader=new FileReader();
+  reader.onload=function(){
+    let d=JSON.parse(reader.result);
+
+    JSON.parse(d.employees || "[]").forEach(emp=>{
+      db.collection("employees").add(emp);
+    });
+
+    alert("Imported!");
+  };
+  reader.readAsText(file);
+}
+
+// RESET
+function safeReset(){
+  if(!confirm("Delete ALL employees?")) return;
+  db.collection("employees").get().then(snap=>{
+    snap.forEach(doc=>{
+      db.collection("employees").doc(doc.id).delete();
+    });
+  });
+}
+
+// NAV
 function goPayroll(){
   window.location.href="payroll.html";
 }
 
-render();
-  function search(col, value){
-  let rows = document.querySelectorAll("#table tr");
-
-  rows.forEach(r=>{
-    let cell = r.children[col];
-    if(!cell) return;
-
-    let text = cell.innerText.toLowerCase();
-    r.style.display = text.includes(value.toLowerCase()) ? "" : "none";
-  });
-}
-  if(localStorage.getItem("login") !== "true"){
-  window.location.href = "login.html";
-}
-  // ===============================
-// 🔥 EXPORT / IMPORT EMPLOYEE
-// ===============================
-
-function exportData(){
-  let data = {
-    employees: localStorage.getItem("employees")
-  };
-
-  let blob = new Blob([JSON.stringify(data)], {type:"application/json"});
-  let a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "employees.json";
-  a.click();
+// LOGIN
+if(localStorage.getItem("login")!=="true"){
+  window.location.href="login.html";
 }
 
-function importData(e){
-  let file = e.target.files[0];
-
-  let reader = new FileReader();
-  reader.onload = function(){
-    let data = JSON.parse(reader.result);
-
-    localStorage.setItem("employees", data.employees);
-
-    alert("Employees Imported!");
-    location.reload();
-  };
-
-  reader.readAsText(file);
-}
-  // 🔥 FIREBASE INIT
-const firebaseConfig = {
-  apiKey: "AIzaSyCZG7xQaHaCtD_evrziUqdKqHJsVOQf3A8",
-  authDomain: "hr-system-18fee.firebaseapp.com",
-  projectId: "hr-system-18fee",
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-  // 🔥 AUTO LOAD FROM FIREBASE
-db.collection("employees").onSnapshot(snapshot => {
-  data = [];
-  snapshot.forEach(doc=>{
-    data.push(doc.data());
-  });
-
-  render();
-});
-  db.collection("employees").onSnapshot(snapshot => {
-  data = [];
-  snapshot.forEach(doc=>{
-    let d = doc.data();
-    d.id = doc.id;
-    data.push(d);
-  });
-
-  render();
-});
-  // 🔥 AUTO DELETE BLANK SA FIREBASE
-db.collection("employees").get().then(snapshot=>{
-  snapshot.forEach(doc=>{
-    let d = doc.data();
-
-    if(
-      !d ||
-      (!d.fname && !d.lname && !d.email) ||
-      (d.fname === "" && d.lname === "" && d.email === "")
-    ){
-      db.collection("employees").doc(doc.id).delete();
-      console.log("Deleted blank:", doc.id);
-    }
-  });
-});
-  function safeReset(){
-  if(!confirm("Delete all employees?")) return;
-
-  localStorage.removeItem("employees");
-
-  db.collection("employees").get().then(snap=>{
-    snap.forEach(doc=> db.collection("employees").doc(doc.id).delete());
-  });
-
-  location.reload();
-}
 </script>
 
 </body>
