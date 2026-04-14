@@ -324,6 +324,30 @@ td:last-child button {
   display: inline-block !important;
   margin: 2px;
 }
+  /* ===== SCROLL TABLE FIX ===== */
+
+/* 🔥 1. NO WRAP (ONE LINE LANG) */
+th, td {
+  white-space: nowrap;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* 🔥 2. ENABLE HORIZONTAL SCROLL */
+.table-container {
+  overflow-x: auto;
+}
+
+/* 🔥 3. PARA HINDI SUMIKIP */
+table {
+  min-width: 1600px; /* pwede mo pa taasan */
+}
+
+/* 🔥 4. BUTTON SIDE BY SIDE */
+td:last-child button {
+  display: inline-block !important;
+  margin: 2px;
+}
 </style>
   
 </head>
