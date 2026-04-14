@@ -72,6 +72,12 @@
       background:#dbe3f3;
       color:black;
     }
+
+    /* 🔥 ADD ONLY HIGHLIGHT */
+    tr.selected{
+      background:#ffe082 !important;
+    }
+
   </style>
 </head>
 
@@ -91,6 +97,9 @@
 <br>
 
 <button class="add" onclick="add()">Add Attendance</button>
+
+<!-- 🔥 ADD ONLY -->
+<button class="nav" onclick="today()">Today 📅</button>
 
 <table>
   <thead>
@@ -182,7 +191,7 @@ function computeHours(inTime, outTime){
   return diff > 0 ? diff.toFixed(2) : 0;
 }
 
-// AUTO STATUS
+// STATUS
 function getStatus(timeIn){
   if(!timeIn) return "Absent";
 
@@ -250,11 +259,10 @@ function render(){
     `;
   });
 
-  // 🔥 AUTO UPDATE TIMESHEET
   generateTimesheet();
 }
 
-// 🔥 TIMESHEET FUNCTION
+// 🔥 TIMESHEET
 function generateTimesheet(){
 
   let body = document.getElementById("timesheetBody");
@@ -263,10 +271,18 @@ function generateTimesheet(){
   let totalH = 0;
   let totalP = 0;
   let rate = parseFloat(document.getElementById("rate").value) || 0;
+  let filterDate = document.getElementById("tdate").value;
 
   attendance.forEach(a=>{
 
+    // 🔥 FILTER BY DATE
+    if(filterDate && a.date !== filterDate) return;
+
     let hours = parseFloat(a.hours) || 0;
+
+    // 🔥 AUTO OT (more than 8 hrs)
+    let ot = hours > 8 ? (hours - 8).toFixed(2) : 0;
+
     let pay = hours * rate;
 
     totalH += hours;
@@ -277,7 +293,7 @@ function generateTimesheet(){
         <td>${a.name}</td>
         <td>${a.timeIn}</td>
         <td>${a.timeOut}</td>
-        <td>0</td>
+        <td>${ot}</td>
         <td>${hours}</td>
         <td>${pay.toFixed(2)}</td>
       </tr>
@@ -288,11 +304,29 @@ function generateTimesheet(){
   document.getElementById("totalPay").innerText = totalP.toFixed(2);
 }
 
-// 🔥 AUTO UPDATE RATE
+// 🔥 AUTO UPDATE
 document.addEventListener("input", function(e){
-  if(e.target.id === "rate"){
+  if(e.target.id === "rate" || e.target.id === "tdate"){
     generateTimesheet();
   }
+});
+
+// 🔥 TODAY BUTTON
+function today(){
+  let now = new Date().toISOString().slice(0,10);
+  document.getElementById("date").value = now;
+}
+
+// 🔥 ROW SELECT
+document.addEventListener("click", function(e){
+  let row = e.target.closest("tr");
+  if(!row) return;
+
+  document.querySelectorAll("tbody tr").forEach(r=>{
+    r.classList.remove("selected");
+  });
+
+  row.classList.add("selected");
 });
 
 // BACK
