@@ -88,6 +88,81 @@ th:first-child {
   background: blue;
   color: white;
   z-index: 2;
+}/* ================================= */
+/* 🔥 EMPLOYEE PREMIUM LIGHT GLOW UI */
+/* ================================= */
+
+/* clean light background */
+body{
+  background: linear-gradient(135deg, #f5f7fa, #e4ecf7) !important;
+}
+
+/* remove dark overlays if meron */
+body::before{
+  display:none !important;
+}
+
+/* 🔥 FORM BOX (yung input area mo) */
+.box{
+  background:white !important;
+  border-radius:12px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.08);
+  border:1px solid rgba(0,0,0,0.05);
+}
+
+/* 🔥 TABLE CONTAINER */
+.table-container{
+  background:white !important;
+  border-radius:12px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.08);
+  padding:5px;
+}
+
+/* 🔥 TABLE STYLE */
+table{
+  background:white !important;
+}
+
+/* 🔥 TABLE HEADER */
+th{
+  background:linear-gradient(to right, #4facfe, #00c6ff) !important;
+  color:white;
+}
+
+/* 🔥 ROW HOVER */
+tbody tr:hover{
+  background:#f1f7ff !important;
+}
+
+/* 🔥 INPUT STYLE */
+input, select{
+  background:white;
+  border:1px solid #ccc;
+  border-radius:8px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* 🔥 INPUT FOCUS */
+input:focus, select:focus{
+  outline:none;
+  border:1px solid #007bff;
+  box-shadow:0 0 8px rgba(0,123,255,0.3);
+}
+
+/* 🔥 BUTTON STYLE */
+button{
+  box-shadow:0 3px 8px rgba(0,0,0,0.1);
+}
+
+button:hover{
+  transform:scale(1.05);
+  box-shadow:0 5px 15px rgba(0,123,255,0.3);
+}
+
+/* 🔥 TITLE */
+h2{
+  color:#2c3e50;
+  text-shadow:0 2px 5px rgba(0,0,0,0.1);
 }
   </style>
 </head>
