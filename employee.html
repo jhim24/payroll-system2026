@@ -19,12 +19,13 @@ h2 {
 }
 
 button {
-  padding:10px;
-  margin:5px;
+  padding:8px;
+  margin:4px;
   border:none;
   color:white;
   border-radius:5px;
   cursor:pointer;
+  font-size:12px;
 }
 
 .nav {background:green;}
@@ -40,29 +41,28 @@ button {
   padding:10px;
 }
 
-/* 🔥 GRID SYSTEM */
+/* GRID */
 .form-grid{
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap:8px;
+  gap:6px;
 }
 
-/* 🔥 UNIFORM SIZE */
+/* INPUT SIZE */
 .form-grid input,
 .form-grid select{
-  width:100% !important;
-  height:35px;
-  box-sizing:border-box;
+  width:100%;
+  height:32px;
+  font-size:12px;
 }
 
-/* 🔥 BUTTON AREA */
+/* BUTTON AREA */
 .form-actions{
-  margin-top:10px;
+  margin-top:8px;
   text-align:center;
 }
 
 input, select {
-  padding:5px;
   border-radius:5px;
   border:1px solid #ccc;
 }
@@ -81,16 +81,26 @@ table {
   min-width:1400px;
   width:100%;
   border-collapse:collapse;
-  font-size:12px;
+  font-size:11px;
 }
 
+/* 🔥 COMPACT ROW FIX */
 th, td {
   border:1px solid #ccc;
-  padding:4px;
-  text-align:center;
+
+  padding:2px 4px;      /* 🔥 maliit */
+  font-size:11px;
+
   white-space:normal;
   word-break:break-word;
-  line-height:1.2;
+
+  line-height:1.1;      /* 🔥 auto height */
+  vertical-align:top;
+}
+
+/* 🔥 LIMIT WIDTH */
+td {
+  max-width:120px;
 }
 
 th {
@@ -98,8 +108,9 @@ th {
   color:white;
 }
 
+/* 🔥 HOVER */
 tbody tr:hover{
-  background:#f1f7ff;
+  background:#e3f2fd;
 }
 </style>
 </head>
@@ -112,10 +123,9 @@ tbody tr:hover{
 
 <div class="box">
 
-<button onclick="exportData()">Export Employees 💾</button>
+<button onclick="exportData()">Export 💾</button>
 <input type="file" onchange="importData(event)">
 
-<!-- 🔥 GRID START -->
 <div class="form-grid">
 
 <input id="fname" placeholder="First Name">
@@ -126,16 +136,15 @@ tbody tr:hover{
 <input id="age" placeholder="Age" readonly>
 
 <input id="address" placeholder="Address">
-<input id="contact" placeholder="Contact Number">
+<input id="contact" placeholder="Contact">
 
 <input id="email" placeholder="Email">
 <input id="empid" placeholder="Employee ID">
 
 <input id="passport" placeholder="Passport">
 
-<!-- 🔥 GOVERNMENT ID -->
 <select id="govType">
-<option value="">Gov ID Type</option>
+<option value="">Gov ID</option>
 <option>UMID</option>
 <option>PHILHEALTH</option>
 <option>LICENSE</option>
@@ -148,13 +157,9 @@ tbody tr:hover{
 
 <select id="position">
 <option value="">Position</option>
-<option>GENERAL MANAGER</option>
 <option>MANAGER</option>
 <option>SUPERVISOR</option>
 <option>ADMIN</option>
-<option>WAITER</option>
-<option>WAITRESS</option>
-<option>CASHIER</option>
 </select>
 
 <select id="bank">
@@ -162,23 +167,20 @@ tbody tr:hover{
 <option>BDO</option>
 <option>BPI</option>
 <option>Metrobank</option>
-<option>Landbank</option>
-<option>UnionBank</option>
 </select>
 
-<input id="bankAccount" placeholder="Bank Account">
+<input id="bankAccount" placeholder="Account">
 
 <input id="sss" placeholder="SSS">
 <input id="philhealth" placeholder="PhilHealth">
 <input id="pagibig" placeholder="Pag-IBIG">
 
 </div>
-<!-- 🔥 GRID END -->
 
 <div class="form-actions">
 <button class="add" onclick="add()">Add</button>
 <button class="update" onclick="add()">Update</button>
-<button onclick="safeReset()">Reset All</button>
+<button onclick="safeReset()">Reset</button>
 </div>
 
 </div>
@@ -196,7 +198,7 @@ tbody tr:hover{
 <th>Email</th>
 <th>ID</th>
 <th>Passport</th>
-<th>Gov Type</th>
+<th>Gov</th>
 <th>Gov ID</th>
 <th>Position</th>
 <th>Bank</th>
@@ -213,14 +215,14 @@ tbody tr:hover{
 
 <script>
 
-// 🔥 AUTO PLACEHOLDER
+// AUTO PLACEHOLDER
 govType.onchange = function(){
-  govID.placeholder = "Enter " + this.value + " Number";
+  govID.placeholder = "Enter " + this.value;
 };
 
 // FIREBASE
 const firebaseConfig = {
-  apiKey: "AIzaSyCZG7xQaHaCtD_evrziUqdKqHJsVOQf3A8",
+  apiKey: "AIzaSy...",
   authDomain: "hr-system-18fee.firebaseapp.com",
   projectId: "hr-system-18fee",
 };
@@ -231,7 +233,7 @@ const db = firebase.firestore();
 let data = [];
 let editId = null;
 
-// AGE
+// AGE AUTO
 birthday.onchange = function(){
   let b = new Date(this.value);
   let t = new Date();
@@ -251,24 +253,17 @@ function getForm(){
     empid: empid.value,
     passport: passport.value,
     govType: govType.value,
-    govID: govID.value,
-    position: position.value,
-    bank: bank.value,
-    bankAccount: bankAccount.value,
-    sss: sss.value,
-    philhealth: philhealth.value,
-    pagibig: pagibig.value
+    govID: govID.value
   };
 }
 
-// ADD / UPDATE
+// ADD
 function add(){
   let form = getForm();
 
   if(editId){
     db.collection("employees").doc(editId).update(form);
     editId = null;
-    alert("Updated!");
   } else {
     db.collection("employees").add(form);
   }
@@ -276,30 +271,14 @@ function add(){
   clear();
 }
 
-// EDIT
-function edit(i){
-  let e = data[i];
-  editId = e.id;
-
-  for(let key in e){
-    if(document.getElementById(key)){
-      document.getElementById(key).value = e[key];
-    }
-  }
-}
-
 // DELETE
 function del(i){
-  if(!confirm("Delete employee?")) return;
   db.collection("employees").doc(data[i].id).delete();
 }
 
 // CLEAR
 function clear(){
   document.querySelectorAll("input").forEach(i=>i.value="");
-  bank.value="";
-  position.value="";
-  govType.value="";
 }
 
 // RENDER
@@ -326,7 +305,6 @@ function render(){
       <td>${e.philhealth||""}</td>
       <td>${e.pagibig||""}</td>
       <td>
-        <button onclick="edit(${i})">Edit</button>
         <button onclick="del(${i})">Delete</button>
       </td>
     </tr>`;
@@ -344,24 +322,8 @@ db.collection("employees").onSnapshot(snapshot=>{
   render();
 });
 
-// RESET
-function safeReset(){
-  if(!confirm("Delete ALL employees?")) return;
-  db.collection("employees").get().then(snap=>{
-    snap.forEach(doc=>{
-      db.collection("employees").doc(doc.id).delete();
-    });
-  });
-}
-
-// NAV
 function goPayroll(){
   window.location.href="payroll.html";
-}
-
-// LOGIN
-if(localStorage.getItem("login")!=="true"){
-  window.location.href="login.html";
 }
 
 </script>
