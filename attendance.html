@@ -185,6 +185,69 @@ th{
 tbody tr:hover{
   background:rgba(0,255,255,0.2) !important;
 }
+    /* ================================= */
+/* 🌞 LIGHT CLEAN UI + SOFT GLOW */
+/* ================================= */
+
+/* light gradient background */
+body{
+  background: linear-gradient(135deg, #f5f7fa, #e4ecf7) !important;
+}
+
+/* remove dark overlay */
+body::before{
+  display:none !important;
+}
+
+/* clean glass boxes */
+table, #timesheet{
+  background:white !important;
+  border-radius:12px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.08);
+  overflow:hidden;
+}
+
+/* inputs clean */
+input, select{
+  background:white;
+  border:1px solid #ccc;
+  border-radius:8px;
+  color:#333;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* focus effect */
+input:focus, select:focus{
+  outline:none;
+  border:1px solid #007bff;
+  box-shadow:0 0 8px rgba(0,123,255,0.3);
+}
+
+/* buttons */
+button{
+  box-shadow:0 3px 8px rgba(0,0,0,0.1);
+}
+
+button:hover{
+  transform:scale(1.05);
+  box-shadow:0 5px 15px rgba(0,123,255,0.3);
+}
+
+/* header */
+h2{
+  color:#2c3e50;
+}
+
+/* table header */
+th{
+  background:linear-gradient(to right, #4facfe, #00c6ff) !important;
+  color:white;
+}
+
+/* row hover */
+tbody tr:hover{
+  background:#f1f7ff !important;
+}
   </style>
 </head>
 
