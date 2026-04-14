@@ -124,6 +124,45 @@ button:hover {
   box-shadow:0 0 20px rgba(0,255,0,0.3);
 }
 
+/* ================================= */
+/* 🔥🔥 NEW ADD: PREMIUM BORDER */
+/* ================================= */
+
+#dashboard {
+  border:2px solid rgba(0, 200, 255, 0.6) !important;
+  border-radius:15px !important;
+  box-shadow:
+    0 0 10px rgba(0,200,255,0.5),
+    0 0 25px rgba(0,200,255,0.3);
+  padding:10px !important;
+}
+
+/* individual cards */
+#dashboard div {
+  background: rgba(255,255,255,0.2);
+  border:1px solid rgba(255,255,255,0.5);
+  border-radius:10px;
+  padding:8px 12px;
+  box-shadow:0 0 10px rgba(0,255,255,0.3);
+  transition:0.2s;
+}
+
+/* hover effect */
+#dashboard div:hover {
+  transform:scale(1.05);
+  background:rgba(0,255,255,0.2);
+}
+
+/* optional glow animation */
+#dashboard {
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+  from { box-shadow:0 0 10px cyan; }
+  to { box-shadow:0 0 25px blue; }
+}
+
 </style>
 </head>
 
@@ -213,13 +252,11 @@ function view(i){
 
   document.getElementById("details").innerHTML = `
   <table style="min-width:900px; border-collapse:collapse; border:2px solid green;">
-
     <tr style="background:green; color:white;">
       <th>Name</th><th>Gross</th><th>OT</th><th>Holiday</th>
       <th>Vacation</th><th>Sick</th><th>Birthday</th>
       <th>SSS</th><th>PhilHealth</th><th>Pag-IBIG</th><th>Net</th>
     </tr>
-
     <tr>
       <td>${e.name}</td>
       <td>${e.gross}</td>
@@ -233,11 +270,8 @@ function view(i){
       <td>${e.pagibig}</td>
       <td><b style="color:green;">${e.net}</b></td>
     </tr>
-
   </table>
-
   <br>
-
   <button onclick="printRecord()">🖨️ Print</button>
   <button onclick="exportRecord()">📊 Export</button>
   `;
