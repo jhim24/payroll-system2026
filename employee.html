@@ -33,12 +33,24 @@ button {
 .update {background:orange;}
 .delete {background:red;}
 .edit {background:green;}
+.cancel {background:#555;}
 
 .box {
   border-radius:12px;
-  background:green;
+  background:white;
   box-shadow:0 5px 20px rgba(0,0,0,0.08);
   padding:10px;
+}
+
+/* EDIT MODE */
+#editMode{
+  display:none;
+  background:#fff3cd;
+  border:1px solid #ffeeba;
+  padding:5px;
+  border-radius:5px;
+  margin-bottom:5px;
+  font-size:12px;
 }
 
 /* GRID */
@@ -69,7 +81,7 @@ input, select {
 .table-container {
   width:100%;
   overflow-x:auto;
-  background:lightgreen;
+  background:white;
   border-radius:12px;
   box-shadow:0 5px 20px rgba(0,0,0,0.08);
   padding:5px;
@@ -89,12 +101,9 @@ th, td {
   white-space:normal;
   word-break:break-word;
   line-height:1.1;
-  vertical-align:top;
 }
 
-td {
-  max-width:120px;
-}
+td { max-width:120px; }
 
 th {
   background:linear-gradient(to right, #4facfe, #00c6ff);
@@ -103,6 +112,11 @@ th {
 
 tbody tr:hover{
   background:#e3f2fd;
+}
+
+/* 🔥 SELECTED ROW */
+tr.selected{
+  background:#fff3cd !important;
 }
 </style>
 </head>
@@ -115,8 +129,8 @@ tbody tr:hover{
 
 <div class="box">
 
-<button onclick="exportData()">Export 💾</button>
-<input type="file" onchange="importData(event)">
+<!-- 🔥 EDIT MODE INDICATOR -->
+<div id="editMode">✏️ Editing employee...</div>
 
 <div class="form-grid">
 
@@ -170,8 +184,8 @@ tbody tr:hover{
 </div>
 
 <div class="form-actions">
-<button class="add" onclick="add()">Add</button>
-<button class="update" onclick="add()">Update</button>
+<button class="add" onclick="add()">Save</button>
+<button class="cancel" onclick="cancelEdit()">Cancel</button>
 <button onclick="safeReset()">Reset</button>
 </div>
 
@@ -207,12 +221,6 @@ tbody tr:hover{
 
 <script>
 
-// AUTO PLACEHOLDER
-govType.onchange = function(){
-  govID.placeholder = "Enter " + this.value;
-};
-
-// FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSy...",
   authDomain: "hr-system-18fee.firebaseapp.com",
@@ -224,8 +232,9 @@ const db = firebase.firestore();
 
 let data = [];
 let editId = null;
+let selectedRow = null;
 
-// AGE AUTO
+// AGE
 birthday.onchange = function(){
   let b = new Date(this.value);
   let t = new Date();
@@ -261,7 +270,7 @@ function add(){
 
   if(editId){
     db.collection("employees").doc(editId).update(form);
-    editId = null;
+    cancelEdit();
     alert("Updated!");
   } else {
     db.collection("employees").add(form);
@@ -270,7 +279,7 @@ function add(){
   clear();
 }
 
-// EDIT FUNCTION (FIXED)
+// EDIT
 function edit(i){
   let e = data[i];
   editId = e.id;
@@ -281,7 +290,31 @@ function edit(i){
     }
   }
 
-  window.scrollTo({top:0, behavior:'smooth'});
+  // 🔥 highlight row
+  document.querySelectorAll("tr").forEach(r=>r.classList.remove("selected"));
+  let row = document.querySelectorAll("#table tr")[i];
+  if(row){
+    row.classList.add("selected");
+    selectedRow = row;
+  }
+
+  // 🔥 show edit mode
+  document.getElementById("editMode").style.display = "block";
+
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+// CANCEL
+function cancelEdit(){
+  editId = null;
+  clear();
+
+  document.getElementById("editMode").style.display = "none";
+
+  if(selectedRow){
+    selectedRow.classList.remove("selected");
+    selectedRow = null;
+  }
 }
 
 // DELETE
@@ -298,7 +331,7 @@ function clear(){
   govType.value="";
 }
 
-// RENDER (WITH EDIT BUTTON)
+// RENDER
 function render(){
   table.innerHTML="";
   data.forEach((e,i)=>{
@@ -340,8 +373,13 @@ db.collection("employees").onSnapshot(snapshot=>{
   render();
 });
 
+// NAV
 function goPayroll(){
   window.location.href="payroll.html";
+}
+
+if(localStorage.getItem("login")!=="true"){
+  window.location.href="login.html";
 }
 
 </script>
