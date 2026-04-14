@@ -127,6 +127,64 @@ h2{
   color:white;
   text-shadow:0 0 10px rgba(0,0,0,0.5);
 }
+    /* ================================= */
+/* 🔥 CLEAN BACKGROUND + GLOW UI */
+/* ================================= */
+
+/* plain gradient background */
+body{
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364) !important;
+}
+
+/* remove overlay kung meron */
+body::before{
+  display:none !important;
+}
+
+/* glow effect sa tables */
+table, #timesheet{
+  background:rgba(255,255,255,0.08) !important;
+  backdrop-filter: blur(10px);
+  border-radius:12px;
+  box-shadow:0 0 15px rgba(0,255,255,0.3);
+  overflow:hidden;
+}
+
+/* glow inputs */
+input, select{
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.3);
+  color:white;
+  border-radius:8px;
+  box-shadow:0 0 8px rgba(0,255,255,0.2);
+}
+
+/* glow buttons */
+button{
+  box-shadow:0 0 10px rgba(0,255,255,0.3);
+}
+
+button:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 20px rgba(0,255,255,0.7);
+}
+
+/* header glow */
+h2{
+  color:white;
+  text-shadow:0 0 15px rgba(0,255,255,0.7);
+}
+
+/* table header glow */
+th{
+  background:linear-gradient(to right, #00c6ff, #0072ff) !important;
+  box-shadow:0 0 10px rgba(0,255,255,0.5);
+}
+
+/* row hover glow */
+tbody tr:hover{
+  background:rgba(0,255,255,0.2) !important;
+}
   </style>
 </head>
 
