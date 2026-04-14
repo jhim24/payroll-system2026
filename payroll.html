@@ -41,10 +41,6 @@ table {
   background:white;
 }
 
-/* ================================= */
-/* 🔥 ADD ONLY EXCEL STYLE */
-/* ================================= */
-
 th, td {
   border:1px solid #999 !important;
   padding:6px !important;
@@ -59,28 +55,23 @@ th {
   top:0;
 }
 
-/* zebra rows */
 tbody tr:nth-child(even){
   background:#f4f9f4;
 }
 
-/* hover */
 tbody tr:hover{
   background:#c8e6c9;
 }
 
-/* selected row */
 tr.selected{
   background:#a5d6a7 !important;
 }
 
-/* scroll */
 .table-container{
   max-height:400px;
   overflow:auto;
   border:2px solid green;
 }
-
 </style>
 </head>
 
@@ -115,7 +106,6 @@ tr.selected{
 
 </div>
 
-<!-- 🔥 ADD ONLY WRAPPER -->
 <div class="table-container">
 <table>
 <tr>
@@ -137,24 +127,41 @@ tr.selected{
 
 <script>
 
-// LOAD EMPLOYEES
+// 🔥 LOAD EMPLOYEES FIXED
 let data = JSON.parse(localStorage.getItem("employees")) || [];
 let lastPayslip = null;
 
-// DROPDOWN
 let emp = document.getElementById("emp");
+
+// RESET DROPDOWN
 emp.innerHTML = "<option value=''>Select Employee</option>";
 
+// 🔥 HANDLE EMPTY
+if(data.length === 0){
+  emp.innerHTML += "<option>No employees found</option>";
+}
+
+// 🔥 FLEXIBLE NAME SUPPORT
 data.forEach((e,i)=>{
-  emp.innerHTML += `<option value="${i}">
-    ${e.fname} ${e.lname}
-  </option>`;
+
+  let fullName = "";
+
+  if(e.fname || e.lname){
+    fullName = (e.fname || "") + " " + (e.lname || "");
+  } else if(e.name){
+    fullName = e.name;
+  } else {
+    fullName = "Employee " + (i+1);
+  }
+
+  emp.innerHTML += `<option value="${i}">${fullName}</option>`;
 });
 
-// COMPUTE (UNCHANGED)
+
+// COMPUTE
 function compute(){
 
-  let i = document.getElementById("emp").value;
+  let i = emp.value;
 
   if(i===""){
     alert("Select employee");
@@ -162,6 +169,15 @@ function compute(){
   }
 
   let e = data[i];
+
+  let name = "";
+  if(e.fname || e.lname){
+    name = (e.fname || "") + " " + (e.lname || "");
+  } else if(e.name){
+    name = e.name;
+  } else {
+    name = "Employee";
+  }
 
   let rateVal = Number(document.getElementById("rate").value) || 0;
   let daysVal = Number(document.getElementById("days").value) || 0;
@@ -195,20 +211,12 @@ function compute(){
 
   let net = totalIncome - totalDed;
 
-  lastPayslip = {
-    name: e.fname + " " + e.lname,
-    gross, otPay, holidayPay,
-    vacPay, sickPay, bdayPay,
-    sss: sssVal,
-    philhealth: philVal,
-    pagibig: pagVal,
-    net
-  };
+  lastPayslip = {name, gross, otPay, holidayPay, vacPay, sickPay, bdayPay, sss:sssVal, philhealth:philVal, pagibig:pagVal, net};
 
   let history = JSON.parse(localStorage.getItem("history")) || [];
 
   history.push({
-    name: lastPayslip.name,
+    name,
     gross: gross.toFixed(2),
     ot: otPay.toFixed(2),
     holiday: holidayPay.toFixed(2),
@@ -228,7 +236,7 @@ function compute(){
 
   table.innerHTML += `
   <tr>
-    <td>${lastPayslip.name}</td>
+    <td>${name}</td>
     <td>${gross.toFixed(2)}</td>
     <td>${otPay.toFixed(2)}</td>
     <td>${holidayPay.toFixed(2)}</td>
@@ -242,13 +250,14 @@ function compute(){
   </tr>
   `;
 
-  alert("Salary Computed & Saved!");
+  alert("✅ Salary Computed!");
 }
 
-// 🔥 AUTO FROM ATTENDANCE
+
+// AUTO ATTENDANCE
 function autoAttendance(){
 
-  let i = document.getElementById("emp").value;
+  let i = emp.value;
 
   if(i===""){
     alert("Select employee");
@@ -256,7 +265,8 @@ function autoAttendance(){
   }
 
   let e = data[i];
-  let name = e.fname + " " + e.lname;
+
+  let name = e.fname ? e.fname + " " + e.lname : (e.name || "");
 
   let attendance = JSON.parse(localStorage.getItem("attendance")) || [];
 
@@ -277,10 +287,11 @@ function autoAttendance(){
 
   document.getElementById("days").value = days.toFixed(2);
 
-  alert("✅ Auto-filled from attendance!");
+  alert("✅ Auto-filled!");
 }
 
-// 🔥 ROW SELECT (EXCEL FEEL)
+
+// ROW SELECT
 document.addEventListener("click", function(e){
   let row = e.target.closest("tr");
   if(!row || !row.parentElement) return;
@@ -291,6 +302,7 @@ document.addEventListener("click", function(e){
 
   row.classList.add("selected");
 });
+
 
 // PAYSLIP
 function openPayslip(){
@@ -310,6 +322,7 @@ function openPayslip(){
   <button onclick="window.print()">Print</button>
   `);
 }
+
 
 // LOGIN CHECK
 if(localStorage.getItem("login") !== "true"){
