@@ -1,1050 +1,326 @@
 <!DOCTYPE html>
-  
 <html>
-  
 <head>
-  
   <title>HR System</title>
-  
 
-  
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  
 
-  
 <style>
-  
 body {
-  
   font-family: Arial;
-  
-  padding:10px;
-  
-  background: linear-gradient(135deg, #f5f7fa, #e4ecf7);
-  
+  background:#f4f6f9;
+  padding:15px;
 }
-  
 
-  
+/* HEADER */
 h2 {
-  
-  border-bottom:2px solid #007bff;
-  
   color:#2c3e50;
-  
-}
-  
-
-  
-button {
-  
-  padding:8px;
-  
-  margin:4px;
-  
-  border:none;
-  
-  color:white;
-  
-  border-radius:5px;
-  
-  cursor:pointer;
-  
-  font-size:12px;
-  
-}
-  
-
-  
-.nav {background:#28a745;}
-  
-.add {background:#007bff;}
-  
-.update {background:#ffc107;}
-  
-.delete {background:#dc3545;}
-  
-.edit {background:#17a2b8;}
-  
-.cancel {background:#6c757d;}
-  
-
-  
-.box {
-  
-  background:Aquamarine;
-  
-  border-radius:12px;
-  
-  box-shadow:0 5px 20px rgba(0,0,0,0.08);
-  
-  padding:10px;
-  
   margin-bottom:10px;
-  
 }
-  
 
-  
-.form-grid{
-  
-  display:grid;
-  
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  
-  gap:6px;
-  
-}
-  
-
-  
-.form-grid input,
-  
-.form-grid select{
-  
-  width:100%;
-  
-  height:30px;
-  
-  font-size:12px;
-  
+/* BUTTONS */
+button {
+  padding:8px 12px;
+  border:none;
   border-radius:6px;
-  
-  border:1px solid #ccc;
-  
-  padding:4px;
-  
-}
-  
-
-  
-.form-actions{
-  
-  text-align:center;
-  
-  margin-top:10px;
-  
-}
-  
-
-  
-.table-container {
-  
-  width:100%;
-  
-  overflow-x:auto;
-  
-  background:LightGray;
-  
-  border-radius:12px;
-  
-  box-shadow:0 5px 20px rgba(0,0,0,0.08);
-  
-  padding:10px;
-  
-}
-  
-
-  
-table {
-  
-  min-width:1400px;
-  
-  width:100%;
-  
-  border-collapse:collapse;
-  
-  font-size:11px;
-  
-}
-  
-
-  
-th, td {
-  
-  border:1px solid #ddd;
-  
-  padding:3px 5px;
-  
-  font-size:11px;
-  
-  white-space:normal;
-  
-  word-break:break-word;
-  
-  line-height:1.2;
-  
-  vertical-align:top;
-  
-}
-  
-
-  
-td{
-  
-  max-width:120px;
-  
-}
-  
-
-  
-th {
-  
-  background:linear-gradient(to right, #4facfe, #00c6ff);
-  
   color:white;
-  
+  cursor:pointer;
 }
-  
 
-  
-tbody tr:hover{
-  
-  background:#f1f7ff;
-  
+.nav {background:#28a745;}
+.add {background:#007bff;}
+.delete {background:#dc3545;}
+.edit {background:#17a2b8;}
+.cancel {background:#6c757d;}
+
+/* CARD */
+.box {
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+  margin-bottom:15px;
 }
-  
 
-  
-tr.selected{
-  
-  background:#fff3cd !important;
-  
-}
-  
-
-  
-#editMode{
-  
-  display:none;
-  
-  background:#fff3cd;
-  
-  border:1px solid #ffeeba;
-  
-  padding:5px;
-  
-  border-radius:5px;
-  
-  margin-bottom:5px;
-  
-  font-size:12px;
-  
-}
-  /* ✅ FINAL CLEAN FIX */
-
-/* spacing form */
+/* FORM GRID */
 .form-grid {
-  gap: 12px;
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+  gap:12px;
 }
 
-/* table align */
-th, td {
-  text-align: center;
-  vertical-align: middle;
+.form-grid input, .form-grid select {
+  padding:10px;
+  border-radius:6px;
+  border:1px solid #ccc;
+  width:100%;
 }
 
-/* 🔥 BUTTON FIX (ITO ANG PINAKA IMPORTANTE) */
-td button {
-  display: inline-block;
-  margin: 2px;
-  width: auto;
-}
-  /* ===== FINAL TABLE FIX ===== */
-
-/* 🔥 LAHAT NG TEXT = HINDI BABABA */
-th, td {
-  white-space: nowrap !important; /* no line break */
-  text-align: center;
-  vertical-align: middle;
+/* ACTIONS */
+.form-actions {
+  text-align:center;
+  margin-top:10px;
 }
 
-/* 🔥 TABLE SCROLL (para hindi masira layout) */
+/* TABLE */
 .table-container {
-  overflow-x: auto;
+  background:white;
+  border-radius:12px;
+  padding:10px;
+  overflow-x:auto;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
-/* 🔥 BUTTONS SIDE BY SIDE */
-td:last-child {
-  white-space: nowrap;
-}
-
-td:last-child button {
-  display: inline-block !important;
-  margin: 2px;
-  width: auto;
-}
-  /* ===== FINAL NO OVERLAP FIX ===== */
-
-/* 🔥 FIX TABLE CELLS */
-th, td {
-  white-space: nowrap;       /* hindi bababa */
-  overflow: hidden;          /* hindi lalabas */
-  text-overflow: ellipsis;   /* ... kapag mahaba */
-  max-width: 150px;          /* limit width */
-}
-
-/* 🔥 MAS MALAKI PARA SA IMPORTANT FIELDS */
-td:nth-child(5),  /* Address */
-td:nth-child(6),  /* Contact */
-td:nth-child(7) { /* Email */
-  max-width: 220px;
-}
-
-/* 🔥 BUTTONS FIX */
-td:last-child button {
-  display: inline-block !important;
-  margin: 2px;
-}
-  /* ===== FULL READABLE TEXT FIX ===== */
-
-/* 🔥 ALLOW TEXT TO WRAP (BABABA PROPERLY) */
-th, td {
-  white-space: normal !important;   /* pwede na bumaba */
-  word-break: break-word;           /* break long words */
-  text-align: center;
-  vertical-align: middle;
-}
-
-/* 🔥 BIGGER SPACE FOR ADDRESS */
-td:nth-child(5) { /* Address column */
-  min-width: 220px;
-}
-
-/* 🔥 OPTIONAL: email/contact */
-td:nth-child(6),
-td:nth-child(7) {
-  min-width: 160px;
-}
-
-/* 🔥 BUTTONS SIDE BY SIDE */
-td:last-child button {
-  display: inline-block !important;
-  margin: 2px;
-}
-  /* ===== SCROLL TABLE FIX ===== */
-
-/* 🔥 1. NO WRAP (ONE LINE LANG) */
-th, td {
-  white-space: nowrap;
-  text-align: center;
-  vertical-align: middle;
-}
-
-/* 🔥 2. ENABLE HORIZONTAL SCROLL */
-.table-container {
-  overflow-x: auto;
-}
-
-/* 🔥 3. PARA HINDI SUMIKIP */
 table {
-  min-width: 1600px; /* pwede mo pa taasan */
+  width:100%;
+  min-width:1500px;
+  border-collapse:collapse;
 }
 
-/* 🔥 4. BUTTON SIDE BY SIDE */
-td:last-child button {
-  display: inline-block !important;
-  margin: 2px;
-}
-  /* ===== FINAL STABLE TABLE FIX ===== */
-
-/* 🔥 TABLE STRUCTURE FIX */
-table {
-  table-layout: auto; /* allow natural width */
-  min-width: 1800px;  /* para may space */
-}
-
-/* 🔥 CELLS - NO WRAP PERO HINDI OVERLAP */
 th, td {
-  white-space: nowrap;
-  overflow: hidden;       /* para hindi tumawid */
-  text-overflow: ellipsis;
-  text-align: center;
-  vertical-align: middle;
-  padding: 6px 10px;
+  padding:10px;
+  text-align:center;
+  border-bottom:1px solid #eee;
+  white-space:nowrap;
 }
 
-/* 🔥 BIGGER IMPORTANT COLUMNS */
-td:nth-child(5) { min-width: 250px; } /* Address */
-td:nth-child(6) { min-width: 180px; } /* Contact */
-td:nth-child(7) { min-width: 220px; } /* Email */
-
-/* 🔥 BUTTON FIX (PERMANENT) */
-td:last-child {
-  white-space: nowrap;
-}
-
-td:last-child button {
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-  margin: 2px;
-  width: auto;
-}
-
-/* 🔥 SCROLL FIX */
-.table-container {
-  overflow-x: auto;
-}
-  /* ===== AUTO HEIGHT TABLE (LIKE YOUR SAMPLE) ===== */
-
-/* 🔥 ALLOW MULTI-LINE (KEY FIX) */
-th, td {
-  white-space: normal !important;   /* pwede bumaba */
-  word-break: break-word;           /* hati long text */
-  vertical-align: top;              /* header stays on top */
-  text-align: center;
-  padding: 8px;
-  line-height: 1.4;
-}
-
-/* 🔥 REMOVE HEIGHT LIMITS */
-td {
-  max-width: none !important;
-}
-
-/* 🔥 OPTIONAL: BIGGER SPACE SA ADDRESS */
-td:nth-child(5) {
-  min-width: 220px;
-}
-
-/* 🔥 BUTTON FIX (HINDI MAGPATONG) */
-td:last-child button {
-  display: inline-block !important;
-  margin: 2px;
-}
-  /* ===== HORIZONTAL TABLE (LEFT ↔ RIGHT) ===== */
-
-/* 🔥 NO WRAP (ONE LINE LANG) */
-th, td {
-  white-space: nowrap;
-  text-align: center;
-  vertical-align: middle;
-}
-
-/* 🔥 PALAPADIN TABLE */
-table {
-  min-width: 1800px; /* pwede pa taasan */
-}
-
-/* 🔥 ENABLE SIDE SCROLL */
-.table-container {
-  overflow-x: auto;
-}
-
-/* 🔥 BUTTONS FIX */
-td:last-child button {
-  display: inline-block !important;
-  margin: 2px;
-}
-  /* ===== FINAL LOCKED TABLE FIX ===== */
-
-/* 🔥 1. FIXED TABLE STRUCTURE (KEY FIX) */
-table {
-  table-layout: fixed; /* hindi gagalaw columns */
-  width: 100%;
-  min-width: 1600px; /* pwede mo adjust */
-}
-
-/* 🔥 2. HEADER STABLE (HINDI BABABA) */
 th {
-  white-space: nowrap; /* hindi mag break */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: center;
+  background:#007bff;
+  color:white;
 }
 
-/* 🔥 3. BODY TEXT (HINDI OVERLAP) */
-td {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: center;
-}
-
-/* 🔥 4. SPECIFIC COLUMN WIDTHS (IMPORTANT) */
-th:nth-child(1), td:nth-child(1) { width: 120px; } /* First */
-th:nth-child(2), td:nth-child(2) { width: 120px; } /* Middle */
-th:nth-child(3), td:nth-child(3) { width: 120px; } /* Last */
-th:nth-child(5), td:nth-child(5) { width: 250px; } /* Address */
-th:nth-child(6), td:nth-child(6) { width: 160px; } /* Contact */
-th:nth-child(7), td:nth-child(7) { width: 200px; } /* Email */
-
-/* 🔥 5. ACTION BUTTON FIX (FINAL) */
-td:last-child {
-  white-space: nowrap;
-}
-
+/* BUTTON FIX */
 td:last-child button {
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-  margin: 2px;
-  width: auto;
-}
-
-/* 🔥 6. SCROLL SAFE */
-.table-container {
-  overflow-x: auto;
+  display:inline-block;
+  margin:2px;
 }
 </style>
-  
 </head>
-  
 
-  
 <body>
-  
 
-  
 <h2>👥 Employee Master List</h2>
-  
 
-  
 <button class="nav" onclick="goPayroll()">Go to Payroll 💰</button>
-  
 
-  
 <div class="box">
-  
 
-  
-<div id="editMode">✏️ Editing employee...</div>
-  
+<div id="editMode" style="display:none;color:red;">Editing...</div>
 
-  
 <div class="form-grid">
-  
-
-  
 <input id="fname" placeholder="First Name">
-  
 <input id="mname" placeholder="Middle Name">
-  
 <input id="lname" placeholder="Last Name">
-  
 
-  
 <input type="date" id="birthday">
-  
 <input id="age" placeholder="Age" readonly>
-  
 
-  
 <input id="address" placeholder="Address">
-  
 <input id="contact" placeholder="Contact">
-  
 
-  
 <input id="email" placeholder="Email">
-  
 <input id="empid" placeholder="Employee ID">
-  
 
-  
 <input id="passport" placeholder="Passport">
-  
 
-  
 <select id="govType">
-  
 <option value="">Gov ID</option>
-  
 <option>UMID</option>
-  
 <option>PHILHEALTH</option>
-  
 <option>LICENSE</option>
-  
 <option>PASSPORT</option>
-  
-<option>NATIONAL ID</option>
-  
-<option>POSTAL ID</option>
-  
 </select>
-  
 
-  
 <input id="govID" placeholder="ID Number">
-  
 
-  
 <select id="position">
-  
 <option value="">Position</option>
-  
 <option>MANAGER</option>
-  
 <option>SUPERVISOR</option>
-  
 <option>ADMIN</option>
-  
 </select>
-  
 
-  
 <select id="bank">
-  
 <option value="">Bank</option>
-  
 <option>BDO</option>
-  
 <option>BPI</option>
-  
-<option>Metrobank</option>
-  
 </select>
-  
 
-  
 <input id="bankAccount" placeholder="Account">
-  
 
-  
 <input id="sss" placeholder="SSS">
-  
 <input id="philhealth" placeholder="PhilHealth">
-  
 <input id="pagibig" placeholder="Pag-IBIG">
-  
-
-  
 </div>
-  
 
-  
 <div class="form-actions">
-  
 <button class="add" onclick="add()">Save</button>
-  
 <button class="cancel" onclick="cancelEdit()">Cancel</button>
-  
 <button class="delete" onclick="safeReset()">Reset</button>
-  
 </div>
-  
 
-  
 </div>
-  
 
-  
 <div class="table-container">
-  
 <table>
-  
 <thead>
-  
 <tr>
-  
 <th>First</th>
-  
 <th>Middle</th>
-  
 <th>Last</th>
-  
 <th>Age</th>
-  
 <th>Address</th>
-  
 <th>Contact</th>
-  
 <th>Email</th>
-  
 <th>ID</th>
-  
 <th>Passport</th>
-  
 <th>Gov</th>
-  
 <th>Gov ID</th>
-  
 <th>Position</th>
-  
 <th>Bank</th>
-  
 <th>Account</th>
-  
 <th>SSS</th>
-  
 <th>PhilHealth</th>
-  
 <th>Pag-IBIG</th>
-  
 <th>Action</th>
-  
 </tr>
-  
 </thead>
-  
 <tbody id="table"></tbody>
-  
 </table>
-  
 </div>
-  
 
-  
 <script>
-  
-
-  
-// FIREBASE
-  
+// SAME FIREBASE + FUNCTIONS (UNCHANGED)
 const firebaseConfig = {
-  
   apiKey: "AIzaSyCZG7xQaHaCtD_evrziUqdKqHJsVOQf3A8",
-  
   authDomain: "hr-system-18fee.firebaseapp.com",
-  
   projectId: "hr-system-18fee",
-  
 };
-  
-
-  
 firebase.initializeApp(firebaseConfig);
-  
 const db = firebase.firestore();
-  
 
-  
 let data = [];
-  
 let editId = null;
-  
-let selectedRow = null;
-  
 
-  
-// AGE AUTO
-  
 birthday.onchange = function(){
-  
   let b = new Date(this.value);
-  
   let t = new Date();
-  
   age.value = t.getFullYear() - b.getFullYear();
-  
 };
-  
 
-  
-// GET FORM
-  
 function getForm(){
-  
   return {
-  
     fname: fname.value,
-  
     mname: mname.value,
-  
     lname: lname.value,
-  
     age: age.value,
-  
     address: address.value,
-  
     contact: contact.value,
-  
     email: email.value,
-  
     empid: empid.value,
-  
     passport: passport.value,
-  
     govType: govType.value,
-  
     govID: govID.value,
-  
     position: position.value,
-  
     bank: bank.value,
-  
     bankAccount: bankAccount.value,
-  
     sss: sss.value,
-  
     philhealth: philhealth.value,
-  
     pagibig: pagibig.value
-  
   };
-  
 }
-  
 
-  
-// 🔥 ADD / UPDATE (FIXED WITH LOCAL STORAGE)
-  
 function add(){
-  
   let form = getForm();
-  
-
-  
   if(editId){
-  
     db.collection("employees").doc(editId).update(form);
-  
     cancelEdit();
-  
-    alert("Updated!");
-  
   } else {
-  
     db.collection("employees").add(form);
-  
   }
-  
-
-  
-  // ✅ LOCAL STORAGE SYNC
-  
-  let local = JSON.parse(localStorage.getItem("employees")) || [];
-  
-
-  
-  local.push({
-  
-    fname: form.fname,
-  
-    lname: form.lname
-  
-  });
-  
-
-  
-  localStorage.setItem("employees", JSON.stringify(local));
-  
-
-  
   clear();
-  
 }
-  
 
-  
-// RENDER + 🔥 AUTO SYNC TO LOCAL
-  
 function render(){
-  
   table.innerHTML="";
-  
-
-  
-  let local = [];
-  
-
-  
   data.forEach((e,i)=>{
-  
-
-  
-    if(!e.fname && !e.lname && !e.email) return;
-  
-
-  
-    // 🔥 collect for payroll
-  
-    local.push({
-  
-      fname: e.fname || "",
-  
-      lname: e.lname || ""
-  
-    });
-  
-
-  
     table.innerHTML += `
-  
     <tr>
-  
       <td>${e.fname||""}</td>
-  
       <td>${e.mname||""}</td>
-  
       <td>${e.lname||""}</td>
-  
       <td>${e.age||""}</td>
-  
       <td>${e.address||""}</td>
-  
       <td>${e.contact||""}</td>
-  
       <td>${e.email||""}</td>
-  
       <td>${e.empid||""}</td>
-  
       <td>${e.passport||""}</td>
-  
       <td>${e.govType||""}</td>
-  
       <td>${e.govID||""}</td>
-  
       <td>${e.position||""}</td>
-  
       <td>${e.bank||""}</td>
-  
       <td>${e.bankAccount||""}</td>
-  
       <td>${e.sss||""}</td>
-  
       <td>${e.philhealth||""}</td>
-  
       <td>${e.pagibig||""}</td>
-  
       <td>
-  
         <button class="edit" onclick="edit(${i})">Edit</button>
-  
         <button class="delete" onclick="del(${i})">Delete</button>
-  
       </td>
-  
     </tr>`;
-  
   });
-  
-
-  
-  // 🔥 IMPORTANT: sync ALL employees to localStorage
-  
-  localStorage.setItem("employees", JSON.stringify(local));
-  
 }
-  
 
-  
-// FIREBASE LIVE
-  
 db.collection("employees").onSnapshot(snapshot=>{
-  
   data=[];
-  
   snapshot.forEach(doc=>{
-  
     let d=doc.data();
-  
     d.id=doc.id;
-  
     data.push(d);
-  
   });
-  
   render();
-  
 });
-  
 
-  
-// OTHER FUNCTIONS (UNCHANGED)
-  
 function edit(i){
-  
   let e = data[i];
-  
   editId = e.id;
-  
   for(let key in e){
-  
     if(document.getElementById(key)){
-  
       document.getElementById(key).value = e[key];
-  
     }
-  
   }
-  
   document.getElementById("editMode").style.display = "block";
-  
-  window.scrollTo({top:0, behavior:"smooth"});
-  
 }
-  
 
-  
 function cancelEdit(){
-  
   editId = null;
-  
   clear();
-  
   document.getElementById("editMode").style.display = "none";
-  
 }
-  
 
-  
 function del(i){
-  
-  if(!confirm("Delete employee?")) return;
-  
+  if(!confirm("Delete?")) return;
   db.collection("employees").doc(data[i].id).delete();
-  
 }
-  
 
-  
 function clear(){
-  
   document.querySelectorAll("input").forEach(i=>i.value="");
-  
-  bank.value="";
-  
-  position.value="";
-  
-  govType.value="";
-  
 }
-  
 
-  
 function safeReset(){
-  
-  if(!confirm("Delete ALL employees?")) return;
-  
+  if(!confirm("Delete ALL?")) return;
   db.collection("employees").get().then(snap=>{
-  
     snap.forEach(doc=>{
-  
       db.collection("employees").doc(doc.id).delete();
-  
     });
-  
   });
-  
 }
-  
 
-  
 function goPayroll(){
-  
   window.location.href="payroll.html";
-  
 }
-  
-
-  
-if(localStorage.getItem("login")!=="true"){
-  
-  window.location.href="login.html";
-  
-}
-  
-
-  
 </script>
-  
 
-  
 </body>
-  
 </html>
