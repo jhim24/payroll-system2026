@@ -388,6 +388,33 @@ td:last-child button {
 .table-container {
   overflow-x: auto;
 }
+  /* ===== AUTO HEIGHT TABLE (LIKE YOUR SAMPLE) ===== */
+
+/* 🔥 ALLOW MULTI-LINE (KEY FIX) */
+th, td {
+  white-space: normal !important;   /* pwede bumaba */
+  word-break: break-word;           /* hati long text */
+  vertical-align: top;              /* header stays on top */
+  text-align: center;
+  padding: 8px;
+  line-height: 1.4;
+}
+
+/* 🔥 REMOVE HEIGHT LIMITS */
+td {
+  max-width: none !important;
+}
+
+/* 🔥 OPTIONAL: BIGGER SPACE SA ADDRESS */
+td:nth-child(5) {
+  min-width: 220px;
+}
+
+/* 🔥 BUTTON FIX (HINDI MAGPATONG) */
+td:last-child button {
+  display: inline-block !important;
+  margin: 2px;
+}
 </style>
   
 </head>
