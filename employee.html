@@ -348,6 +348,46 @@ td:last-child button {
   display: inline-block !important;
   margin: 2px;
 }
+  /* ===== FINAL STABLE TABLE FIX ===== */
+
+/* 🔥 TABLE STRUCTURE FIX */
+table {
+  table-layout: auto; /* allow natural width */
+  min-width: 1800px;  /* para may space */
+}
+
+/* 🔥 CELLS - NO WRAP PERO HINDI OVERLAP */
+th, td {
+  white-space: nowrap;
+  overflow: hidden;       /* para hindi tumawid */
+  text-overflow: ellipsis;
+  text-align: center;
+  vertical-align: middle;
+  padding: 6px 10px;
+}
+
+/* 🔥 BIGGER IMPORTANT COLUMNS */
+td:nth-child(5) { min-width: 250px; } /* Address */
+td:nth-child(6) { min-width: 180px; } /* Contact */
+td:nth-child(7) { min-width: 220px; } /* Email */
+
+/* 🔥 BUTTON FIX (PERMANENT) */
+td:last-child {
+  white-space: nowrap;
+}
+
+td:last-child button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  margin: 2px;
+  width: auto;
+}
+
+/* 🔥 SCROLL FIX */
+.table-container {
+  overflow-x: auto;
+}
 </style>
   
 </head>
