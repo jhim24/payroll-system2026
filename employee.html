@@ -276,6 +276,28 @@ td:last-child button {
   margin: 2px;
   width: auto;
 }
+  /* ===== FINAL NO OVERLAP FIX ===== */
+
+/* 🔥 FIX TABLE CELLS */
+th, td {
+  white-space: nowrap;       /* hindi bababa */
+  overflow: hidden;          /* hindi lalabas */
+  text-overflow: ellipsis;   /* ... kapag mahaba */
+  max-width: 150px;          /* limit width */
+}
+
+/* 🔥 MAS MALAKI PARA SA IMPORTANT FIELDS */
+td:nth-child(5),  /* Address */
+td:nth-child(6),  /* Contact */
+td:nth-child(7) { /* Email */
+  max-width: 220px;
+}
+
+/* 🔥 BUTTONS FIX */
+td:last-child button {
+  display: inline-block !important;
+  margin: 2px;
+}
 </style>
   
 </head>
