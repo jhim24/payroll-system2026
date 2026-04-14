@@ -439,6 +439,56 @@ td:last-child button {
   display: inline-block !important;
   margin: 2px;
 }
+  /* ===== FINAL LOCKED TABLE FIX ===== */
+
+/* 🔥 1. FIXED TABLE STRUCTURE (KEY FIX) */
+table {
+  table-layout: fixed; /* hindi gagalaw columns */
+  width: 100%;
+  min-width: 1600px; /* pwede mo adjust */
+}
+
+/* 🔥 2. HEADER STABLE (HINDI BABABA) */
+th {
+  white-space: nowrap; /* hindi mag break */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+/* 🔥 3. BODY TEXT (HINDI OVERLAP) */
+td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+/* 🔥 4. SPECIFIC COLUMN WIDTHS (IMPORTANT) */
+th:nth-child(1), td:nth-child(1) { width: 120px; } /* First */
+th:nth-child(2), td:nth-child(2) { width: 120px; } /* Middle */
+th:nth-child(3), td:nth-child(3) { width: 120px; } /* Last */
+th:nth-child(5), td:nth-child(5) { width: 250px; } /* Address */
+th:nth-child(6), td:nth-child(6) { width: 160px; } /* Contact */
+th:nth-child(7), td:nth-child(7) { width: 200px; } /* Email */
+
+/* 🔥 5. ACTION BUTTON FIX (FINAL) */
+td:last-child {
+  white-space: nowrap;
+}
+
+td:last-child button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  margin: 2px;
+  width: auto;
+}
+
+/* 🔥 6. SCROLL SAFE */
+.table-container {
+  overflow-x: auto;
+}
 </style>
   
 </head>
