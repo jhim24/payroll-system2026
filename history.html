@@ -1,456 +1,326 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>PAYROLL HISTORY</title>
+<title>Payroll System</title>
+
 <style>
 body {font-family:Arial; padding:20px; background:#eef3ff;}
-h2 {border-bottom:3px solid blue;}
+h2 {border-bottom:3px solid green;}
+
+.box {
+  border:2px solid green;
+  padding:15px;
+  border-radius:10px;
+  background:white;
+}
+
+input, select {
+  padding:8px;
+  margin:5px;
+  width:160px;
+}
 
 button {
-  padding:6px;
+  padding:10px;
+  margin:5px;
   border:none;
-  color:Prussian Blue;
+  color:white;
   border-radius:5px;
   cursor:pointer;
-  margin:5px;
 }
 
-.back {background:#00b4d8;}
-.delete {background:red;}
+.compute {background:green;}
+.back {background:#444;}
+.history {background:blue;}
+.auto {background:purple;}
 
 table {
-  width:50%;
-  border-collapse:collapse;
-  margin-top:20px;
-  background:silver;
-  border:2px solid blue;
-}
-
-th, td {
-  border:1px solid #ccc;
-  padding:5px;
-  text-align:center;
-}
-
-th {background:blue; color:white;}
-
-tr:hover {background:#f1f1f1;}
-
-.details {
-  margin-top:20px;
-  padding:5px;
-  border:2px solid green;
-  border-radius:10px;
-  background:Yale Blue;
-  overflow-x:auto;
-}
-
-/* 🔥 EXISTING SIZE */
-th, td {
-  padding:5px !important;
-  height:auto !important;
-  line-height:1.3 !important;
-  font-size:11px;
-}
-
-tr { height:auto !important; }
-
-/* 🔥 SCROLL */
-table { overflow-x:auto; }
-
-.table-container {
   width:100%;
-  overflow-x:auto;
-}
-
-table {
-  width:100% !important;
-  min-width:100% !important;
+  margin-top:20px;
   border-collapse:collapse;
+  background:white;
 }
 
-td, th { width:auto; }
-
-/* ================================= */
-/* 🔥🔥 ADD ONLY PREMIUM DESIGN */
-/* ================================= */
-
-/* 🌟 GLASS EFFECT */
-body {
-  background: linear-gradient(to right, #dfe9f3, #ffffff);
-}
-
-.table-container table {
-  background: rgba(255,255,255,0.2);
-  backdrop-filter: blur(10px);
-  border-radius:10px;
-  overflow:hidden;
-}
-
-/* 🌟 HEADER GRADIENT */
-th {
-  background: linear-gradient(to right, #0077b6, #03045e);
-  color:white;
-}
-
-/* 🌟 HOVER EFFECT */
-tr:hover {
-  background: rgba(0,183,255,0.2);
-  transform: scale(1.01);
-  transition:0.2s;
-}
-
-/* 🌟 DASHBOARD STYLE */
-#dashboard {
-  backdrop-filter: blur(10px);
-  box-shadow:0 0 15px rgba(0,255,255,0.3);
-}
-
-/* 🌟 SEARCH INPUT */
-input {
-  border-radius:5px;
-  border:1px solid #ccc;
-}
-
-/* 🌟 BUTTON HOVER */
-button:hover {
-  transform:scale(1.05);
-  opacity:0.9;
-}
-
-/* 🌟 DETAILS BOX UPGRADE */
-.details {
-  backdrop-filter: blur(10px);
-  box-shadow:0 0 20px rgba(0,255,0,0.3);
-}
-
-/* ================================= */
-/* 🔥🔥 NEW ADD: PREMIUM BORDER */
-/* ================================= */
-
-#dashboard {
-  border:2px solid rgba(0, 200, 255, 0.6) !important;
-  border-radius:15px !important;
-  box-shadow:
-    0 0 10px rgba(0,200,255,0.5),
-    0 0 25px rgba(0,200,255,0.3);
-  padding:10px !important;
-}
-
-/* individual cards */
-#dashboard div {
-  background: rgba(255,255,255,0.2);
-  border:1px solid rgba(255,255,255,0.5);
-  border-radius:10px;
-  padding:8px 12px;
-  box-shadow:0 0 10px rgba(0,255,255,0.3);
-  transition:0.2s;
-}
-
-/* hover effect */
-#dashboard div:hover {
-  transform:scale(1.05);
-  background:rgba(0,255,255,0.2);
-}
-
-/* optional glow animation */
-#dashboard {
-  animation: glow 2s infinite alternate;
-}
-
-@keyframes glow {
-  from { box-shadow:0 0 10px cyan; }
-  to { box-shadow:0 0 25px blue; }
-}
-/* 🔥 ALL BORDERS (FULL GRID STYLE) */
-
-/* outer border */
-table {
-  border:2px solid #444 !important;
-}
-
-/* all cells */
 th, td {
-  border:1px solid #666 !important;
-}
-
-/* ensure collapse (no double lines) */
-table {
-  border-collapse:collapse !important;
-}
-
-/* header stronger */
-th {
-  border:1px solid #333 !important;
-}
-
-/* row + column lines */
-tr {
-  border:1px solid #666 !important;
-}
-
-/* cleaner look */
-tbody tr:nth-child(even) {
-  background:rgba(0,0,0,0.04);
-}
-  /* 🔥 EXCEL STYLE TABLE */
-
-/* full grid */
-table {
-  border-collapse: collapse !important;
-  border:2px solid #444 !important;
-}
-
-/* all cells */
-th, td {
-  border:1px solid #888 !important;
+  border:1px solid #999 !important;
   padding:6px !important;
+  text-align:center;
   font-size:12px;
 }
 
-/* header like excel */
 th {
-  background:#2b579a !important;
-  color:white !important;
+  background:linear-gradient(to right, #2e7d32, #1b5e20);
+  color:white;
   position:sticky;
   top:0;
-  z-index:2;
 }
 
-/* zebra rows */
-tbody tr:nth-child(even) {
-  background:#f5f7fa !important;
-}
+tbody tr:nth-child(even){background:#f4f9f4;}
+tbody tr:hover{background:#c8e6c9;}
+tr.selected{background:#a5d6a7 !important;}
 
-/* hover highlight */
-tbody tr:hover {
-  background:#dbe9ff !important;
-}
-
-/* selected row effect */
-tr.selected {
-  background:#a7c7ff !important;
-}
-
-/* column lines stronger */
-td {
-  border-right:1px solid #666 !important;
-}
-
-/* smooth scroll container */
-.table-container {
+.table-container{
   max-height:400px;
   overflow:auto;
-  border:2px solid #444;
-}
-
-/* optional: cursor like excel */
-td {
-  cursor:pointer;
+  border:2px solid green;
 }
 </style>
 </head>
 
 <body>
 
-<h2 style="color:#03045e;">📊 Payroll History</h2>
+<h2>💰 Payroll System</h2>
 
-<!-- 🔥 DASHBOARD -->
-<div id="dashboard" style="
-background:Yale Blue;
-border:2px solid blue;
-padding:5px;
-border-radius:10px;
-margin-top:10px;
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-">
-<div><b>Total Records:</b> <span id="totalRec">0</span></div>
-<div><b>Total Net:</b> ₱ <span id="totalNet">0</span></div>
-<div><b>Employees:</b> <span id="totalEmp">0</span></div>
+<button class="back" onclick="window.location.href='index.html'">⬅ Back</button>
+<button class="history" onclick="window.location.href='history.html'">History</button>
+
+<div class="box">
+
+<select id="emp"></select><br>
+
+<input id="rate" type="number" placeholder="Daily Rate">
+<input id="days" type="number" placeholder="Days Worked"><br>
+
+<input id="ot" type="number" placeholder="OT Hours">
+<input id="holiday" type="number" placeholder="Holiday"><br>
+
+<input id="vac" type="number" placeholder="Vacation">
+<input id="sick" type="number" placeholder="Sick">
+<input id="bday" type="number" placeholder="Birthday"><br>
+
+<input id="sss" type="number" placeholder="SSS">
+<input id="philhealth" type="number" placeholder="PhilHealth">
+<input id="pagibig" type="number" placeholder="Pag-IBIG"><br>
+
+<input id="otherDed" type="number" placeholder="Other Deduction">
+<input id="otherReason" placeholder="Reason"><br>
+
+<input id="healthCard" type="number" placeholder="Health Card">
+<input id="cardNumber" placeholder="Card Number"><br>
+
+<button class="compute" onclick="compute()">Compute Salary</button>
+<button onclick="openPayslip()">Payslip 🧾</button>
+<button class="auto" onclick="autoAttendance()">Auto from Attendance ⚡</button>
+<button style="background:orange;" onclick="updateRow()">Update ✏️</button>
+
 </div>
 
-<!-- 🔍 SEARCH -->
-<input onkeyup="searchHistory(this.value)" placeholder="Search name..." style="padding:8px; margin-top:10px; width:200px;">
-
-<!-- 📅 FILTER -->
-<br><br>
-<input type="date" onchange="filterDate(this.value)">
-<button onclick="resetFilter()">Reset</button>
-
-<br>
-
-<button class="back" onclick="window.location.href='payroll.html'">⬅ Back</button>
-
-<!-- 🔥 WRAPPED TABLE -->
 <div class="table-container">
 <table>
 <tr>
 <th>Name</th>
+<th>Gross</th>
+<th>OT</th>
+<th>Holiday</th>
+<th>Vacation</th>
+<th>Sick</th>
+<th>Birthday</th>
+<th>SSS</th>
+<th>PhilHealth</th>
+<th>Pag-IBIG</th>
+<th>Other</th>
+<th>Reason</th>
+<th>Health Card</th>
+<th>Card #</th>
 <th>Net</th>
-<th>Date</th>
-<th>Action</th>
 </tr>
-
 <tbody id="table"></tbody>
 </table>
 </div>
 
-<div id="details" class="details"></div>
-
 <script>
 
-let history = JSON.parse(localStorage.getItem("history")) || [];
+let emp = document.getElementById("emp");
+let lastPayslip = null;
+let selectedRowIndex = null;
 
-function load(){
-  table.innerHTML = "";
+// LOAD EMPLOYEES
+function loadEmployees(){
+  emp.innerHTML = "<option value=''>Select Employee</option>";
+  let data = JSON.parse(localStorage.getItem("employees")) || [];
 
-  if(history.length === 0){
-    table.innerHTML = "<tr><td colspan='4'>No records found</td></tr>";
-    updateDashboard([]);
+  data.forEach((e,i)=>{
+    let name = (e.fname || "") + " " + (e.lname || "") || e.name || "Employee";
+    emp.innerHTML += `<option value="${i}">${name.toUpperCase()}</option>`;
+  });
+}
+loadEmployees();
+
+
+// COMPUTE + SAVE HISTORY
+function compute(){
+
+  let data = JSON.parse(localStorage.getItem("employees")) || [];
+  let i = emp.value;
+
+  if(i===""){ alert("Select employee"); return; }
+
+  let e = data[i];
+  let name = (e.fname || "") + " " + (e.lname || "") || e.name;
+
+  let rate = Number(rateEl.value) || 0;
+  let days = Number(daysEl.value) || 0;
+
+  if(rate===0 || days===0){
+    alert("Enter rate & days");
     return;
   }
 
-  history.forEach((e,i)=>{
-    table.innerHTML += `
-    <tr id="row${i}">
-      <td onclick="view(${i})" style="cursor:pointer; color:blue;">${e.name}</td>
-      <td onclick="view(${i})">${e.net}</td>
-      <td onclick="view(${i})">${e.date}</td>
-      <td><button class="delete" onclick="del(${i})">Delete</button></td>
-    </tr>
-    `;
+  let ot = Number(ot.value) || 0;
+  let holiday = Number(holiday.value) || 0;
+  let vac = Number(vac.value) || 0;
+  let sick = Number(sick.value) || 0;
+  let bday = Number(bday.value) || 0;
+
+  let sss = Number(sss.value) || 0;
+  let phil = Number(philhealth.value) || 0;
+  let pag = Number(pagibig.value) || 0;
+
+  let other = Number(otherDed.value) || 0;
+  let reason = otherReason.value || "-";
+
+  let health = Number(healthCard.value) || 0;
+  let card = cardNumber.value || "-";
+
+  let gross = rate * days;
+  let otPay = (rate/8) * ot * 1.25;
+  let holidayPay = holiday * rate * 2;
+
+  let vacPay = vac * rate;
+  let sickPay = sick * rate;
+  let bdayPay = bday * rate;
+
+  let totalIncome = gross + otPay + holidayPay + vacPay + sickPay + bdayPay;
+  let totalDed = sss + phil + pag + other + health;
+  let net = totalIncome - totalDed;
+
+  lastPayslip = {name, net};
+
+  // SAVE HISTORY
+  let history = JSON.parse(localStorage.getItem("history")) || [];
+
+  history.push({
+    name,
+    gross, ot: otPay, holiday: holidayPay,
+    vac: vacPay, sick: sickPay, bday: bdayPay,
+    sss, phil, pag, other, reason, health, card,
+    net,
+    date: new Date().toLocaleString()
   });
 
-  updateDashboard(history);
+  localStorage.setItem("history", JSON.stringify(history));
+
+  // TABLE
+  let table = document.getElementById("table");
+
+  table.innerHTML += `
+  <tr>
+    <td>${name}</td>
+    <td>${gross.toFixed(2)}</td>
+    <td>${otPay.toFixed(2)}</td>
+    <td>${holidayPay.toFixed(2)}</td>
+    <td>${vacPay.toFixed(2)}</td>
+    <td>${sickPay.toFixed(2)}</td>
+    <td>${bdayPay.toFixed(2)}</td>
+    <td>${sss.toFixed(2)}</td>
+    <td>${phil.toFixed(2)}</td>
+    <td>${pag.toFixed(2)}</td>
+    <td>${other.toFixed(2)}</td>
+    <td>${reason}</td>
+    <td>${health.toFixed(2)}</td>
+    <td>${card}</td>
+    <td><b>${net.toFixed(2)}</b></td>
+  </tr>`;
+
+  alert("✅ Salary Computed!");
 }
 
-function view(i){
 
-  document.querySelectorAll("#table tr").forEach(r=> r.style.background="");
+// CLICK ROW
+document.addEventListener("click", function(e){
+  let row = e.target.closest("tr");
+  if(!row || row.parentElement.id !== "table") return;
 
-  let row = document.getElementById("row"+i);
-  if(row) row.style.background="#d1ffd1";
-
-  let e = history[i];
-
-  document.getElementById("details").innerHTML = `
-  <table style="min-width:900px; border-collapse:collapse; border:2px solid green;">
-    <tr style="background:green; color:white;">
-      <th>Name</th><th>Gross</th><th>OT</th><th>Holiday</th>
-      <th>Vacation</th><th>Sick</th><th>Birthday</th>
-      <th>SSS</th><th>PhilHealth</th><th>Pag-IBIG</th><th>Net</th>
-    </tr>
-    <tr>
-      <td>${e.name}</td>
-      <td>${e.gross}</td>
-      <td>${e.ot}</td>
-      <td>${e.holiday}</td>
-      <td>${e.vac}</td>
-      <td>${e.sick}</td>
-      <td>${e.bday}</td>
-      <td>${e.sss}</td>
-      <td>${e.philhealth}</td>
-      <td>${e.pagibig}</td>
-      <td><b style="color:green;">${e.net}</b></td>
-    </tr>
-  </table>
-  <br>
-  <button onclick="printRecord()">🖨️ Print</button>
-  <button onclick="exportRecord()">📊 Export</button>
-  `;
-}
-
-function del(i){
-  if(confirm("Delete this record?")){
-    history.splice(i,1);
-    localStorage.setItem("history", JSON.stringify(history));
-    load();
-    details.innerHTML = "";
-  }
-}
-
-function printRecord(){
-  let content = document.getElementById("details").innerHTML;
-  let w = window.open("");
-  w.document.write(content);
-  w.print();
-}
-
-function exportRecord(){
-  let content = document.getElementById("details").innerHTML;
-
-  let blob = new Blob([content], {type:"application/vnd.ms-excel"});
-  let a = document.createElement("a");
-
-  a.href = URL.createObjectURL(blob);
-  a.download = "payroll_record.xls";
-  a.click();
-}
-
-function searchHistory(value){
-  let rows = document.querySelectorAll("#table tr");
-
-  rows.forEach(r=>{
-    let cell = r.children[0];
-    if(!cell) return;
-
-    let text = cell.innerText.toLowerCase();
-    r.style.display = text.includes(value.toLowerCase()) ? "" : "none";
-  });
-}
-
-function updateDashboard(data){
-  document.getElementById("totalRec").innerText = data.length;
-
-  let total = 0;
-  let empSet = new Set();
-
-  data.forEach(e=>{
-    total += Number(e.net);
-    empSet.add(e.name);
-  });
-
-  document.getElementById("totalNet").innerText = total.toFixed(2);
-  document.getElementById("totalEmp").innerText = empSet.size;
-}
-
-function filterDate(date){
   let rows = document.querySelectorAll("#table tr");
 
   rows.forEach((r,i)=>{
-    let e = history[i];
-    if(!e) return;
-
-    r.style.display = e.date.includes(date) ? "" : "none";
-  });
-
-  let filtered = history.filter(e=>e.date.includes(date));
-  updateDashboard(filtered);
-}
-
-function resetFilter(){
-  load();
-}
-
-load();
-
-if(localStorage.getItem("login") !== "true"){
-  window.location.href = "login.html";
-}
-  // 🔥 CLICK ROW = SELECT (EXCEL FEEL)
-document.addEventListener("click", function(e){
-  let row = e.target.closest("tr");
-
-  if(!row || !row.parentElement.id === "table") return;
-
-  document.querySelectorAll("#table tr").forEach(r=>{
     r.classList.remove("selected");
+
+    if(r === row){
+      r.classList.add("selected");
+      selectedRowIndex = i;
+
+      let cells = r.children;
+
+      rate.value = cells[1].innerText;
+      days.value = 1;
+
+      ot.value = cells[2].innerText;
+      holiday.value = cells[3].innerText;
+
+      vac.value = cells[4].innerText;
+      sick.value = cells[5].innerText;
+      bday.value = cells[6].innerText;
+
+      sss.value = cells[7].innerText;
+      philhealth.value = cells[8].innerText;
+      pagibig.value = cells[9].innerText;
+
+      otherDed.value = cells[10].innerText;
+      otherReason.value = cells[11].innerText;
+
+      healthCard.value = cells[12].innerText;
+      cardNumber.value = cells[13].innerText;
+    }
+  });
+});
+
+
+// UPDATE
+function updateRow(){
+
+  if(selectedRowIndex === null){
+    alert("Select row");
+    return;
+  }
+
+  let rows = document.querySelectorAll("#table tr");
+  let row = rows[selectedRowIndex];
+
+  compute(); // recompute
+  alert("✅ Updated!");
+}
+
+
+// AUTO ATTENDANCE
+function autoAttendance(){
+  let attendance = JSON.parse(localStorage.getItem("attendance")) || [];
+  let name = emp.options[emp.selectedIndex].text;
+
+  let total = 0;
+  attendance.forEach(a=>{
+    if(a.name === name){
+      total += Number(a.hours || 0);
+    }
   });
 
-  row.classList.add("selected");
-});
+  days.value = (total/8).toFixed(2);
+}
+
+
+// PAYSLIP
+function openPayslip(){
+  if(!lastPayslip){
+    alert("Compute first");
+    return;
+  }
+
+  let win = window.open();
+  win.document.write(`<h2>${lastPayslip.name}</h2><p>Net: ${lastPayslip.net}</p>`);
+}
+
+window.addEventListener("focus", loadEmployees);
+
 </script>
 
 </body>
