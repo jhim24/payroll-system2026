@@ -162,7 +162,7 @@ loadEmployees();
 function compute(){
 
   let data = JSON.parse(localStorage.getItem("employees")) || [];
-  let i = emp.value;
+  let i = document.getElementById("emp").value;
 
   if(i===""){ 
     alert("Select employee"); 
@@ -171,14 +171,7 @@ function compute(){
 
   let e = data[i];
 
-  let name = "";
-  if(e.fname || e.lname){
-    name = (e.fname || "") + " " + (e.lname || "");
-  } else if(e.name){
-    name = e.name;
-  } else {
-    name = "Employee";
-  }
+  let name = (e.fname || "") + " " + (e.lname || "");
 
   let rate = Number(document.getElementById("rate").value) || 0;
   let days = Number(document.getElementById("days").value) || 0;
@@ -190,19 +183,18 @@ function compute(){
 
   let ot = Number(document.getElementById("ot").value) || 0;
   let holiday = Number(document.getElementById("holiday").value) || 0;
-
   let vac = Number(document.getElementById("vac").value) || 0;
   let sick = Number(document.getElementById("sick").value) || 0;
   let bday = Number(document.getElementById("bday").value) || 0;
 
-  let sss = Number(document.getElementById("sss").value) || 0;
-  let phil = Number(document.getElementById("philhealth").value) || 0;
-  let pag = Number(document.getElementById("pagibig").value) || 0;
+  let sssVal = Number(document.getElementById("sss").value) || 0;
+  let philVal = Number(document.getElementById("philhealth").value) || 0;
+  let pagVal = Number(document.getElementById("pagibig").value) || 0;
 
-  let other = Number(document.getElementById("otherDed").value) || 0;
+  let otherVal = Number(document.getElementById("otherDed").value) || 0;
   let reason = document.getElementById("otherReason").value || "-";
 
-  let health = Number(document.getElementById("healthCard").value) || 0;
+  let healthVal = Number(document.getElementById("healthCard").value) || 0;
   let card = document.getElementById("cardNumber").value || "-";
 
   let gross = rate * days;
@@ -214,12 +206,35 @@ function compute(){
   let bdayPay = bday * rate;
 
   let totalIncome = gross + otPay + holidayPay + vacPay + sickPay + bdayPay;
-  let totalDed = sss + phil + pag + other + health;
+  let totalDed = sssVal + philVal + pagVal + otherVal + healthVal;
 
   let net = totalIncome - totalDed;
 
-  lastPayslip = {name, net};
+  // SAVE HISTORY
+  let history = JSON.parse(localStorage.getItem("history")) || [];
 
+  history.push({
+    name: name,
+    gross: gross,
+    ot: otPay,
+    holiday: holidayPay,
+    vac: vacPay,
+    sick: sickPay,
+    bday: bdayPay,
+    sss: sssVal,
+    phil: philVal,
+    pag: pagVal,
+    other: otherVal,
+    reason: reason,
+    health: healthVal,
+    card: card,
+    net: net,
+    date: new Date().toLocaleString()
+  });
+
+  localStorage.setItem("history", JSON.stringify(history));
+
+  // SHOW TABLE
   let table = document.getElementById("table");
 
   table.innerHTML += `
@@ -231,18 +246,18 @@ function compute(){
     <td>${vacPay.toFixed(2)}</td>
     <td>${sickPay.toFixed(2)}</td>
     <td>${bdayPay.toFixed(2)}</td>
-    <td>${sss.toFixed(2)}</td>
-    <td>${phil.toFixed(2)}</td>
-    <td>${pag.toFixed(2)}</td>
-    <td>${other.toFixed(2)}</td>
+    <td>${sssVal.toFixed(2)}</td>
+    <td>${philVal.toFixed(2)}</td>
+    <td>${pagVal.toFixed(2)}</td>
+    <td>${otherVal.toFixed(2)}</td>
     <td>${reason}</td>
-    <td>${health.toFixed(2)}</td>
+    <td>${healthVal.toFixed(2)}</td>
     <td>${card}</td>
     <td><b>${net.toFixed(2)}</b></td>
   </tr>
   `;
 
-  alert("✅ Salary Computed!");
+  alert("✅ Salary Computed & Saved!");
 }
 
 // AUTO ATTENDANCE
