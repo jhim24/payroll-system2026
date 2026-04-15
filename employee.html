@@ -9,8 +9,9 @@
 <style>
 body {
   font-family: Arial;
-  background:PaleTurquoise;
-  padding:15px;
+  background: PaleTurquoise;
+  margin: 0;
+  padding: 20px;
 }
 
 /* HEADER */
@@ -25,55 +26,54 @@ button {
   border-radius: 8px;
   font-weight: bold;
   transition: 0.3s;
+  border:none;
+  cursor:pointer;
 }
-
 button:hover {
   transform: scale(1.05);
   opacity: 0.9;
 }
 
-.nav {background:#28a745;}
-.add {background:#007bff;}
-.delete {background:#dc3545;}
-.edit {background:#17a2b8;}
-.cancel {background:#6c757d;}
+.nav {background:#28a745; color:white;}
+.add {background:#007bff; color:white;}
+.delete {background:#dc3545; color:white;}
+.edit {background:#17a2b8; color:white;}
+.cancel {background:#6c757d; color:white;}
 
 /* CARD */
 .box {
   background: Cornsilk;
-  padding: 3px;
+  padding: 15px;
   border-radius: 15px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  margin-bottom: 10px;
-  margin-left: 20px;
-  margin-right:20px;
+  margin-bottom: 20px;
 }
+
+/* FORM GRID */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 20px;
+  gap: 10px;
 }
+
 .form-grid input,
 .form-grid select {
   width: 100%;
-  height: 45px; /* same height lahat */
+  height: 40px;
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 8px;
   border: 1px solid #ddd;
-  box-sizing: border-box; /* KEY FIX */
-}
-
-.form-grid input:focus,
-.form-grid select:focus {
-  border-color: #007bff;
-  background: #fff;
-  outline: none;
+  box-sizing: border-box;
 }
 
 /* ACTIONS */
 .form-actions {
   text-align:center;
-  margin-top:10px;
+  margin-top:20px;
+}
+
+.form-actions button {
+  margin:5px;
 }
 
 /* TABLE */
@@ -81,166 +81,24 @@ button:hover {
   background: silver;
   border-radius: 12px;
   padding: 10px;
-}
-
-table {
-  min-width: 1000px;
-}
-
-th {
-  background: linear-gradient(to right, #007bff, #00c6ff);
-  font-size: 13px;
-}
-
-td {
-  font-size: 12px;
+  overflow-x: auto;
 }
 
 table {
   width:100%;
-  min-width:1500px;
   border-collapse:collapse;
 }
 
 th, td {
   padding:10px;
   text-align:center;
-  border-bottom:1px solid #eee;
+  border:1px solid #999;
   white-space:nowrap;
 }
 
 th {
   background:#007bff;
   color:white;
-}
-
-/* BUTTON FIX */
-td:last-child button {
-  display:inline-block;
-  margin:2px;
-}
-  /* ===== FORM SPACING FIX ===== */
-
-/* 🔥 GRID GAP (MAIN FIX) */
-.form-grid {
-  gap: 10px !important; /* space pagitan ng inputs */
-}
-
-/* 🔥 INPUT SPACING */
-.form-grid input,
-.form-grid select {
-  padding: 10px !important;
-  height: 40px !important;
-  border-radius: 8px;
-}
-
-/* 🔥 ADD SPACE SA ROWS */
-.form-grid > * {
-  margin-bottom: 5px;
-}
-
-/* 🔥 BUTTON SPACING */
-.form-actions {
-  margin-top: 20px;
-}
-
-.form-actions button {
-  margin: 5px;
-  padding: 10px 15px;
-}
-  /* ===== LAYOUT FIX (WHITE BOX FULL WIDTH) ===== */
-
-/* CENTER CONTENT */
-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* MAIN CARD WIDTH CONTROL */
-.box,
-.table-container {
-  width: 100%;
-  max-width: 1200px; /* adjust mo if gusto mo mas malapad */
-}
-
-/* TABLE FIX */
-.table-container {
-  margin-top: 15px;
-}
-
-/* HEADER ALIGN */
-h2, .nav {
-  width: 100%;
-  max-width: 1200px;
-}
-  /* ===== SAFE LAYOUT FIX ===== */
-
-/* CENTER CONTENT */
-body {
-  margin: 5;
-  padding: 20px;
-}
-
-/* MAIN WRAPPER EFFECT */
-.box,
-.table-container,
-h2,
-.nav {
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* SPACE BETWEEN SECTIONS */
-.box {
-  margin-bottom: 20px;
-}
-
-/* TABLE FULL WIDTH */
-.table-container {
-  width: 100%;
-}
-  /* ===== FULL WIDTH FIX ===== */
-
-/* REMOVE SIDE GAP */
-body {
-  margin: 0;
-  padding: 20px;
-}
-
-/* MAKE CONTAINERS FULL WIDTH */
-.box,
-.table-container {
-  width: 100%;
-  max-width: 100%;
-}
-
-/* REMOVE CENTER LIMIT */
-h2,
-.nav {
-  width: 100%;
-}
-
-/* FIX TABLE SCROLL AREA */
-.table-container {
-  overflow-x: auto;
-}
-  /* ===== EXCEL GRID STYLE ===== */
-
-/* TABLE BORDER */
-table {
-  border: 1px solid #999;
-}
-
-/* CELLS */
-th, td {
-  border: 1px solid #999; /* grid lines */
-}
-
-/* OPTIONAL: darker header */
-th {
-  border: 1px solid #666;
 }
 </style>
 </head>
@@ -338,7 +196,6 @@ th {
 </div>
 
 <script>
-// SAME FIREBASE + FUNCTIONS (UNCHANGED)
 const firebaseConfig = {
   apiKey: "AIzaSyCZG7xQaHaCtD_evrziUqdKqHJsVOQf3A8",
   authDomain: "hr-system-18fee.firebaseapp.com",
@@ -394,23 +251,23 @@ function render(){
   data.forEach((e,i)=>{
     table.innerHTML += `
     <tr>
-      <td>${e.fname||""}</td>
-      <td>${e.mname||""}</td>
-      <td>${e.lname||""}</td>
-      <td>${e.age||""}</td>
-      <td>${e.address||""}</td>
-      <td>${e.contact||""}</td>
-      <td>${e.email||""}</td>
-      <td>${e.empid||""}</td>
-      <td>${e.passport||""}</td>
-      <td>${e.govType||""}</td>
-      <td>${e.govID||""}</td>
-      <td>${e.position||""}</td>
-      <td>${e.bank||""}</td>
-      <td>${e.bankAccount||""}</td>
-      <td>${e.sss||""}</td>
-      <td>${e.philhealth||""}</td>
-      <td>${e.pagibig||""}</td>
+      <td>${e.fname||"-"}</td>
+      <td>${e.mname||"-"}</td>
+      <td>${e.lname||"-"}</td>
+      <td>${e.age||"-"}</td>
+      <td>${e.address||"-"}</td>
+      <td>${e.contact||"-"}</td>
+      <td>${e.email||"-"}</td>
+      <td>${e.empid||"-"}</td>
+      <td>${e.passport||"-"}</td>
+      <td>${e.govType||"-"}</td>
+      <td>${e.govID||"-"}</td>
+      <td>${e.position||"-"}</td>
+      <td>${e.bank||"-"}</td>
+      <td>${e.bankAccount||"-"}</td>
+      <td>${e.sss||"-"}</td>
+      <td>${e.philhealth||"-"}</td>
+      <td>${e.pagibig||"-"}</td>
       <td>
         <button class="edit" onclick="edit(${i})">Edit</button>
         <button class="delete" onclick="del(${i})">Delete</button>
