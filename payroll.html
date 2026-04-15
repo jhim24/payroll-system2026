@@ -86,19 +86,26 @@ tr.selected{
 
 <select id="emp"></select><br>
 
-<input id="rate" placeholder="Daily Rate">
-<input id="days" placeholder="Days Worked"><br>
+<input id="rate" type="number" placeholder="Daily Rate">
+<input id="days" type="number" placeholder="Days Worked"><br>
 
-<input id="ot" placeholder="OT Hours">
-<input id="holiday" placeholder="Holiday"><br>
+<input id="ot" type="number" placeholder="OT Hours">
+<input id="holiday" type="number" placeholder="Holiday"><br>
 
-<input id="vac" placeholder="Vacation">
-<input id="sick" placeholder="Sick">
-<input id="bday" placeholder="Birthday"><br>
+<input id="vac" type="number" placeholder="Vacation">
+<input id="sick" type="number" placeholder="Sick">
+<input id="bday" type="number" placeholder="Birthday"><br>
 
-<input id="sss" placeholder="SSS">
-<input id="philhealth" placeholder="PhilHealth">
-<input id="pagibig" placeholder="Pag-IBIG"><br>
+<input id="sss" type="number" placeholder="SSS">
+<input id="philhealth" type="number" placeholder="PhilHealth">
+<input id="pagibig" type="number" placeholder="Pag-IBIG"><br>
+
+<!-- NEW DEDUCTIONS -->
+<input id="otherDed" type="number" placeholder="Other Deduction">
+<input id="otherReason" placeholder="Reason"><br>
+
+<input id="healthCard" type="number" placeholder="Health Card">
+<input id="cardNumber" placeholder="Card Number"><br>
 
 <button class="compute" onclick="compute()">Compute Salary</button>
 <button onclick="openPayslip()">Payslip 🧾</button>
@@ -119,6 +126,10 @@ tr.selected{
 <th>SSS</th>
 <th>PhilHealth</th>
 <th>Pag-IBIG</th>
+<th>Other</th>
+<th>Reason</th>
+<th>Health Card</th>
+<th>Card #</th>
 <th>Net</th>
 </tr>
 <tbody id="table"></tbody>
@@ -127,20 +138,12 @@ tr.selected{
 
 <script>
 
-// 🔥 LOAD EMPLOYEES (FIXED + AUTO UPDATE)
-let data = JSON.parse(localStorage.getItem("employees")) || [];
 let lastPayslip = null;
-
 let emp = document.getElementById("emp");
 
-// 🔥 DEBUG (optional pwede mo alisin)
-console.log("EMP DATA:", data);
-
-// RESET DROPDOWN
+// LOAD EMPLOYEES
 function loadEmployees(){
-
   emp.innerHTML = "<option value=''>Select Employee</option>";
-
   let data = JSON.parse(localStorage.getItem("employees")) || [];
 
   if(data.length === 0){
@@ -149,23 +152,11 @@ function loadEmployees(){
   }
 
   data.forEach((e,i)=>{
-
-    let fullName = "";
-
-    if(e.fname || e.lname){
-      fullName = (e.fname || "") + " " + (e.lname || "");
-    } else if(e.name){
-      fullName = e.name;
-    } else {
-      fullName = "Employee " + (i+1);
-    }
-
-    emp.innerHTML += `<option value="${i}">${fullName.toUpperCase()}</option>`;
+    let name = (e.fname || "") + " " + (e.lname || "") || e.name || "Employee";
+    emp.innerHTML += `<option value="${i}">${name.toUpperCase()}</option>`;
   });
-
 }
 
-// 🔥 INITIAL LOAD
 loadEmployees();
 
 
@@ -173,77 +164,52 @@ loadEmployees();
 function compute(){
 
   let data = JSON.parse(localStorage.getItem("employees")) || [];
-
   let i = emp.value;
 
-  if(i===""){
-    alert("Select employee");
-    return;
-  }
+  if(i===""){ alert("Select employee"); return; }
 
   let e = data[i];
+  let name = (e.fname || "") + " " + (e.lname || "") || e.name || "Employee";
 
-  let name = "";
-  if(e.fname || e.lname){
-    name = (e.fname || "") + " " + (e.lname || "");
-  } else if(e.name){
-    name = e.name;
-  } else {
-    name = "Employee";
-  }
+  let rate = Number(rateEl.value) || 0;
+  let days = Number(daysEl.value) || 0;
 
-  let rateVal = Number(document.getElementById("rate").value) || 0;
-  let daysVal = Number(document.getElementById("days").value) || 0;
-
-  if(rateVal===0 || daysVal===0){
+  if(rate===0 || days===0){
     alert("Enter rate & days");
     return;
   }
 
-  let otVal = Number(document.getElementById("ot").value) || 0;
-  let holidayVal = Number(document.getElementById("holiday").value) || 0;
+  let ot = Number(otEl.value) || 0;
+  let holiday = Number(holidayEl.value) || 0;
 
-  let vacVal = Number(document.getElementById("vac").value) || 0;
-  let sickVal = Number(document.getElementById("sick").value) || 0;
-  let bdayVal = Number(document.getElementById("bday").value) || 0;
+  let vac = Number(vacEl.value) || 0;
+  let sick = Number(sickEl.value) || 0;
+  let bday = Number(bdayEl.value) || 0;
 
-  let sssVal = Number(document.getElementById("sss").value) || 0;
-  let philVal = Number(document.getElementById("philhealth").value) || 0;
-  let pagVal = Number(document.getElementById("pagibig").value) || 0;
+  let sss = Number(sssEl.value) || 0;
+  let phil = Number(philhealthEl.value) || 0;
+  let pag = Number(pagibigEl.value) || 0;
 
-  let gross = rateVal * daysVal;
-  let otPay = (rateVal / 8) * otVal * 1.25;
-  let holidayPay = holidayVal * rateVal * 2;
+  let other = Number(otherDed.value) || 0;
+  let reason = otherReason.value || "-";
 
-  let vacPay = vacVal * rateVal;
-  let sickPay = sickVal * rateVal;
-  let bdayPay = bdayVal * rateVal;
+  let health = Number(healthCard.value) || 0;
+  let card = cardNumber.value || "-";
+
+  let gross = rate * days;
+  let otPay = (rate/8) * ot * 1.25;
+  let holidayPay = holiday * rate * 2;
+
+  let vacPay = vac * rate;
+  let sickPay = sick * rate;
+  let bdayPay = bday * rate;
 
   let totalIncome = gross + otPay + holidayPay + vacPay + sickPay + bdayPay;
-  let totalDed = sssVal + philVal + pagVal;
+  let totalDed = sss + phil + pag + other + health;
 
   let net = totalIncome - totalDed;
 
-  lastPayslip = {name, gross, otPay, holidayPay, vacPay, sickPay, bdayPay, sss:sssVal, philhealth:philVal, pagibig:pagVal, net};
-
-  let history = JSON.parse(localStorage.getItem("history")) || [];
-
-  history.push({
-    name,
-    gross: gross.toFixed(2),
-    ot: otPay.toFixed(2),
-    holiday: holidayPay.toFixed(2),
-    vac: vacPay.toFixed(2),
-    sick: sickPay.toFixed(2),
-    bday: bdayPay.toFixed(2),
-    sss: sssVal.toFixed(2),
-    philhealth: philVal.toFixed(2),
-    pagibig: pagVal.toFixed(2),
-    net: net.toFixed(2),
-    date: new Date().toLocaleString()
-  });
-
-  localStorage.setItem("history", JSON.stringify(history));
+  lastPayslip = {name, net};
 
   let table = document.getElementById("table");
 
@@ -256,9 +222,13 @@ function compute(){
     <td>${vacPay.toFixed(2)}</td>
     <td>${sickPay.toFixed(2)}</td>
     <td>${bdayPay.toFixed(2)}</td>
-    <td>${sssVal.toFixed(2)}</td>
-    <td>${philVal.toFixed(2)}</td>
-    <td>${pagVal.toFixed(2)}</td>
+    <td>${sss.toFixed(2)}</td>
+    <td>${phil.toFixed(2)}</td>
+    <td>${pag.toFixed(2)}</td>
+    <td>${other.toFixed(2)}</td>
+    <td>${reason}</td>
+    <td>${health.toFixed(2)}</td>
+    <td>${card}</td>
     <td><b>${net.toFixed(2)}</b></td>
   </tr>
   `;
@@ -269,26 +239,20 @@ function compute(){
 
 // AUTO ATTENDANCE
 function autoAttendance(){
-
   let data = JSON.parse(localStorage.getItem("employees")) || [];
-
   let i = emp.value;
 
-  if(i===""){
-    alert("Select employee");
-    return;
-  }
+  if(i===""){ alert("Select employee"); return; }
 
   let e = data[i];
-
-  let name = e.fname ? e.fname + " " + e.lname : (e.name || "");
+  let name = (e.fname || "") + " " + (e.lname || "") || e.name;
 
   let attendance = JSON.parse(localStorage.getItem("attendance")) || [];
 
   let totalHours = 0;
 
   attendance.forEach(a=>{
-    if(a.name === name){
+    if((a.name || "").toLowerCase() === name.toLowerCase()){
       totalHours += Number(a.hours || 0);
     }
   });
@@ -299,28 +263,10 @@ function autoAttendance(){
   }
 
   let days = totalHours / 8;
-
   document.getElementById("days").value = days.toFixed(2);
 
   alert("✅ Auto-filled!");
 }
-
-
-// AUTO REFRESH EMPLOYEES (REALTIME STYLE)
-window.addEventListener("focus", loadEmployees);
-
-
-// ROW SELECT
-document.addEventListener("click", function(e){
-  let row = e.target.closest("tr");
-  if(!row || !row.parentElement) return;
-
-  document.querySelectorAll("tbody tr").forEach(r=>{
-    r.classList.remove("selected");
-  });
-
-  row.classList.add("selected");
-});
 
 
 // PAYSLIP
@@ -330,24 +276,26 @@ function openPayslip(){
     return;
   }
 
-  let p = lastPayslip;
-
   let win = window.open("", "", "width=800,height=600");
-
   win.document.write(`
   <h2>Payslip</h2>
-  <p>${p.name}</p>
-  <p>Net: ${p.net}</p>
+  <p>${lastPayslip.name}</p>
+  <p>Net: ${lastPayslip.net}</p>
   <button onclick="window.print()">Print</button>
   `);
 }
 
 
-// LOGIN CHECK
+// AUTO REFRESH
+window.addEventListener("focus", loadEmployees);
+
+
+// LOGIN CHECK (optional)
 if(localStorage.getItem("login") !== "true"){
-  window.location.href = "login.html";
+  console.log("Login disabled for testing");
 }
 
 </script>
+
 </body>
 </html>
