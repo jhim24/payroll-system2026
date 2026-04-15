@@ -1,24 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Payroll System</title>
+<title>Payroll History</title>
 
 <style>
 body {font-family:Arial; padding:20px; background:#eef3ff;}
 h2 {border-bottom:3px solid green;}
-
-.box {
-  border:2px solid green;
-  padding:15px;
-  border-radius:10px;
-  background:white;
-}
-
-input, select {
-  padding:8px;
-  margin:5px;
-  width:160px;
-}
 
 button {
   padding:10px;
@@ -29,10 +16,7 @@ button {
   cursor:pointer;
 }
 
-.compute {background:green;}
 .back {background:#444;}
-.history {background:blue;}
-.auto {background:purple;}
 
 table {
   width:100%;
@@ -42,8 +26,8 @@ table {
 }
 
 th, td {
-  border:1px solid #999 !important;
-  padding:6px !important;
+  border:1px solid #999;
+  padding:6px;
   text-align:center;
   font-size:12px;
 }
@@ -51,16 +35,13 @@ th, td {
 th {
   background:linear-gradient(to right, #2e7d32, #1b5e20);
   color:white;
-  position:sticky;
-  top:0;
 }
 
 tbody tr:nth-child(even){background:#f4f9f4;}
 tbody tr:hover{background:#c8e6c9;}
-tr.selected{background:#a5d6a7 !important;}
 
 .table-container{
-  max-height:400px;
+  max-height:500px;
   overflow:auto;
   border:2px solid green;
 }
@@ -69,41 +50,9 @@ tr.selected{background:#a5d6a7 !important;}
 
 <body>
 
-<h2>💰 Payroll System</h2>
+<h2>📊 Payroll History</h2>
 
 <button class="back" onclick="window.location.href='index.html'">⬅ Back</button>
-<button class="history" onclick="window.location.href='history.html'">History</button>
-
-<div class="box">
-
-<select id="emp"></select><br>
-
-<input id="rate" type="number" placeholder="Daily Rate">
-<input id="days" type="number" placeholder="Days Worked"><br>
-
-<input id="ot" type="number" placeholder="OT Hours">
-<input id="holiday" type="number" placeholder="Holiday"><br>
-
-<input id="vac" type="number" placeholder="Vacation">
-<input id="sick" type="number" placeholder="Sick">
-<input id="bday" type="number" placeholder="Birthday"><br>
-
-<input id="sss" type="number" placeholder="SSS">
-<input id="philhealth" type="number" placeholder="PhilHealth">
-<input id="pagibig" type="number" placeholder="Pag-IBIG"><br>
-
-<input id="otherDed" type="number" placeholder="Other Deduction">
-<input id="otherReason" placeholder="Reason"><br>
-
-<input id="healthCard" type="number" placeholder="Health Card">
-<input id="cardNumber" placeholder="Card Number"><br>
-
-<button class="compute" onclick="compute()">Compute Salary</button>
-<button onclick="openPayslip()">Payslip 🧾</button>
-<button class="auto" onclick="autoAttendance()">Auto from Attendance ⚡</button>
-<button style="background:orange;" onclick="updateRow()">Update ✏️</button>
-
-</div>
 
 <div class="table-container">
 <table>
@@ -120,206 +69,57 @@ tr.selected{background:#a5d6a7 !important;}
 <th>Pag-IBIG</th>
 <th>Other</th>
 <th>Reason</th>
-<th>Health Card</th>
+<th>Health</th>
 <th>Card #</th>
 <th>Net</th>
+<th>Date</th>
 </tr>
-<tbody id="table"></tbody>
+<tbody id="historyTable"></tbody>
 </table>
 </div>
 
 <script>
 
-let emp = document.getElementById("emp");
-let lastPayslip = null;
-let selectedRowIndex = null;
+// LOAD HISTORY
+function loadHistory(){
 
-// LOAD EMPLOYEES
-function loadEmployees(){
-  emp.innerHTML = "<option value=''>Select Employee</option>";
-  let data = JSON.parse(localStorage.getItem("employees")) || [];
-
-  data.forEach((e,i)=>{
-    let name = (e.fname || "") + " " + (e.lname || "") || e.name || "Employee";
-    emp.innerHTML += `<option value="${i}">${name.toUpperCase()}</option>`;
-  });
-}
-loadEmployees();
-
-
-// COMPUTE + SAVE HISTORY
-function compute(){
-
-  let data = JSON.parse(localStorage.getItem("employees")) || [];
-  let i = emp.value;
-
-  if(i===""){ alert("Select employee"); return; }
-
-  let e = data[i];
-  let name = (e.fname || "") + " " + (e.lname || "") || e.name;
-
-  let rate = Number(rateEl.value) || 0;
-  let days = Number(daysEl.value) || 0;
-
-  if(rate===0 || days===0){
-    alert("Enter rate & days");
-    return;
-  }
-
-  let ot = Number(ot.value) || 0;
-  let holiday = Number(holiday.value) || 0;
-  let vac = Number(vac.value) || 0;
-  let sick = Number(sick.value) || 0;
-  let bday = Number(bday.value) || 0;
-
-  let sss = Number(sss.value) || 0;
-  let phil = Number(philhealth.value) || 0;
-  let pag = Number(pagibig.value) || 0;
-
-  let other = Number(otherDed.value) || 0;
-  let reason = otherReason.value || "-";
-
-  let health = Number(healthCard.value) || 0;
-  let card = cardNumber.value || "-";
-
-  let gross = rate * days;
-  let otPay = (rate/8) * ot * 1.25;
-  let holidayPay = holiday * rate * 2;
-
-  let vacPay = vac * rate;
-  let sickPay = sick * rate;
-  let bdayPay = bday * rate;
-
-  let totalIncome = gross + otPay + holidayPay + vacPay + sickPay + bdayPay;
-  let totalDed = sss + phil + pag + other + health;
-  let net = totalIncome - totalDed;
-
-  lastPayslip = {name, net};
-
-  // SAVE HISTORY
   let history = JSON.parse(localStorage.getItem("history")) || [];
+  let table = document.getElementById("historyTable");
 
-  history.push({
-    name,
-    gross, ot: otPay, holiday: holidayPay,
-    vac: vacPay, sick: sickPay, bday: bdayPay,
-    sss, phil, pag, other, reason, health, card,
-    net,
-    date: new Date().toLocaleString()
-  });
+  table.innerHTML = "";
 
-  localStorage.setItem("history", JSON.stringify(history));
-
-  // TABLE
-  let table = document.getElementById("table");
-
-  table.innerHTML += `
-  <tr>
-    <td>${name}</td>
-    <td>${gross.toFixed(2)}</td>
-    <td>${otPay.toFixed(2)}</td>
-    <td>${holidayPay.toFixed(2)}</td>
-    <td>${vacPay.toFixed(2)}</td>
-    <td>${sickPay.toFixed(2)}</td>
-    <td>${bdayPay.toFixed(2)}</td>
-    <td>${sss.toFixed(2)}</td>
-    <td>${phil.toFixed(2)}</td>
-    <td>${pag.toFixed(2)}</td>
-    <td>${other.toFixed(2)}</td>
-    <td>${reason}</td>
-    <td>${health.toFixed(2)}</td>
-    <td>${card}</td>
-    <td><b>${net.toFixed(2)}</b></td>
-  </tr>`;
-
-  alert("✅ Salary Computed!");
-}
-
-
-// CLICK ROW
-document.addEventListener("click", function(e){
-  let row = e.target.closest("tr");
-  if(!row || row.parentElement.id !== "table") return;
-
-  let rows = document.querySelectorAll("#table tr");
-
-  rows.forEach((r,i)=>{
-    r.classList.remove("selected");
-
-    if(r === row){
-      r.classList.add("selected");
-      selectedRowIndex = i;
-
-      let cells = r.children;
-
-      rate.value = cells[1].innerText;
-      days.value = 1;
-
-      ot.value = cells[2].innerText;
-      holiday.value = cells[3].innerText;
-
-      vac.value = cells[4].innerText;
-      sick.value = cells[5].innerText;
-      bday.value = cells[6].innerText;
-
-      sss.value = cells[7].innerText;
-      philhealth.value = cells[8].innerText;
-      pagibig.value = cells[9].innerText;
-
-      otherDed.value = cells[10].innerText;
-      otherReason.value = cells[11].innerText;
-
-      healthCard.value = cells[12].innerText;
-      cardNumber.value = cells[13].innerText;
-    }
-  });
-});
-
-
-// UPDATE
-function updateRow(){
-
-  if(selectedRowIndex === null){
-    alert("Select row");
+  if(history.length === 0){
+    table.innerHTML = "<tr><td colspan='16'>No records found</td></tr>";
     return;
   }
 
-  let rows = document.querySelectorAll("#table tr");
-  let row = rows[selectedRowIndex];
-
-  compute(); // recompute
-  alert("✅ Updated!");
-}
-
-
-// AUTO ATTENDANCE
-function autoAttendance(){
-  let attendance = JSON.parse(localStorage.getItem("attendance")) || [];
-  let name = emp.options[emp.selectedIndex].text;
-
-  let total = 0;
-  attendance.forEach(a=>{
-    if(a.name === name){
-      total += Number(a.hours || 0);
-    }
+  history.forEach(h=>{
+    table.innerHTML += `
+    <tr>
+      <td>${h.name}</td>
+      <td>${Number(h.gross).toFixed(2)}</td>
+      <td>${Number(h.ot).toFixed(2)}</td>
+      <td>${Number(h.holiday).toFixed(2)}</td>
+      <td>${Number(h.vac).toFixed(2)}</td>
+      <td>${Number(h.sick).toFixed(2)}</td>
+      <td>${Number(h.bday).toFixed(2)}</td>
+      <td>${Number(h.sss).toFixed(2)}</td>
+      <td>${Number(h.phil).toFixed(2)}</td>
+      <td>${Number(h.pag).toFixed(2)}</td>
+      <td>${Number(h.other).toFixed(2)}</td>
+      <td>${h.reason}</td>
+      <td>${Number(h.health).toFixed(2)}</td>
+      <td>${h.card}</td>
+      <td><b>${Number(h.net).toFixed(2)}</b></td>
+      <td>${h.date}</td>
+    </tr>
+    `;
   });
 
-  days.value = (total/8).toFixed(2);
 }
 
-
-// PAYSLIP
-function openPayslip(){
-  if(!lastPayslip){
-    alert("Compute first");
-    return;
-  }
-
-  let win = window.open();
-  win.document.write(`<h2>${lastPayslip.name}</h2><p>Net: ${lastPayslip.net}</p>`);
-}
-
-window.addEventListener("focus", loadEmployees);
+// AUTO LOAD
+loadHistory();
 
 </script>
 
