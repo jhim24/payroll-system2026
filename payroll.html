@@ -110,7 +110,7 @@ tr.selected{
 <button class="compute" onclick="compute()">Compute Salary</button>
 <button onclick="openPayslip()">Payslip 🧾</button>
 <button class="auto" onclick="autoAttendance()">Auto from Attendance ⚡</button>
-
+<button style="background:orange;" onclick="updateRow()">Update ✏️</button>
 </div>
 
 <div class="table-container">
@@ -296,13 +296,113 @@ function openPayslip(){
 
 // AUTO REFRESH
 window.addEventListener("focus", loadEmployees);
+document.addEventListener("click", function(e){
+  let row = e.target.closest("tr");
+  if(!row || !row.parentElement || row.parentElement.id !== "table") return;
 
+  let rows = document.querySelectorAll("#table tr");
+
+  rows.forEach((r,i)=>{
+    r.classList.remove("selected");
+    if(r === row){
+      r.classList.add("selected");
+      selectedRowIndex = i;
+
+      let cells = r.children;
+
+      // LOAD SA INPUTS
+      document.getElementById("rate").value = cells[1].innerText;
+      document.getElementById("days").value = cells[1].innerText / cells[1].innerText; // basic fallback
+
+      document.getElementById("ot").value = cells[2].innerText;
+      document.getElementById("holiday").value = cells[3].innerText;
+
+      document.getElementById("vac").value = cells[4].innerText;
+      document.getElementById("sick").value = cells[5].innerText;
+      document.getElementById("bday").value = cells[6].innerText;
+
+      document.getElementById("sss").value = cells[7].innerText;
+      document.getElementById("philhealth").value = cells[8].innerText;
+      document.getElementById("pagibig").value = cells[9].innerText;
+
+      document.getElementById("otherDed").value = cells[10].innerText;
+      document.getElementById("otherReason").value = cells[11].innerText;
+
+      document.getElementById("healthCard").value = cells[12].innerText;
+      document.getElementById("cardNumber").value = cells[13].innerText;
+    }
+  });
 
 // LOGIN CHECK (optional)
 if(localStorage.getItem("login") !== "true"){
   console.log("Login disabled for testing");
 }
+let selectedRowIndex = null;
+  function updateRow(){
 
+  if(selectedRowIndex === null){
+    alert("Select row to update");
+    return;
+  }
+
+  let rows = document.querySelectorAll("#table tr");
+  let row = rows[selectedRowIndex];
+
+  let name = emp.options[emp.selectedIndex].text;
+
+  let rate = Number(document.getElementById("rate").value) || 0;
+  let days = Number(document.getElementById("days").value) || 0;
+
+  let ot = Number(document.getElementById("ot").value) || 0;
+  let holiday = Number(document.getElementById("holiday").value) || 0;
+
+  let vac = Number(document.getElementById("vac").value) || 0;
+  let sick = Number(document.getElementById("sick").value) || 0;
+  let bday = Number(document.getElementById("bday").value) || 0;
+
+  let sss = Number(document.getElementById("sss").value) || 0;
+  let phil = Number(document.getElementById("philhealth").value) || 0;
+  let pag = Number(document.getElementById("pagibig").value) || 0;
+
+  let other = Number(document.getElementById("otherDed").value) || 0;
+  let reason = document.getElementById("otherReason").value || "-";
+
+  let health = Number(document.getElementById("healthCard").value) || 0;
+  let card = document.getElementById("cardNumber").value || "-";
+
+  let gross = rate * days;
+  let otPay = (rate/8) * ot * 1.25;
+  let holidayPay = holiday * rate * 2;
+
+  let vacPay = vac * rate;
+  let sickPay = sick * rate;
+  let bdayPay = bday * rate;
+
+  let totalIncome = gross + otPay + holidayPay + vacPay + sickPay + bdayPay;
+  let totalDed = sss + phil + pag + other + health;
+
+  let net = totalIncome - totalDed;
+
+  row.innerHTML = `
+    <td>${name}</td>
+    <td>${gross.toFixed(2)}</td>
+    <td>${otPay.toFixed(2)}</td>
+    <td>${holidayPay.toFixed(2)}</td>
+    <td>${vacPay.toFixed(2)}</td>
+    <td>${sickPay.toFixed(2)}</td>
+    <td>${bdayPay.toFixed(2)}</td>
+    <td>${sss.toFixed(2)}</td>
+    <td>${phil.toFixed(2)}</td>
+    <td>${pag.toFixed(2)}</td>
+    <td>${other.toFixed(2)}</td>
+    <td>${reason}</td>
+    <td>${health.toFixed(2)}</td>
+    <td>${card}</td>
+    <td><b>${net.toFixed(2)}</b></td>
+  `;
+
+  alert("✅ Updated successfully!");
+}
 </script>
 
 </body>
