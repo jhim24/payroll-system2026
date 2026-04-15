@@ -127,39 +127,52 @@ tr.selected{
 
 <script>
 
-// 🔥 LOAD EMPLOYEES FIXED
+// 🔥 LOAD EMPLOYEES (FIXED + AUTO UPDATE)
 let data = JSON.parse(localStorage.getItem("employees")) || [];
 let lastPayslip = null;
 
 let emp = document.getElementById("emp");
 
+// 🔥 DEBUG (optional pwede mo alisin)
+console.log("EMP DATA:", data);
+
 // RESET DROPDOWN
-emp.innerHTML = "<option value=''>Select Employee</option>";
+function loadEmployees(){
 
-// 🔥 HANDLE EMPTY
-if(data.length === 0){
-  emp.innerHTML += "<option>No employees found</option>";
-}
+  emp.innerHTML = "<option value=''>Select Employee</option>";
 
-// 🔥 FLEXIBLE NAME SUPPORT
-data.forEach((e,i)=>{
+  let data = JSON.parse(localStorage.getItem("employees")) || [];
 
-  let fullName = "";
-
-  if(e.fname || e.lname){
-    fullName = (e.fname || "") + " " + (e.lname || "");
-  } else if(e.name){
-    fullName = e.name;
-  } else {
-    fullName = "Employee " + (i+1);
+  if(data.length === 0){
+    emp.innerHTML += "<option>No employees found</option>";
+    return;
   }
 
-  emp.innerHTML += `<option value="${i}">${fullName}</option>`;
-});
+  data.forEach((e,i)=>{
+
+    let fullName = "";
+
+    if(e.fname || e.lname){
+      fullName = (e.fname || "") + " " + (e.lname || "");
+    } else if(e.name){
+      fullName = e.name;
+    } else {
+      fullName = "Employee " + (i+1);
+    }
+
+    emp.innerHTML += `<option value="${i}">${fullName.toUpperCase()}</option>`;
+  });
+
+}
+
+// 🔥 INITIAL LOAD
+loadEmployees();
 
 
 // COMPUTE
 function compute(){
+
+  let data = JSON.parse(localStorage.getItem("employees")) || [];
 
   let i = emp.value;
 
@@ -257,6 +270,8 @@ function compute(){
 // AUTO ATTENDANCE
 function autoAttendance(){
 
+  let data = JSON.parse(localStorage.getItem("employees")) || [];
+
   let i = emp.value;
 
   if(i===""){
@@ -289,6 +304,10 @@ function autoAttendance(){
 
   alert("✅ Auto-filled!");
 }
+
+
+// AUTO REFRESH EMPLOYEES (REALTIME STYLE)
+window.addEventListener("focus", loadEmployees);
 
 
 // ROW SELECT
@@ -330,6 +349,5 @@ if(localStorage.getItem("login") !== "true"){
 }
 
 </script>
-
 </body>
 </html>
